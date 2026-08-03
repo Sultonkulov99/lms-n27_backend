@@ -1,0 +1,160 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRoles {
+  SUPERADMIN
+  ADMIN
+  MENTOR
+  ASSISTANT
+  STUDENT
+}
+
+enum CourseLevel {
+  BEGINNER
+  ELEMENTARY
+  PREINTERMEDIATE
+  INTERMEDIATE
+  ADVANCED
+}
+
+enum TestAnswer {
+  variantA
+  variantB
+  variantC
+  variantD
+}
+
+model User {
+  id         Int       @id @default(autoincrement())
+  fullName   String
+  phone      String
+  password   String
+  file       String?
+  role       UserRoles
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+
+  mentor           MentorProfile[]
+  courseAssistants CourseAssistant[]
+}
+
+model MentorProfile {
+  id          Int      @id @default(autoincrement())
+  userId      Int
+  experience  Int?
+  job         String?
+  site        String?
+  description String?
+  facebook    String?
+  telegram    String?
+  instagram   String?
+  github      String?
+  linkedin    String?
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model CourseAssistant {
+  id         Int      @id @default(autoincrement())
+  courseId   Int
+  userId     Int
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Categories {
+  id         Int      @id @default(autoincrement())
+  name       String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  courses Courses[]
+}
+
+model Courses {
+  id          Int         @id @default(autoincrement())
+  banner      String
+  introVideo  String?
+  name        String
+  description String
+  level       CourseLevel
+  price       Decimal
+  categoryId  Int
+  created_at  DateTime    @default(now())
+  updated_at  DateTime    @updatedAt
+
+  categories Categories @relation(fields: [categoryId], references: [id])
+  sections   Sections[]
+}
+
+model Sections {
+  id         Int      @id @default(autoincrement())
+  courseId   Int
+  name       String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  courses Courses   @relation(fields: [courseId], references: [id])
+  lessons Lessons[]
+}
+
+model Lessons {
+  id          Int      @id @default(autoincrement())
+  sectionId   Int
+  name        String
+  description String
+  file        String
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  sections  Sections    @relation(fields: [sectionId], references: [id])
+  materials Materials[]
+  homeworks Homeworks[]
+  exams     Exams[]
+}
+
+model Materials {
+  id          Int      @id @default(autoincrement())
+  lessonId    Int
+  description String
+  file        String[] @default([])
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  lessons Lessons @relation(fields: [lessonId], references: [id])
+}
+
+model Homeworks {
+  id          Int      @id @default(autoincrement())
+  lessonId    Int
+  description String
+  file        String[] @default([])
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  lessons Lessons @relation(fields: [lessonId], references: [id])
+}
+
+model Exams {
+  id       Int @id @default(autoincrement())
+  lessonId Int
+  questoin String
+  variantA String
+  variantB String
+  variantC String
+  variantD String
+  answer TestAnswer
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  lessons Lessons @relation(fields: [lessonId], references: [id])
+}
