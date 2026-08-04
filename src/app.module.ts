@@ -8,7 +8,6 @@ import { CategoriesModule } from './modules/categories/categories.module';
 import { CourseAssistantModule } from './modules/course-assistant/course-assistant.module';
 import { UserModule } from './modules/users/users.module';
 
-
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -17,6 +16,9 @@ import { UserModule } from './modules/users/users.module';
     PrismaModule,
     SeederModule,
     CoursesModule,
+    CategoriesModule,
+    CourseAssistantModule,
+    UserModule,
   ],
 }) 
 export class AppModule {}
