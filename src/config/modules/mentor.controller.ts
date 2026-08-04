@@ -30,4 +30,4 @@ export class MentorController {
   remove(@Param('id') id: string) {
     return this.mentorService.remove(Number(id));
   }
-}
+} 
