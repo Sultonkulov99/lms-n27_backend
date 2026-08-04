@@ -4,8 +4,7 @@ import { CreateUserDto } from "./dto/create-user.dto";
 import { ApiConsumes, ApiTags } from "@nestjs/swagger";
 import { FileInterceptor } from "@nestjs/platform-express";
 
-@ApiTags('Users')
-@Controller('/api/users')
+@Controller('users')
 export class UserController {
     constructor(private readonly service: UserService) { }
 

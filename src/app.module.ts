@@ -1,17 +1,16 @@
-import { Module } from '@nestjs/common';
-import { PrismaModule } from './core/database/prisma.module';
-import { ConfigModule } from '@nestjs/config';
-import { SeederModule } from './core/seed/seeder.module';
-import { CoursesModule } from './modules/courses/courses.module';
-
-import { CategoriesModule } from './modules/categories/categories.module';
-import { CourseAssistantModule } from './modules/course-assistant/course-assistant.module';
-import { UserModule } from './modules/users/users.module';
+import { Module } from "@nestjs/common";
+import { PrismaModule } from "./core/database/prisma.module";
+import { ConfigModule } from "@nestjs/config";
+import { SeederModule } from "./core/seed/seeder.module";
+import { CoursesModule } from "./modules/courses/courses.module";
+import { CategoriesModule } from "./modules/categories/categories.module";
+import { CourseAssistantModule } from "./modules/course-assistant/course-assistant.module";
+import { UserModule } from "./modules/users/users.module";
 
 @Module({
   imports: [
     ConfigModule.forRoot({
-      isGlobal:true
+      isGlobal: true,
     }),
     PrismaModule,
     SeederModule,
@@ -20,5 +19,5 @@ import { UserModule } from './modules/users/users.module';
     CourseAssistantModule,
     UserModule,
   ],
-}) 
+})
 export class AppModule {}

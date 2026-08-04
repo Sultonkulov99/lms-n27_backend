@@ -13,12 +13,10 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
         super({adapter,log:["error","warn"]})
     }
     async onModuleInit() {
-        await this.$connect()
         Logger.log("✅ Database connected")
     }
 
     async onModuleDestroy() {
-        await this.$disconnect()
         Logger.log("❌ Database disconnected")
     }
 }
