@@ -20,8 +20,10 @@ export class CreateUserDto {
     @MinLength(8)
     password: string;
 
-    @ApiProperty()
+    @ApiProperty({
+        required: false,
+        type: 'string',
+    })
     @IsOptional()
-    @IsString()
-    file?: string;
+    file?: any;
 }
