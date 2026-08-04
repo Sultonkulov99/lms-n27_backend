@@ -8,7 +8,7 @@ import { CategoriesModule } from './modules/categories/categories.module';
 import { CourseAssistantModule } from './modules/course-assistant/course-assistant.module';
 import { UserModule } from './modules/users/users.module';
 import { MentorModule } from './config/modules/mentor.module';
-import { AuthModule } from './modules';
+import { AuthModule, SectionsModule } from './modules';
 
 
 @Module({
@@ -21,6 +21,7 @@ import { AuthModule } from './modules';
     CoursesModule,
     MentorModule,
     AuthModule,
+    SectionsModule,
   ],
 })
 export class AppModule {}
