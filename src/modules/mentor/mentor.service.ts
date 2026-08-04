@@ -21,9 +21,13 @@ export class MentorService {
             },
         });
     }
+<<<<<<< HEAD
 
 
 
+=======
+ 
+>>>>>>> 924f16d5aeaa518855ab5e58a2a9f6751667b9bb
     async getOne(id: number) {
         const mentor = await this.prisma.user.findUnique({
             where: { id },
