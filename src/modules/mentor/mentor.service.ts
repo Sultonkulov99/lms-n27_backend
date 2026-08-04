@@ -1,14 +1,11 @@
 import { PrismaService } from "src/core/database/prisma.service";
 import { Injectable } from "@nestjs/common";
-import { CreateMentorDto } from "../dto/mentor.dto";
-import * as bcrypt from 'bcrypt';
+import { CreateMentorDto } from "./dto/mentor.dto";
+import * as argon from "argon2"
 
 @Injectable()
 export class MentorService {
     constructor(private prisma: PrismaService) {}
-
-
-
     
     async getAll() {
         return this.prisma.user.findMany({
@@ -16,18 +13,14 @@ export class MentorService {
         });
     }
 
-
-
-
     async getOne(id: number) {
         return this.prisma.user.findUnique({
             where: { id },
         });
     }
 
-
     async create(dto: CreateMentorDto) {
-        const hashedPass = await bcrypt.hash(dto.password, 10);
+        const hashedPass = await argon.hash(dto.password);
 
         return this.prisma.user.create({
             data: {
