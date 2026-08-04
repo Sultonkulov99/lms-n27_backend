@@ -16,7 +16,18 @@ export class AuthService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly jwtService: JwtService,
-  ) {}
+  ) { }
+
+  private async hashPassword(password: string) {
+    return await argon.hash(password);
+  }
+
+  private async verifyPassword(
+    hashedPassword: string,
+    originalPassword: string,
+  ) {
+    return await argon.verify(hashedPassword, originalPassword);
+  }
 
   async register(payload: RegisterDto) {
     const existing = await this.prisma.user.findUnique({
@@ -74,21 +85,9 @@ export class AuthService {
 
     return {
       success: true,
-      access_token: this.jwtService.sign(
-        (({ password, ...rest }) => rest)(payload),
-      ),
+      access_token: this.jwtService.sign({id:existing.id, role:existing.role},{secret:process.env.SECRET_KEY}),
       data: result,
     };
   }
 
-  private async hashPassword(password: string) {
-    return await argon.hash(password);
-  }
-
-  private async verifyPassword(
-    hashedPassword: string,
-    originalPassword: string,
-  ) {
-    return await argon.verify(hashedPassword, originalPassword);
-  }
 }
