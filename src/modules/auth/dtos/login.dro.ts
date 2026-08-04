@@ -1,23 +1,14 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsPhoneNumber, IsString, IsStrongPassword } from "class-validator";
+import {
+  IsPhoneNumber,
+  IsString,
+  IsStrongPassword,
+} from "class-validator";
 
-export class RegisterDto {
-  @ApiProperty({
-    example: "Mr Kebyu",
-  })
-  @IsString()
-  fullName!: string;
-
-  @ApiProperty({
-    example: "+998990007007",
-  })
+export class LoginDto {
   @IsString()
   @IsPhoneNumber()
   phone!: string;
 
-  @ApiProperty({
-    example: "@Kebyu007",
-  })
   @IsString()
   @IsStrongPassword(
     {

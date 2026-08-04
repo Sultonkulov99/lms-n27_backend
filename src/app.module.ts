@@ -11,7 +11,7 @@ import { MentorModule } from "./modules/mentor/mentor.module";
 
 @Module({
   imports: [
-    ConfigModule.forRoot({  
+    ConfigModule.forRoot({
       isGlobal: true,
     }),
     PrismaModule,

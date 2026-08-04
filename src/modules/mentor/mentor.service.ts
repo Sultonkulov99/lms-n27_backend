@@ -12,7 +12,7 @@ export class MentorService {
             where: { role: "MENTOR" },
         });
     }
-
+ 
     async getOne(id: number) {
         return this.prisma.user.findUnique({
             where: { id },
