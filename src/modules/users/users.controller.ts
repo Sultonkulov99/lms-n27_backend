@@ -1,36 +1,63 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, UploadedFile, UseInterceptors } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  UploadedFile,
+  UseGuards,
+  UseInterceptors,
+} from "@nestjs/common";
 import { UserService } from "./users.service";
 import { CreateUserDto } from "./dto/create-user.dto";
-import { ApiConsumes, ApiTags } from "@nestjs/swagger";
+import { ApiConsumes, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { FileInterceptor } from "@nestjs/platform-express";
+import { Roles } from "src/common/decorators/roles.decorator";
+import { UserRoles } from "src/common/enums";
+import { JwtAuthGuard } from "src/common/guards/jwt-auth.guard";
+import { RolesGuard } from "src/common/guards/roles.guard";
 
-@Controller('users')
+@Controller("users")
 export class UserController {
-    constructor(private readonly service: UserService) { }
+  constructor(private readonly service: UserService) {}
 
-    @Get()
-    async getAllAdmins() {
-        return await this.service.getAllAdmins()
-    }
+  @Get()
+  @Roles(UserRoles.SUPERADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiOperation({ summary: "Faqat SUPERADMIN - Barcha foydalanuvchi olish" })
+  async getAllAdmins() {
+    return await this.service.getAllAdmins();
+  }
 
-    @Post()
-    @ApiConsumes('multipart/form-data')
-    @UseInterceptors(FileInterceptor('file'))
-    async createAdmin(
-        @Body() payload: CreateUserDto,
-        @UploadedFile()
-        image?: Express.Multer.File,
-    ) {
-        return await this.service.createAdmin(payload, image)
-    }
+  @Post()
+  @Roles(UserRoles.SUPERADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiConsumes("multipart/form-data")
+  @UseInterceptors(FileInterceptor("file"))
+  @ApiOperation({ summary: "Faqat SUPERADMIN - Yangi foydalanuvchi yaratish" })
+  async createAdmin(
+    @Body() payload: CreateUserDto,
+    @UploadedFile()
+    image?: Express.Multer.File,
+  ) {
+    return await this.service.createAdmin(payload, image);
+  }
 
-    @Patch(':id')
-    async updateAdmin(@Param('id') id: number, @Body() payload: CreateUserDto) {
-        return await this.service.updateAdmin(id, payload)
-    }
+  @Patch(":id")
+  @Roles(UserRoles.SUPERADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiOperation({ summary: "Faqat SUPERADMIN - Foydalanuvchini tahrirlash" })
+  async updateAdmin(@Param("id") id: number, @Body() payload: CreateUserDto) {
+    return await this.service.updateAdmin(id, payload);
+  }
 
-    @Delete(':id')
-    async deleteAdmin(@Param('id') id: number) {
-        return await this.service.deleteAdmin(id)
-    }
+  @Delete(":id")
+  @Roles(UserRoles.SUPERADMIN)
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiOperation({ summary: "Faqat SUPERADMIN - Foydalanuvchini o'chirish" })
+  async deleteAdmin(@Param("id") id: number) {
+    return await this.service.deleteAdmin(id);
+  }
 }
