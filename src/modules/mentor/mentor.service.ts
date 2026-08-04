@@ -1,6 +1,6 @@
 import { PrismaService } from "src/core/database/prisma.service";
 import { Injectable } from "@nestjs/common";
-import { CreateMentorDto } from "../dto/mentor.dto";
+import { CreateMentorDto } from "./dto/mentor.dto";
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
