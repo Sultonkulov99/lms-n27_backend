@@ -5,9 +5,9 @@ import { SeederModule } from "./core/seed/seeder.module";
 import { CoursesModule } from "./modules/courses/courses.module";
 import { CategoriesModule } from "./modules/categories/categories.module";
 import { CourseAssistantModule } from "./modules/course-assistant/course-assistant.module";
-import { UserModule } from "./modules/users/users.module";
 import { AuthModule, SectionsModule } from "./modules";
 import { MentorModule } from "./modules/mentor/mentor.module";
+import { AdminModule } from "./modules/admin/admin.module";
 
 @Module({
   imports: [
@@ -21,7 +21,7 @@ import { MentorModule } from "./modules/mentor/mentor.module";
     SectionsModule,
     CategoriesModule,
     CourseAssistantModule,
-    UserModule,
+    AdminModule,
     MentorModule,
   ],
 })
