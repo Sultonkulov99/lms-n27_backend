@@ -8,6 +8,7 @@ import { CourseAssistantModule } from "./modules/course-assistant/course-assista
 import { AuthModule, SectionsModule } from "./modules";
 import { MentorModule } from "./modules/mentor/mentor.module";
 import { AdminModule } from "./modules/admin/admin.module";
+import { LessonsModule } from "./modules/lessons/lessons.module";
 
 @Module({
   imports: [
