@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsOptional, IsString, MinLength } from 'class-validator';
 
-export class CreateAdminDto {
+export class CreateUserDto {
     @ApiProperty({
         example: 'Ali Valiyev',
     })
@@ -21,9 +21,9 @@ export class CreateAdminDto {
     password: string;
 
     @ApiProperty({
-        required: false,
         type: 'string',
+        format: 'binary'
     })
     @IsOptional()
-    file?: any;
+    file: any;
 }

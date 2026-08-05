@@ -5,14 +5,13 @@ import {
 } from "@nestjs/common";
 import { UserRoles } from "@prisma/client";
 import { PrismaService } from "src/core/database/prisma.service";
-import { CreateAdminDto } from "./dto/create-admin.dto";
-import { UpdateAdminDto } from "./dto/update-admin.dto";
+import { CreateUserDto } from "./dto/create-user.dto";
+import { UpdateUserDto } from "./dto/update-user.dto";
 import { randomUUID } from "node:crypto";
-import * as fs from "fs";
-import path from "node:path";
+import * as bcrypt from "bcrypt";
 
 @Injectable()
-export class AdminService {
+export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
 
   async getAllAdmins() {
@@ -34,8 +33,8 @@ export class AdminService {
       data: admins,
     };
   }
-  async createAdmin(payload: CreateAdminDto, file?: Express.Multer.File) {
-    let fileName = "empty";
+
+  async createAdmin(payload: CreateUserDto, file?: Express.Multer.File) {
     const admin = await this.prisma.user.findFirst({
       where: { role: UserRoles.ADMIN, phone: payload.phone },
     });
@@ -44,27 +43,12 @@ export class AdminService {
       throw new ConflictException("User has already existed");
     }
 
-    if (file) {
-      fileName = this.generateFileName(file);
-
-      fs.writeFile(
-        path.join(process.cwd(), "src", "uploads", fileName),
-        file.buffer,
-        null,
-        (err) => {
-          if (err) {
-            console.log(err);
-          } else {
-            console.log("Image successfully saved");
-          }
-        },
-      );
-    }
-
+    const hashedPassword = await bcrypt.hash(payload.password, 10);
     const newAdmin = await this.prisma.user.create({
       data: {
         ...payload,
-        file: fileName,
+        password: hashedPassword,
+        file: file?.filename ?? "empty",
         role: UserRoles.ADMIN,
       },
     });
@@ -77,7 +61,7 @@ export class AdminService {
 
   async updateAdmin(
     id: number,
-    payload: UpdateAdminDto,
+    payload: UpdateUserDto,
     file?: Express.Multer.File,
   ) {
     const existingAdmin = await this.prisma.user.findFirst({ where: { id } });
@@ -93,11 +77,12 @@ export class AdminService {
         "Bu telefon raqami boshqa admin tomonidan band qilingan",
       );
 
-    const { file: _ignore, ...rest } = payload as any;
+    const { file: _ignore, password, ...rest } = payload as any;
     const updatedAdmin = await this.prisma.user.update({
       where: { id },
       data: {
         ...rest,
+        ...(password && { password: await bcrypt.hash(password, 10) }),
         ...(file && { file: file.filename }),
       },
     });

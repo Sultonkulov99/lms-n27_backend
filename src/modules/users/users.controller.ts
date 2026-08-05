@@ -10,8 +10,8 @@ import {
   UseGuards,
   UseInterceptors,
 } from "@nestjs/common";
-import { AdminService } from "./admin.service";
-import { CreateAdminDto } from "./dto/create-admin.dto";
+import { UsersService } from "./users.service";
+import { CreateUserDto } from "./dto/create-user.dto";
 import {
   ApiBearerAuth,
   ApiConsumes,
@@ -25,13 +25,13 @@ import { RolesGuard } from "src/common/guards/roles.guard";
 import { UserRoles } from "@prisma/client";
 import { diskStorage } from "multer";
 import { extname } from "path";
-import { UpdateAdminDto } from "./dto/update-admin.dto";
+import { UpdateUserDto } from "./dto/update-user.dto";
 
-@Controller("admin")
-export class AdminController {
-  constructor(private readonly service: AdminService) {}
+@Controller("user")
+export class UsersController {
+  constructor(private readonly service: UsersService) {}
 
-  @Get()
+  @Get("admin")
   @Roles(UserRoles.SUPERADMIN)
   @ApiBearerAuth("access-token")
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -40,22 +40,33 @@ export class AdminController {
     return await this.service.getAllAdmins();
   }
 
-  @Post()
+  @Post("admin")
   @Roles(UserRoles.SUPERADMIN)
   @ApiBearerAuth("access-token")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiConsumes("multipart/form-data")
-  @UseInterceptors(FileInterceptor("file"))
   @ApiOperation({ summary: "Faqat SUPERADMIN" })
+  @UseInterceptors(
+    FileInterceptor("file", {
+      storage: diskStorage({
+        destination: "./uploads",
+        filename: (req, file, callback) => {
+          const uniqueSuffix =
+            Date.now() + "-" + Math.round(Math.random() * 1e9);
+          callback(null, `${uniqueSuffix}${extname(file.originalname)}`);
+        },
+      }),
+      limits: { fileSize: 5 * 1024 * 1024 },
+    }),
+  )
   async createAdmin(
-    @Body() payload: CreateAdminDto,
-    @UploadedFile()
-    image?: Express.Multer.File,
+    @Body() payload: CreateUserDto,
+    @UploadedFile() file: Express.Multer.File,
   ) {
-    return await this.service.createAdmin(payload, image);
+    return await this.service.createAdmin(payload, file);
   }
 
-  @Patch(":id")
+  @Patch("admin/:id")
   @Roles(UserRoles.SUPERADMIN)
   @ApiBearerAuth("access-token")
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -76,13 +87,13 @@ export class AdminController {
   )
   async updateAdmin(
     @Param("id") id: number,
-    @Body() payload: UpdateAdminDto,
+    @Body() payload: UpdateUserDto,
     @UploadedFile() file: Express.Multer.File,
   ) {
     return await this.service.updateAdmin(id, payload, file);
   }
 
-  @Delete(":id")
+  @Delete("admin/:id")
   @Roles(UserRoles.SUPERADMIN)
   @ApiBearerAuth("access-token")
   @UseGuards(JwtAuthGuard, RolesGuard)
