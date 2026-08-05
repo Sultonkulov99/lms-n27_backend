@@ -1,4 +1,4 @@
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { CourseLevel } from "@prisma/client";
 import { Type } from "class-transformer";
 import {
@@ -12,19 +12,13 @@ import {
 } from "class-validator";
 
 export class CreateCourseDto {
-  @ApiProperty({
-    example: "any",
-  })
-  @IsString()
-  @IsNotEmpty()
-  banner: string;
-
-  @ApiProperty({
-    example: "video.mp4?",
-  })
-  @IsString()
+  @ApiProperty({ type: 'string', format: 'binary' })
   @IsOptional()
-  introVideo?: string;
+  banner: any;
+
+  @IsOptional()
+  @ApiPropertyOptional({ type: 'string', format: 'binary' })
+  introVideo?: any;
 
   @ApiProperty({
     example: "Full-stack",
