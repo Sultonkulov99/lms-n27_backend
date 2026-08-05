@@ -23,6 +23,7 @@ import { AdminModule } from "./modules/admin/admin.module";
     CourseAssistantModule,
     AdminModule,
     MentorModule,
+    LessonsModule
   ],
 })
 export class AppModule {}
