@@ -9,12 +9,12 @@ import {
   UseGuards,
 } from "@nestjs/common";
 import { MentorService } from "./mentor.service";
-import { CreateMentorDto } from "./dto/mentor.dto";
 import { Roles } from "src/common/decorators/roles.decorator";
 import { UserRoles } from "@prisma/client";
 import { ApiBearerAuth, ApiOperation } from "@nestjs/swagger";
 import { JwtAuthGuard } from "src/common/guards/jwt-auth.guard";
 import { RolesGuard } from "src/common/guards/roles.guard";
+import { CreateMentorDto } from "./dto/mentor-create.dto";
 
 @Controller("mentors")
 export class MentorController {
