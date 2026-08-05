@@ -47,15 +47,7 @@ export class MentorController {
   create(@Body() dto: CreateMentorDto) {
     return this.mentorService.create(dto);
   }
-
-  // @Put(":id")
-  // @Roles(UserRoles.SUPERADMIN)
-  // @ApiBearerAuth("access-token")
-  // @UseGuards(JwtAuthGuard, RolesGuard)
-  // @ApiOperation({ summary: "Faqat SUPERADMIN - Update Mentor" })
-  // update(@Param("id") id: string, @Body() dto: Partial<CreateMentorDto>) {
-  //   return this.mentorService.update(Number(id), dto);
-  // }
+  
   @Put(":id")
   @Roles(UserRoles.SUPERADMIN)
   @ApiBearerAuth("access-token")
