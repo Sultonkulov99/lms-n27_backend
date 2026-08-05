@@ -1,24 +1,34 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from 'src/core/database/prisma.service';
-import { CreateCategoryDto } from './dto/create-category.dto';
-import { UpdateCategoryDto } from './dto/update-category.dto';
+import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
+import { PrismaService } from "src/core/database/prisma.service";
+import { CreateCategoryDto } from "./dto/create-category.dto";
+import { UpdateCategoryDto } from "./dto/update-category.dto";
 
 @Injectable()
 export class CategoriesService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(dto: CreateCategoryDto) {
-    return this.prisma.categories.create({
+    const category = await this.prisma.categories.create({
       data: dto,
     });
+
+    return {
+      success: true,
+      data: category,
+    };
   }
 
   async findAll() {
-    return this.prisma.categories.findMany({
+    const categories = await this.prisma.categories.findMany({
       include: {
         courses: true,
       },
     });
+
+    return {
+      success: true,
+      data: categories,
+    };
   }
 
   async findOne(id: number) {
@@ -30,26 +40,59 @@ export class CategoriesService {
     });
 
     if (!category) {
-      throw new NotFoundException('Category not found');
+      throw new NotFoundException("Category not found");
     }
 
-    return category;
+    return {
+      success: true,
+      data: category,
+    };
   }
 
   async update(id: number, dto: UpdateCategoryDto) {
-    await this.findOne(id);
+    const existing = await this.findOne(id);
 
-    return this.prisma.categories.update({
+    if (!existing) {
+      throw new NotFoundException("User not found");
+    }
+
+    const updated = await this.prisma.categories.update({
       where: { id },
       data: dto,
     });
+
+    return {
+      success: true,
+      data: updated,
+    };
   }
 
   async remove(id: number) {
-    await this.findOne(id);
+    const existing = await this.prisma.categories.findUnique({
+      where: { id },
+      include: {
+        courses: true,
+      },
+    });
 
-    return this.prisma.categories.delete({
+    if (!existing) {
+      throw new NotFoundException(
+        "Category not found  Category has courses Fir",
+      );
+    }
+
+    if (existing.courses) {
+      throw new ConflictException(
+        "Category has courses. First you need to delete connected courses then you'll able to delete",
+      );
+    }
+
+    await this.prisma.categories.delete({
       where: { id },
     });
+
+    return {
+      success: true,
+    };
   }
 }

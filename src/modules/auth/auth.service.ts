@@ -30,7 +30,7 @@ export class AuthService {
   }
 
   async register(payload: RegisterDto) {
-    const existing = await this.prisma.user.findUnique({
+    const existing = await this.prisma.user.findFirst({
       where: {
         phone: payload.phone,
       },
@@ -62,7 +62,7 @@ export class AuthService {
   }
 
   async login(payload: LoginDto) {
-    const existing = await this.prisma.user.findUnique({
+    const existing = await this.prisma.user.findFirst({
       where: {
         phone: payload.phone,
       },

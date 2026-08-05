@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  UploadedFiles,
   UseGuards,
 } from "@nestjs/common";
 import { ApiBearerAuth, ApiOperation, ApiTags } from "@nestjs/swagger";
