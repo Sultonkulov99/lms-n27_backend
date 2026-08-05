@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsOptional, IsString, MinLength } from 'class-validator';
 
-export class UpdateUserDto {
+export class UpdateAdminDto {
     @ApiProperty({
         example: 'Ali Valiyev',
     })
