@@ -15,10 +15,11 @@ import { ApiBearerAuth, ApiOperation } from "@nestjs/swagger";
 import { JwtAuthGuard } from "src/common/guards/jwt-auth.guard";
 import { RolesGuard } from "src/common/guards/roles.guard";
 import { CreateMentorDto } from "./dto/mentor-create.dto";
+import { UpdateMentorDto } from "./dto/mentor-update.dto";
 
 @Controller("mentors")
 export class MentorController {
-  constructor(private mentorService: MentorService) {}
+  constructor(private mentorService: MentorService) { }
 
   @Get()
   @Roles(UserRoles.SUPERADMIN)
@@ -47,12 +48,23 @@ export class MentorController {
     return this.mentorService.create(dto);
   }
 
+  // @Put(":id")
+  // @Roles(UserRoles.SUPERADMIN)
+  // @ApiBearerAuth("access-token")
+  // @UseGuards(JwtAuthGuard, RolesGuard)
+  // @ApiOperation({ summary: "Faqat SUPERADMIN - Update Mentor" })
+  // update(@Param("id") id: string, @Body() dto: Partial<CreateMentorDto>) {
+  //   return this.mentorService.update(Number(id), dto);
+  // }
   @Put(":id")
   @Roles(UserRoles.SUPERADMIN)
   @ApiBearerAuth("access-token")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: "Faqat SUPERADMIN - Update Mentor" })
-  update(@Param("id") id: string, @Body() dto: Partial<CreateMentorDto>) {
+  @ApiOperation({ summary: "SUPERADMIN - Update Mentor" })
+  update(
+    @Param("id") id: string,
+    @Body() dto: UpdateMentorDto,
+  ) {
     return this.mentorService.update(Number(id), dto);
   }
 
