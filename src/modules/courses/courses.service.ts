@@ -1,80 +1,143 @@
-import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
 import { PrismaService } from "../../core/database/prisma.service";
 import { CreateCourseDto } from "./dto/create-course.dto";
 import { UpdateCourseDto } from "./dto/update-course.dto";
+import * as fs from "fs/promises";
+import { CourseFiles } from "./courses.controller";
 
 @Injectable()
 export class CoursesService {
-    constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) {}
 
-    findAll(page = 1, limit = 10) {
+  findAll(page = 1, limit = 10) {
     return this.prisma.courses.findMany({
-        skip: (page - 1) * limit,
-        take: limit,
-        include: { categories: true },
-        orderBy: { created_at: "desc" },
+      skip: (page - 1) * limit,
+      take: limit,
+      include: { categories: true },
+      orderBy: { created_at: "desc" },
     });
-}
+  }
 
-    async findOne(id: number) {
-        const course = await this.prisma.courses.findUnique({
-            where: { id },
-            include: { categories: true, sections: true },
-        });
-
-        if (!course) throw new NotFoundException(`Kurs topilmadi (id: ${id})`);
-
-        return course;
-    }
-
-    async create(dto: CreateCourseDto) {
-        const category = await this.prisma.categories.findUnique({
-            where: { id: dto.categoryId },
-        });
-
-        if (!category) throw new NotFoundException(`Kategoriya topilmadi (id: ${dto.categoryId})`);
-
-        return this.prisma.courses.create({
-            data: dto,
-            include: { categories: true },
-        });
-    }
-
-
-    async update(id: number, dto: UpdateCourseDto) {
-    await this.findOne(id);
-
-    if (dto.categoryId) {
-        const category = await this.prisma.categories.findUnique({
-            where: { id: dto.categoryId },
-        });
-        if (!category) {
-            throw new NotFoundException(`Kategoriya topilmadi (id: ${dto.categoryId})`);
-        }
-    }
-
-    return this.prisma.courses.update({
-        where: { id },
-        data: dto,
-        include: { categories: true },
+  async findOne(id: number) {
+    const course = await this.prisma.courses.findUnique({
+      where: { id },
+      include: { categories: true, sections: true },
     });
-}
 
+    if (!course) throw new NotFoundException(`Kurs topilmadi (id: ${id})`);
 
+    return course;
+  }
 
-async remove(id: number) {
-    await this.findOne(id);
+  async create(dto: CreateCourseDto, files: CourseFiles) {
+    const bannerFile = files.banner?.[0];
+    const introVideoFile = files.introVideo?.[0];
+
+    if (!bannerFile) {
+      throw new BadRequestException("Banner file is required");
+    }
 
     try {
-        return await this.prisma.courses.delete({
-            where: { id },
-        });
-    } catch (error) {
-        throw new ConflictException(
-            "Bu kursni o'chirish mumkin emas, unga bog'liq ma'lumotlar mavjud"
+      const category = await this.prisma.categories.findUnique({
+        where: { id: dto.categoryId },
+      });
+      if (!category) {
+        throw new NotFoundException(
+          `Kategoriya topilmadi (id: ${dto.categoryId})`,
         );
+      }
+
+      const { banner, introVideo, ...rest } = dto;
+
+      return await this.prisma.courses.create({
+        data: {
+          ...rest,
+          banner: bannerFile.path,
+          introVideo: introVideoFile?.path,
+        },
+        include: { categories: true },
+      });
+    } catch (error) {
+      await this.deleteUploadedFiles([bannerFile, introVideoFile]);
+      throw error;
     }
-}
+  }
 
+  async update(id: number, dto: UpdateCourseDto, files: CourseFiles) {
+    const existing = await this.findOne(id);
+    const bannerFile = files?.banner?.[0];
+    const introVideoFile = files?.introVideo?.[0];
 
+    try {
+      if (dto.categoryId) {
+        const category = await this.prisma.categories.findUnique({
+          where: { id: dto.categoryId },
+        });
+        if (!category) {
+          throw new NotFoundException(
+            `Category not found (id: ${dto.categoryId})`,
+          );
+        }
+      }
+
+      const { banner, introVideo, ...rest } = dto;
+
+      const updated = await this.prisma.courses.update({
+        where: { id },
+        data: {
+          ...rest,
+          ...(bannerFile && { banner: bannerFile.path }),
+          ...(introVideoFile && { introVideo: introVideoFile.path }),
+        },
+        include: { categories: true },
+      });
+
+      const oldFiles: Express.Multer.File[] = [];
+      if (bannerFile && existing.banner)
+        oldFiles.push({ path: existing.banner } as any);
+      if (introVideoFile && existing.introVideo)
+        oldFiles.push({ path: existing.introVideo } as any);
+      if (oldFiles.length) await this.deleteUploadedFiles(oldFiles);
+
+      return updated;
+    } catch (error) {
+      await this.deleteUploadedFiles([bannerFile, introVideoFile]);
+      throw error;
+    }
+  }
+
+  async remove(id: number) {
+    const existing = await this.findOne(id);
+
+    try {
+      return await this.prisma.courses.delete({
+        where: { id },
+      });
+    } catch (error) {
+      throw new ConflictException(
+        "Bu kursni o'chirish mumkin emas, unga bog'liq ma'lumotlar mavjud",
+      );
+    }
+  }
+
+  private async deleteUploadedFiles(
+    files: (Express.Multer.File | undefined)[],
+  ) {
+    await Promise.all(
+      files
+        .filter((f): f is Express.Multer.File => !!f?.path)
+        .map((f) =>
+          fs
+            .unlink(f.path)
+            .catch((err) =>
+              console.error(`Faylni o'chirib bo'lmadi: ${f.path}`, err.message),
+            ),
+        ),
+    );
+  }
 }
