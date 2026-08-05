@@ -8,6 +8,7 @@ import { CourseAssistantModule } from "./modules/course-assistant/course-assista
 import { UserModule } from "./modules/users/users.module";
 import { AuthModule, SectionsModule } from "./modules";
 import { MentorModule } from "./modules/mentor/mentor.module";
+import { LessonsModule } from "./modules/lessons/lessons.module";
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { MentorModule } from "./modules/mentor/mentor.module";
     CourseAssistantModule,
     UserModule,
     MentorModule,
+    LessonsModule
   ],
 })
 export class AppModule {}
