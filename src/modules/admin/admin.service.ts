@@ -41,7 +41,7 @@ export class AdminService {
     });
 
     if (admin) {
-      throw new ConflictException("A has already existed");
+      throw new ConflictException("User has already existed");
     }
 
     if (file) {
@@ -75,21 +75,30 @@ export class AdminService {
     };
   }
 
-  async updateAdmin(id: number, payload: UpdateAdminDto) {
+  async updateAdmin(
+    id: number,
+    payload: UpdateAdminDto,
+    file?: Express.Multer.File,
+  ) {
     const existingAdmin = await this.prisma.user.findFirst({ where: { id } });
 
     if (!existingAdmin) throw new NotFoundException("Admin is not found");
 
     const admin = await this.prisma.user.findFirst({
-      where: { role: UserRoles.ADMIN, phone: payload.phone },
+      where: { role: UserRoles.ADMIN, phone: payload.phone, id: { not: id } },
     });
 
-    if (admin) throw new ConflictException("User has already existed");
+    if (admin)
+      throw new ConflictException(
+        "Bu telefon raqami boshqa admin tomonidan band qilingan",
+      );
 
+    const { file: _ignore, ...rest } = payload as any;
     const updatedAdmin = await this.prisma.user.update({
       where: { id },
       data: {
-        ...payload,
+        ...rest,
+        ...(file && { file: file.filename }),
       },
     });
 
