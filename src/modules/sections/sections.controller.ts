@@ -9,14 +9,14 @@ import {
   Post,
   UseGuards,
 } from "@nestjs/common";
-import { ApiOperation, ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { SectionsService } from "./sections.service";
 import { CreateSectionDto } from "./dto/create-section.dto";
 import { UpdateSectionDto } from "./dto/update-section.dto";
 import { Roles } from "src/common/decorators/roles.decorator";
-import { UserRoles } from "src/common/enums";
 import { JwtAuthGuard } from "src/common/guards/jwt-auth.guard";
 import { RolesGuard } from "src/common/guards/roles.guard";
+import { UserRoles } from "@prisma/client";
 
 @ApiTags("Sections")
 @Controller("sections")
@@ -25,6 +25,7 @@ export class SectionsController {
 
   @Get()
   @Roles(UserRoles.SUPERADMIN)
+  @ApiBearerAuth("access-token")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "Faqat SUPERADMIN - Barcha bo'limlarni olish" })
   findAll() {
@@ -33,6 +34,7 @@ export class SectionsController {
 
   @Get(":id")
   @Roles(UserRoles.SUPERADMIN)
+  @ApiBearerAuth("access-token")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "Faqat SUPERADMIN - Bo'limni id bo'yicha olish" })
   findOne(@Param("id", ParseIntPipe) id: number) {
@@ -41,6 +43,7 @@ export class SectionsController {
 
   @Post()
   @Roles(UserRoles.SUPERADMIN)
+  @ApiBearerAuth("access-token")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "Faqat SUPERADMIN - Yangi bo'lim yaratish" })
   create(@Body() dto: CreateSectionDto) {
@@ -49,6 +52,7 @@ export class SectionsController {
 
   @Patch(":id")
   @Roles(UserRoles.SUPERADMIN)
+  @ApiBearerAuth("access-token")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "Faqat SUPERADMIN - Bo'limni tahrirlash" })
   update(@Param("id", ParseIntPipe) id: number, @Body() dto: UpdateSectionDto) {
@@ -56,6 +60,9 @@ export class SectionsController {
   }
 
   @Delete(":id")
+  @Roles(UserRoles.SUPERADMIN)
+  @ApiBearerAuth("access-token")
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "Faqat SUPERADMIN - Bo'limni o'chirish" })
   remove(@Param("id", ParseIntPipe) id: number) {
     return this.sectionsService.remove(id);

@@ -12,12 +12,12 @@ import {
 } from "@nestjs/common";
 import { UserService } from "./users.service";
 import { CreateUserDto } from "./dto/create-user.dto";
-import { ApiConsumes, ApiOperation, ApiTags } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiConsumes, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { Roles } from "src/common/decorators/roles.decorator";
-import { UserRoles } from "src/common/enums";
 import { JwtAuthGuard } from "src/common/guards/jwt-auth.guard";
 import { RolesGuard } from "src/common/guards/roles.guard";
+import { UserRoles } from "@prisma/client";
 
 @Controller("users")
 export class UserController {
@@ -25,6 +25,7 @@ export class UserController {
 
   @Get()
   @Roles(UserRoles.SUPERADMIN)
+  @ApiBearerAuth('access-token')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "Faqat SUPERADMIN - Barcha foydalanuvchi olish" })
   async getAllAdmins() {
@@ -33,6 +34,7 @@ export class UserController {
 
   @Post()
   @Roles(UserRoles.SUPERADMIN)
+  @ApiBearerAuth('access-token')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiConsumes("multipart/form-data")
   @UseInterceptors(FileInterceptor("file"))
@@ -47,6 +49,7 @@ export class UserController {
 
   @Patch(":id")
   @Roles(UserRoles.SUPERADMIN)
+  @ApiBearerAuth('access-token')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "Faqat SUPERADMIN - Foydalanuvchini tahrirlash" })
   async updateAdmin(@Param("id") id: number, @Body() payload: CreateUserDto) {
@@ -55,6 +58,7 @@ export class UserController {
 
   @Delete(":id")
   @Roles(UserRoles.SUPERADMIN)
+  @ApiBearerAuth('access-token')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "Faqat SUPERADMIN - Foydalanuvchini o'chirish" })
   async deleteAdmin(@Param("id") id: number) {
