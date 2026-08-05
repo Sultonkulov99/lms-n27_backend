@@ -26,7 +26,7 @@ export class CategoriesController {
   @Roles(UserRoles.SUPERADMIN)
   @ApiBearerAuth("access-token")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: "Faqat SUPERADMIN - Create Category" })
+  @ApiOperation({ summary: "SUPERADMIN - Create Category" })
   create(@Body() dto: CreateCategoryDto) {
     return this.categoriesService.create(dto);
   }
@@ -35,7 +35,7 @@ export class CategoriesController {
   @Roles(UserRoles.SUPERADMIN)
   @ApiBearerAuth("access-token")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: "Faqat SUPERADMIN - Get All Categories" })
+  @ApiOperation({ summary: "SUPERADMIN - Get All Categories" })
   findAll() {
     return this.categoriesService.findAll();
   }
@@ -44,7 +44,7 @@ export class CategoriesController {
   @Roles(UserRoles.SUPERADMIN)
   @ApiBearerAuth("access-token")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: "Faqat SUPERADMIN - Get Category By ID" })
+  @ApiOperation({ summary: "SUPERADMIN - Get Category By ID" })
   findOne(@Param("id") id: string) {
     return this.categoriesService.findOne(+id);
   }
@@ -53,7 +53,7 @@ export class CategoriesController {
   @Roles(UserRoles.SUPERADMIN)
   @ApiBearerAuth("access-token")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: "Faqat SUPERADMIN - Update Category" })
+  @ApiOperation({ summary: "SUPERADMIN - Update Category" })
   update(@Param("id") id: string, @Body() dto: UpdateCategoryDto) {
     return this.categoriesService.update(+id, dto);
   }
@@ -62,7 +62,7 @@ export class CategoriesController {
   @Roles(UserRoles.SUPERADMIN)
   @ApiBearerAuth("access-token")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: "Faqat SUPERADMIN - Delete Category" })
+  @ApiOperation({ summary: "SUPERADMIN - Delete Category" })
   remove(@Param("id") id: string) {
     return this.categoriesService.remove(+id);
   }

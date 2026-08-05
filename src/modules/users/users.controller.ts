@@ -27,7 +27,7 @@ export class UserController {
   @Roles(UserRoles.SUPERADMIN)
   @ApiBearerAuth('access-token')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: "Faqat SUPERADMIN - Barcha foydalanuvchi olish" })
+  @ApiOperation({ summary: "SUPERADMIN - Barcha foydalanuvchi olish" })
   async getAllAdmins() {
     return await this.service.getAllAdmins();
   }
@@ -38,7 +38,7 @@ export class UserController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiConsumes("multipart/form-data")
   @UseInterceptors(FileInterceptor("file"))
-  @ApiOperation({ summary: "Faqat SUPERADMIN - Yangi foydalanuvchi yaratish" })
+  @ApiOperation({ summary: "SUPERADMIN - Yangi foydalanuvchi yaratish" })
   async createAdmin(
     @Body() payload: CreateUserDto,
     @UploadedFile()
@@ -51,7 +51,7 @@ export class UserController {
   @Roles(UserRoles.SUPERADMIN)
   @ApiBearerAuth('access-token')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: "Faqat SUPERADMIN - Foydalanuvchini tahrirlash" })
+  @ApiOperation({ summary: "SUPERADMIN - Foydalanuvchini tahrirlash" })
   async updateAdmin(@Param("id") id: number, @Body() payload: CreateUserDto) {
     return await this.service.updateAdmin(id, payload);
   }
@@ -60,7 +60,7 @@ export class UserController {
   @Roles(UserRoles.SUPERADMIN)
   @ApiBearerAuth('access-token')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: "Faqat SUPERADMIN - Foydalanuvchini o'chirish" })
+  @ApiOperation({ summary: "SUPERADMIN - Foydalanuvchini o'chirish" })
   async deleteAdmin(@Param("id") id: number) {
     return await this.service.deleteAdmin(id);
   }
