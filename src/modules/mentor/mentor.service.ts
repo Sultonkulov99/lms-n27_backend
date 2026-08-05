@@ -6,7 +6,6 @@ import {
 } from "@nestjs/common";
 import { CreateMentorDto } from "./dto/mentor-create.dto";
 import * as argon from "argon2";
-import { UpdateCategoryDto } from "../categories/dto/update-category.dto";
 import { UpdateMentorDto } from "./dto/mentor-update.dto";
 import { UserRoles } from "src/common/enums";
 
