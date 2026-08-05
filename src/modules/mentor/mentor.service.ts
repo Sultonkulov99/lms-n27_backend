@@ -9,7 +9,7 @@ export class MentorService {
 
 
     async getAll() {
-        return this.prisma.user.findMany({
+        return await this.prisma.user.findMany({
             where: { role: "MENTOR" },
             select: {
                 id: true,
