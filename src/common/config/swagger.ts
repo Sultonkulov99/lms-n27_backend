@@ -1,5 +1,17 @@
-import {DocumentBuilder} from "@nestjs/swagger"
+import { DocumentBuilder } from "@nestjs/swagger";
 export const config = new DocumentBuilder()
-    .setTitle('LMS N27')
-    .setVersion('1.0')
-    .build();
+  .setTitle("LMS N27")
+  .setDescription("API documentation with Superadmin access")
+  .setVersion("1.0")
+  .addBearerAuth(
+    {
+      type: "http",
+      scheme: "bearer",
+      bearerFormat: "JWT",
+      name: "JWT",
+      description: "JWT Superadmin tokenini kiriting",
+      in: "header",
+    },
+    "access-token",
+  )
+  .build();

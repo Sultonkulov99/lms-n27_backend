@@ -10,61 +10,61 @@ import {
   UseGuards,
 } from "@nestjs/common";
 import { ApiBearerAuth, ApiOperation, ApiTags } from "@nestjs/swagger";
-import { CoursesService } from "./courses.service";
-import { CreateCourseDto } from "./dto/create-course.dto";
-import { UpdateCourseDto } from "./dto/update-course.dto";
-import { UserRoles } from "@prisma/client";
+import { SectionsService } from "./sections.service";
+import { CreateSectionDto } from "./dto/create-section.dto";
+import { UpdateSectionDto } from "./dto/update-section.dto";
 import { Roles } from "src/common/decorators/roles.decorator";
 import { JwtAuthGuard } from "src/common/guards/jwt-auth.guard";
 import { RolesGuard } from "src/common/guards/roles.guard";
+import { UserRoles } from "@prisma/client";
 
-@ApiTags("Courses")
-@Controller("courses")
-export class CoursesController {
-  constructor(private readonly coursesService: CoursesService) {}
+@ApiTags("Sections")
+@Controller("sections")
+export class SectionsController {
+  constructor(private readonly sectionsService: SectionsService) {}
 
   @Get()
   @Roles(UserRoles.SUPERADMIN)
   @ApiBearerAuth("access-token")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: "Faqat SUPERADMIN - Barcha kurslarni olish" })
+  @ApiOperation({ summary: "Faqat SUPERADMIN - Barcha bo'limlarni olish" })
   findAll() {
-    return this.coursesService.findAll();
+    return this.sectionsService.findAll();
   }
 
   @Get(":id")
   @Roles(UserRoles.SUPERADMIN)
   @ApiBearerAuth("access-token")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: "Faqat SUPERADMIN - Kursni id bo'yicha olish" })
+  @ApiOperation({ summary: "Faqat SUPERADMIN - Bo'limni id bo'yicha olish" })
   findOne(@Param("id", ParseIntPipe) id: number) {
-    return this.coursesService.findOne(id);
+    return this.sectionsService.findOne(id);
   }
 
   @Post()
   @Roles(UserRoles.SUPERADMIN)
   @ApiBearerAuth("access-token")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: "Faqat SUPERADMIN - Yangi kurs yaratish" })
-  create(@Body() dto: CreateCourseDto) {
-    return this.coursesService.create(dto);
+  @ApiOperation({ summary: "Faqat SUPERADMIN - Yangi bo'lim yaratish" })
+  create(@Body() dto: CreateSectionDto) {
+    return this.sectionsService.create(dto);
   }
 
   @Patch(":id")
   @Roles(UserRoles.SUPERADMIN)
   @ApiBearerAuth("access-token")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: "Faqat SUPERADMIN - Kursni tahrirlash" })
-  update(@Param("id", ParseIntPipe) id: number, @Body() dto: UpdateCourseDto) {
-    return this.coursesService.update(id, dto);
+  @ApiOperation({ summary: "Faqat SUPERADMIN - Bo'limni tahrirlash" })
+  update(@Param("id", ParseIntPipe) id: number, @Body() dto: UpdateSectionDto) {
+    return this.sectionsService.update(id, dto);
   }
 
   @Delete(":id")
   @Roles(UserRoles.SUPERADMIN)
   @ApiBearerAuth("access-token")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: "Faqat SUPERADMIN - Kursni o'chirish" })
+  @ApiOperation({ summary: "Faqat SUPERADMIN - Bo'limni o'chirish" })
   remove(@Param("id", ParseIntPipe) id: number) {
-    return this.coursesService.remove(id);
+    return this.sectionsService.remove(id);
   }
 }

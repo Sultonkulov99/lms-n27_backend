@@ -4,6 +4,7 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+
 }
 
 enum UserRoles {
@@ -32,7 +33,7 @@ enum TestAnswer {
 model User {
   id         Int       @id @default(autoincrement())
   fullName   String
-  phone      String
+  phone      String    @unique
   password   String
   file       String?
   role       UserRoles
@@ -145,16 +146,16 @@ model Homeworks {
 }
 
 model Exams {
-  id       Int @id @default(autoincrement())
-  lessonId Int
-  questoin String
-  variantA String
-  variantB String
-  variantC String
-  variantD String
-  answer TestAnswer
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  id         Int        @id @default(autoincrement())
+  lessonId   Int
+  questoin   String
+  variantA   String
+  variantB   String
+  variantC   String
+  variantD   String
+  answer     TestAnswer
+  created_at DateTime   @default(now())
+  updated_at DateTime   @updatedAt
 
   lessons Lessons @relation(fields: [lessonId], references: [id])
 }
