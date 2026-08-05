@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Put, Delete, Body, Param } from '@nestjs/common';
 import { MentorService } from './mentor.service';
-import { CreateMentorDto } from './dto/mentor.dto';
+import { CreateMentorDto } from './dto/mentor-create.dto';
 
 @Controller('mentors')
 export class MentorController {
