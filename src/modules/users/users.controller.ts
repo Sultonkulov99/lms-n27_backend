@@ -24,21 +24,21 @@ export class UserController {
   constructor(private readonly service: UserService) {}
 
   @Get()
-  @Roles(UserRoles.SUPERADMIN)
+  @Roles(UserRoles.ADMIN)
   @ApiBearerAuth('access-token')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: "Faqat SUPERADMIN - Barcha foydalanuvchi olish" })
+  @ApiOperation({ summary: "Faqat ADMIN - Barcha foydalanuvchi olish" })
   async getAllAdmins() {
     return await this.service.getAllAdmins();
   }
 
   @Post()
-  @Roles(UserRoles.SUPERADMIN)
+  @Roles(UserRoles.ADMIN)
   @ApiBearerAuth('access-token')
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiConsumes("multipart/form-data")
   @UseInterceptors(FileInterceptor("file"))
-  @ApiOperation({ summary: "Faqat SUPERADMIN - Yangi foydalanuvchi yaratish" })
+  @ApiOperation({ summary: "Faqat ADMIN - Yangi foydalanuvchi yaratish" })
   async createAdmin(
     @Body() payload: CreateUserDto,
     @UploadedFile()
@@ -48,19 +48,19 @@ export class UserController {
   }
 
   @Patch(":id")
-  @Roles(UserRoles.SUPERADMIN)
+  @Roles(UserRoles.ADMIN)
   @ApiBearerAuth('access-token')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: "Faqat SUPERADMIN - Foydalanuvchini tahrirlash" })
+  @ApiOperation({ summary: "Faqat ADMIN - Foydalanuvchini tahrirlash" })
   async updateAdmin(@Param("id") id: number, @Body() payload: CreateUserDto) {
     return await this.service.updateAdmin(id, payload);
   }
 
   @Delete(":id")
-  @Roles(UserRoles.SUPERADMIN)
+  @Roles(UserRoles.ADMIN)
   @ApiBearerAuth('access-token')
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: "Faqat SUPERADMIN - Foydalanuvchini o'chirish" })
+  @ApiOperation({ summary: "Faqat ADMIN - Foydalanuvchini o'chirish" })
   async deleteAdmin(@Param("id") id: number) {
     return await this.service.deleteAdmin(id);
   }
