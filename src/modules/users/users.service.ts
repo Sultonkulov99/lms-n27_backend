@@ -34,13 +34,21 @@ export class UsersService {
     };
   }
 
-  async getCountByRoles() {
-    const dbResult = await this.prisma.user.groupBy({
-      by: ["role"],
-      _count: {
-        _all: true,
-      },
-    });
+  async getCountByRolesAndCourses() {
+    const [dbResult, totalCourses] = await Promise.all([
+      this.prisma.user.groupBy({
+        by: ["role"],
+        where: {
+          role: {
+            not: UserRoles.SUPERADMIN,
+          },
+        },
+        _count: {
+          _all: true,
+        },
+      }),
+      this.prisma.courses.count(),
+    ]);
 
     const countsMap = dbResult.reduce(
       (acc, item) => {
@@ -50,14 +58,18 @@ export class UsersService {
       {} as Record<string, number>,
     );
 
-    const allRoles = Object.values(UserRoles);
+    const filterRoles = Object.values(UserRoles).filter(
+      (role) => role !== UserRoles.SUPERADMIN,
+    );
 
-    const finalResult: Record<string, number> = {};
-    allRoles.forEach((role) => {
-      finalResult[role] = countsMap[role] || 0;
+    const rolesStats: Record<string, number> = {};
+    filterRoles.forEach((role) => {
+      rolesStats[role] = countsMap[role] || 0;
     });
 
-    return finalResult;
+    return {
+      dashboard: {...rolesStats, totalCourses},
+    };
   }
 
   async createAdmin(payload: CreateUserDto, file?: Express.Multer.File) {

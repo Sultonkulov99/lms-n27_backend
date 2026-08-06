@@ -45,8 +45,8 @@ export class UsersController {
   @ApiBearerAuth("access-token")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "Faqat SUPERADMIN" })
-  async getCountByRoles() {
-    return await this.service.getCountByRoles();
+  async getCountByRoleAndCoursess() {
+    return await this.service.getCountByRolesAndCourses();
   }
 
   @Post("admin")
