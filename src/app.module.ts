@@ -18,14 +18,14 @@ import { CommentsModule } from "./modules/comments/comments.module";
     }),
     PrismaModule,
     SeederModule,
-    CoursesModule,
     AuthModule,
-    SectionsModule,
-    CategoriesModule,
-    CourseAssistantModule,
     UsersModule,
     MentorModule,
+    CategoriesModule,
+    CoursesModule,
+    SectionsModule,
     LessonsModule,
+    CourseAssistantModule,
     CommentsModule
   ],
 })
