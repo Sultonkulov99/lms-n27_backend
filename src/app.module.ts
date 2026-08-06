@@ -10,10 +10,9 @@ import { MentorModule } from "./modules/mentor/mentor.module";
 import { MaterialsModule } from "./modules/materials/materials.module";
 import { LessonsModule } from "./modules/lessons/lessons.module";
 import { UsersModule } from "./modules/users/users.module";
+import { ProfileModule } from "./modules/profile/profile.module";
 import { CommentsModule } from "./modules/comments/comments.module";
-import { PaymentModule } from './modules/payment/payment.module';
 import { PaymentsModule } from './modules/payments/payments.module';
-import { PaymentModule } from './modules/payment/payment.module';
 
 @Module({
   imports: [
@@ -25,6 +24,8 @@ import { PaymentModule } from './modules/payment/payment.module';
     AuthModule,
     UsersModule,
     MentorModule,
+    LessonsModule,
+    ProfileModule,
     MaterialsModule,
     CategoriesModule,
     CoursesModule,
@@ -32,7 +33,6 @@ import { PaymentModule } from './modules/payment/payment.module';
     LessonsModule,
     CourseAssistantModule,
     CommentsModule,
-    PaymentModule,
     PaymentsModule
   ],
 })
