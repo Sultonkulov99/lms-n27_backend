@@ -5,10 +5,12 @@ import { SeederModule } from "./core/seed/seeder.module";
 import { CoursesModule } from "./modules/courses/courses.module";
 import { CategoriesModule } from "./modules/categories/categories.module";
 import { CourseAssistantModule } from "./modules/course-assistant/course-assistant.module";
-import { UserModule } from "./modules/users/users.module";
 import { AuthModule, SectionsModule } from "./modules";
 import { MentorModule } from "./modules/mentor/mentor.module";
-import { StudentModule } from "./modules/students/students.module";
+import { MaterialsModule } from "./modules/materials/materials.module";
+import { LessonsModule } from "./modules/lessons/lessons.module";
+import { UsersModule } from "./modules/users/users.module";
+import { CommentsModule } from "./modules/comments/comments.module";
 
 @Module({
   imports: [
@@ -17,14 +19,16 @@ import { StudentModule } from "./modules/students/students.module";
     }),
     PrismaModule,
     SeederModule,
-    CoursesModule,
     AuthModule,
-    SectionsModule,
-    CategoriesModule,
-    CourseAssistantModule,
-    UserModule,
+    UsersModule,
     MentorModule,
-    StudentModule
+    MaterialsModule,
+    CategoriesModule,
+    CoursesModule,
+    SectionsModule,
+    LessonsModule,
+    CourseAssistantModule,
+    CommentsModule
   ],
 })
 export class AppModule {}

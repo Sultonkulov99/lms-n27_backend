@@ -1,113 +1,114 @@
-import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
 import { UserRoles } from "@prisma/client";
 import { PrismaService } from "src/core/database/prisma.service";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { randomUUID } from "node:crypto";
-import * as fs from 'fs';
-import path from "node:path";
+import * as bcrypt from "bcrypt";
 
 @Injectable()
-export class UserService {
-    constructor(private readonly prisma: PrismaService) { }
+export class UsersService {
+  constructor(private readonly prisma: PrismaService) {}
 
-    async getAllAdmins() {
-        const admins = await this.prisma.user.findMany({
-            where: { role: UserRoles.ADMIN }, select: {
-                id: true,
-                fullName: true,
-                phone: true,
-                file: true,
-                role: true,
-                created_at: true,
-                updated_at: true,
-            }
-        })
+  async getAllAdmins() {
+    const admins = await this.prisma.user.findMany({
+      where: { role: UserRoles.ADMIN },
+      select: {
+        id: true,
+        fullName: true,
+        phone: true,
+        file: true,
+        role: true,
+        created_at: true,
+        updated_at: true,
+      },
+    });
 
-        return {
-            success: true,
-            data: admins,
-        }
-    }
-    async createAdmin(payload: CreateUserDto, file?: Express.Multer.File,) {
-        let fileName = 'empty'
-        const admin = await this.prisma.user.findFirst({ where: { role: UserRoles.ADMIN, phone: payload.phone } })
+    return {
+      success: true,
+      data: admins,
+    };
+  }
 
-        if (admin) {
-            throw new ConflictException('User has already existed')
-        }
+  async createAdmin(payload: CreateUserDto, file?: Express.Multer.File) {
+    const admin = await this.prisma.user.findFirst({
+      where: { role: UserRoles.ADMIN, phone: payload.phone },
+    });
 
-
-        if(file) {
-            fileName = this.generateFileName(file);
-            
-            fs.writeFile(
-                path.join(process.cwd(), "src", 'uploads', fileName),
-                file.buffer,
-                null,
-                (err) => {
-                    if (err) {
-                        console.log(err);
-                    } else {
-                        console.log('Image successfully saved');
-                    }
-                },
-            );
-        }
-
-
-        const newAdmin = await this.prisma.user.create({
-            data: {
-                ...payload,
-                file: fileName,
-                role: UserRoles.ADMIN,
-            }
-        })
-
-        return {
-            success: true,
-            data: newAdmin,
-        }
+    if (admin) {
+      throw new ConflictException("User has already existed");
     }
 
-    async updateAdmin(id: number, payload: UpdateUserDto) {
-        const existingAdmin = await this.prisma.user.findFirst({ where: { id } })
+    const hashedPassword = await bcrypt.hash(payload.password, 10);
+    const newAdmin = await this.prisma.user.create({
+      data: {
+        ...payload,
+        password: hashedPassword,
+        file: file?.filename ?? "empty",
+        role: UserRoles.ADMIN,
+      },
+    });
 
-        if (!existingAdmin) throw new NotFoundException("Admin is not found")
+    return {
+      success: true,
+      data: newAdmin,
+    };
+  }
 
-        const admin = await this.prisma.user.findFirst({ where: { role: UserRoles.ADMIN, phone: payload.phone } })
+  async updateAdmin(
+    id: number,
+    payload: UpdateUserDto,
+    file?: Express.Multer.File,
+  ) {
+    const existingAdmin = await this.prisma.user.findFirst({ where: { id } });
 
-        if (admin) throw new ConflictException('User has already existed')
+    if (!existingAdmin) throw new NotFoundException("Admin is not found");
 
-        const updatedAdmin = await this.prisma.user.update({
-            where: { id },
-            data: {
-                ...payload,
-            }
-        })
+    const admin = await this.prisma.user.findFirst({
+      where: { role: UserRoles.ADMIN, phone: payload.phone, id: { not: id } },
+    });
 
-        return {
-            success: true,
-            data: updatedAdmin,
-        }
-    }
+    if (admin)
+      throw new ConflictException(
+        "Bu telefon raqami boshqa admin tomonidan band qilingan",
+      );
 
-    async deleteAdmin(id: number) {
-        const existingAdmin = await this.prisma.user.findFirst({ where: { id } })
+    const { file: _ignore, password, ...rest } = payload as any;
+    const updatedAdmin = await this.prisma.user.update({
+      where: { id },
+      data: {
+        ...rest,
+        ...(password && { password: await bcrypt.hash(password, 10) }),
+        ...(file && { file: file.filename }),
+      },
+    });
 
-        if (!existingAdmin) throw new NotFoundException("Admin is not found")
+    return {
+      success: true,
+      data: updatedAdmin,
+    };
+  }
 
-        await this.prisma.user.delete({ where: { id } })
+  async deleteAdmin(id: number) {
+    const existingAdmin = await this.prisma.user.findFirst({ where: { id } });
 
-        return {
-            success: true,
-            data: existingAdmin,
-        }
-    }
+    if (!existingAdmin) throw new NotFoundException("Admin is not found");
 
-    private generateFileName(file: Express.Multer.File) {
-        const ext = file?.originalname?.split('.')?.at(-1);
-        const uuid = randomUUID();
-        return `${file.originalname}_${uuid}.${ext}`;
-    }
+    await this.prisma.user.delete({ where: { id } });
+
+    return {
+      success: true,
+      data: existingAdmin,
+    };
+  }
+
+  private generateFileName(file: Express.Multer.File) {
+    const ext = file?.originalname?.split(".")?.at(-1);
+    const uuid = randomUUID();
+    return `${file.originalname}_${uuid}.${ext}`;
+  }
 }

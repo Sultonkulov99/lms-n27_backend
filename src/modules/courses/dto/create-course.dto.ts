@@ -1,34 +1,58 @@
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { CourseLevel } from "@prisma/client";
 import { Type } from "class-transformer";
-import { IsEnum, IsInt, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString } from "class-validator";
+import {
+  IsEnum,
+  IsInt,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsPositive,
+  IsString,
+} from "class-validator";
 
 export class CreateCourseDto {
-    @IsString()
-    @IsNotEmpty()
-    banner: string;
+  @ApiProperty({ type: 'string', format: 'binary' })
+  @IsOptional()
+  banner: any;
 
-    @IsString()
-    @IsOptional()
-    introVideo?: string;
+  @IsOptional()
+  @ApiPropertyOptional({ type: 'string', format: 'binary' })
+  introVideo?: any;
 
-    @IsString()
-    @IsNotEmpty()
-    name: string;
+  @ApiProperty({
+    example: "Full-stack",
+  })
+  @IsString()
+  @IsNotEmpty()
+  name: string;
 
-    @IsString()
-    @IsNotEmpty()
-    description: string;
+  @ApiProperty({
+    example: "Node.js & Vue.js",
+  })
+  @IsString()
+  @IsNotEmpty()
+  description: string;
 
-    @IsEnum(CourseLevel)
-    level: CourseLevel;
+  @ApiProperty({
+    example: "BEGINNER",
+  })
+  @IsEnum(CourseLevel)
+  level: CourseLevel;
 
-    @IsNumber()
-    @IsPositive()
-    @Type(() => Number)
-    price: number;
+  @ApiProperty({
+    example: "12345",
+  })
+  @IsNumber()
+  @IsPositive()
+  @Type(() => Number)
+  price: number;
 
-    @IsInt()
-    @IsPositive()
-    @Type(() => Number)
-    categoryId: number;
+  @ApiProperty({
+    example: "1",
+  })
+  @IsInt()
+  @IsPositive()
+  @Type(() => Number)
+  categoryId: number;
 }

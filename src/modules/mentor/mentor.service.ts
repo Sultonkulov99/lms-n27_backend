@@ -54,7 +54,7 @@ export class MentorService {
   }
 
   async create(dto: CreateMentorDto) {
-    const existingUser = await this.prisma.user.findUnique({
+    const existingUser = await this.prisma.user.findFirst({
       where: {
         phone: dto.phone,
       },
@@ -103,7 +103,7 @@ export class MentorService {
     }
 
     if (dto.phone && dto.phone !== mentor.phone) {
-      const existingUser = await this.prisma.user.findUnique({
+      const existingUser = await this.prisma.user.findFirst({
         where: {
           phone: dto.phone,
         },

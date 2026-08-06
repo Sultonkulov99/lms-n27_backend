@@ -28,7 +28,7 @@ export class CourseAssistantController {
   @Roles(UserRoles.SUPERADMIN)
     @ApiBearerAuth("access-token")
     @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: 'Faqat SUPERADMIN - Create Course Assistant' })
+  @ApiOperation({ summary: 'SUPERADMIN - Create Course Assistant' })
   create(@Body() dto: CreateCourseAssistantDto) {
     return this.courseAssistantService.create(dto);
   }
@@ -37,7 +37,7 @@ export class CourseAssistantController {
   @Roles(UserRoles.SUPERADMIN)
   @ApiBearerAuth("access-token")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: 'Faqat SUPERADMIN - Get All Course Assistants' })
+  @ApiOperation({ summary: 'SUPERADMIN - Get All Course Assistants' })
   findAll() {
     return this.courseAssistantService.findAll();
   }
@@ -46,7 +46,7 @@ export class CourseAssistantController {
   @Roles(UserRoles.SUPERADMIN)
   @ApiBearerAuth("access-token")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: 'Faqat SUPERADMIN - Get Course Assistant By ID' })
+  @ApiOperation({ summary: 'SUPERADMIN - Get Course Assistant By ID' })
   findOne(@Param('id') id: string) {
     return this.courseAssistantService.findOne(+id);
   }
@@ -55,7 +55,7 @@ export class CourseAssistantController {
   @Roles(UserRoles.SUPERADMIN)
   @ApiBearerAuth("access-token")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: 'Faqat SUPERADMIN - Update Course Assistant' })
+  @ApiOperation({ summary: 'SUPERADMIN - Update Course Assistant' })
   update(
     @Param('id') id: string,
     @Body() dto: UpdateCourseAssistantDto,
@@ -67,7 +67,7 @@ export class CourseAssistantController {
   @Roles(UserRoles.SUPERADMIN)
   @ApiBearerAuth("access-token")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: 'Faqat SUPERADMIN - Delete Course Assistant' })
+  @ApiOperation({ summary: 'SUPERADMIN - Delete Course Assistant' })
   remove(@Param('id') id: string) {
     return this.courseAssistantService.remove(+id);
   }
