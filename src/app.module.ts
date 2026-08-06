@@ -10,11 +10,8 @@ import { MentorModule } from "./modules/mentor/mentor.module";
 import { MaterialsModule } from "./modules/materials/materials.module";
 import { LessonsModule } from "./modules/lessons/lessons.module";
 import { UsersModule } from "./modules/users/users.module";
-<<<<<<< HEAD
 import { ProfileModule } from "./modules/profile/profile.module";
-=======
 import { CommentsModule } from "./modules/comments/comments.module";
->>>>>>> cbc6c45b767abca1c1774cc1226bd02088d94d67
 
 @Module({
   imports: [
@@ -26,10 +23,8 @@ import { CommentsModule } from "./modules/comments/comments.module";
     AuthModule,
     UsersModule,
     MentorModule,
-<<<<<<< HEAD
     LessonsModule,
-    ProfileModule
-=======
+    ProfileModule,
     MaterialsModule,
     CategoriesModule,
     CoursesModule,
@@ -37,7 +32,6 @@ import { CommentsModule } from "./modules/comments/comments.module";
     LessonsModule,
     CourseAssistantModule,
     CommentsModule
->>>>>>> cbc6c45b767abca1c1774cc1226bd02088d94d67
   ],
 })
 export class AppModule {}
