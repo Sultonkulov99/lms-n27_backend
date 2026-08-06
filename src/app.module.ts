@@ -7,9 +7,14 @@ import { CategoriesModule } from "./modules/categories/categories.module";
 import { CourseAssistantModule } from "./modules/course-assistant/course-assistant.module";
 import { AuthModule, SectionsModule } from "./modules";
 import { MentorModule } from "./modules/mentor/mentor.module";
+import { MaterialsModule } from "./modules/materials/materials.module";
 import { LessonsModule } from "./modules/lessons/lessons.module";
 import { UsersModule } from "./modules/users/users.module";
+<<<<<<< HEAD
 import { ProfileModule } from "./modules/profile/profile.module";
+=======
+import { CommentsModule } from "./modules/comments/comments.module";
+>>>>>>> cbc6c45b767abca1c1774cc1226bd02088d94d67
 
 @Module({
   imports: [
@@ -18,15 +23,21 @@ import { ProfileModule } from "./modules/profile/profile.module";
     }),
     PrismaModule,
     SeederModule,
-    CoursesModule,
     AuthModule,
-    SectionsModule,
-    CategoriesModule,
-    CourseAssistantModule,
     UsersModule,
     MentorModule,
+<<<<<<< HEAD
     LessonsModule,
     ProfileModule
+=======
+    MaterialsModule,
+    CategoriesModule,
+    CoursesModule,
+    SectionsModule,
+    LessonsModule,
+    CourseAssistantModule,
+    CommentsModule
+>>>>>>> cbc6c45b767abca1c1774cc1226bd02088d94d67
   ],
 })
 export class AppModule {}
