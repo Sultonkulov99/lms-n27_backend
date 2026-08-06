@@ -40,6 +40,15 @@ export class UsersController {
     return await this.service.getAllAdmins();
   }
 
+  @Get("dashboard")
+  @Roles(UserRoles.SUPERADMIN)
+  @ApiBearerAuth("access-token")
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiOperation({ summary: "Faqat SUPERADMIN" })
+  async getCountByRoleAndCoursess() {
+    return await this.service.getCountByRolesAndCourses();
+  }
+
   @Post("admin")
   @Roles(UserRoles.SUPERADMIN)
   @ApiBearerAuth("access-token")
