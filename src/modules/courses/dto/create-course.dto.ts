@@ -35,7 +35,7 @@ export class CreateCourseDto {
   description: string;
 
   @ApiProperty({
-    example: "BEGINNER!",
+    example: "BEGINNER",
   })
   @IsEnum(CourseLevel)
   level: CourseLevel;

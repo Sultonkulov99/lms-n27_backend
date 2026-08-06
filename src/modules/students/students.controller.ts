@@ -1,0 +1,40 @@
+import { Body, Controller, Delete, Get, Param, Patch, UseGuards } from "@nestjs/common";
+import { StudentService } from "./students.service";
+import { Roles } from "src/common/decorators/roles.decorator";
+import { UserRoles } from "@prisma/client";
+import { ApiBearerAuth, ApiOperation } from "@nestjs/swagger";
+import { JwtAuthGuard } from "src/common/guards/jwt-auth.guard";
+import { RolesGuard } from "src/common/guards/roles.guard";
+import { UpdateStudentDto } from "./dto/update-student.dto";
+
+@Controller("students")
+export class StudentController {
+    constructor(private readonly service: StudentService) {}
+
+    @Get()
+    @Roles(UserRoles.ADMIN)
+    @ApiBearerAuth('access-token')
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @ApiOperation({ summary: "Faqat ADMIN - Barcha studentlarni olish" })
+    async getAllStudents() {
+        return await this.service.getAllStudents();
+    }
+
+    @Patch(":id")
+    @Roles(UserRoles.ADMIN)
+    @ApiBearerAuth('access-token')
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @ApiOperation({ summary: "Faqat ADMIN - Studentbi tahrirlash" })
+    async updateStudent(@Param("id") id: number, @Body() payload: UpdateStudentDto) {
+        return await this.service.updateStudent(id, payload);
+    }
+
+    @Delete(":id")
+    @Roles(UserRoles.ADMIN)
+    @ApiBearerAuth('access-token')
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @ApiOperation({ summary: "Faqat ADMIN - Studentni o'chiradi" })
+    async deleteStudent(@Param("id") id: number) {
+        return await this.deleteStudent(id);
+    }
+}
