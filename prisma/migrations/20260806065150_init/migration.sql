@@ -14,6 +14,7 @@ CREATE TABLE "User" (
     "phone" TEXT NOT NULL,
     "password" TEXT NOT NULL,
     "file" TEXT,
+    "email" TEXT,
     "role" "UserRoles" NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
@@ -129,6 +130,7 @@ CREATE TABLE "Homeworks" (
 CREATE TABLE "Exams" (
     "id" SERIAL NOT NULL,
     "lessonId" INTEGER NOT NULL,
+    "userId" INTEGER NOT NULL,
     "questoin" TEXT NOT NULL,
     "variantA" TEXT NOT NULL,
     "variantB" TEXT NOT NULL,
@@ -140,6 +142,35 @@ CREATE TABLE "Exams" (
 
     CONSTRAINT "Exams_pkey" PRIMARY KEY ("id")
 );
+
+-- CreateTable
+CREATE TABLE "Comments" (
+    "id" SERIAL NOT NULL,
+    "fullName" TEXT NOT NULL,
+    "phone" TEXT NOT NULL,
+    "message" TEXT NOT NULL,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Comments_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "Payments" (
+    "id" SERIAL NOT NULL,
+    "userId" INTEGER NOT NULL,
+    "courseId" INTEGER NOT NULL,
+    "categoryId" INTEGER NOT NULL,
+    "amount" BIGINT NOT NULL,
+    "status" BOOLEAN NOT NULL DEFAULT true,
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updated_at" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Payments_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_phone_key" ON "User"("phone");
 
 -- AddForeignKey
 ALTER TABLE "MentorProfile" ADD CONSTRAINT "MentorProfile_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -164,3 +195,15 @@ ALTER TABLE "Homeworks" ADD CONSTRAINT "Homeworks_lessonId_fkey" FOREIGN KEY ("l
 
 -- AddForeignKey
 ALTER TABLE "Exams" ADD CONSTRAINT "Exams_lessonId_fkey" FOREIGN KEY ("lessonId") REFERENCES "Lessons"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Exams" ADD CONSTRAINT "Exams_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Payments" ADD CONSTRAINT "Payments_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Payments" ADD CONSTRAINT "Payments_courseId_fkey" FOREIGN KEY ("courseId") REFERENCES "Courses"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Payments" ADD CONSTRAINT "Payments_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "Categories"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
