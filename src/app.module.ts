@@ -5,10 +5,10 @@ import { SeederModule } from "./core/seed/seeder.module";
 import { CoursesModule } from "./modules/courses/courses.module";
 import { CategoriesModule } from "./modules/categories/categories.module";
 import { CourseAssistantModule } from "./modules/course-assistant/course-assistant.module";
-import { UserModule } from "./modules/users/users.module";
 import { AuthModule, SectionsModule } from "./modules";
 import { MentorModule } from "./modules/mentor/mentor.module";
-import { CommentsModule } from "./modules/comments/comments.module";
+import { LessonsModule } from "./modules/lessons/lessons.module";
+import { UsersModule } from "./modules/users/users.module";
 
 @Module({
   imports: [
@@ -22,9 +22,9 @@ import { CommentsModule } from "./modules/comments/comments.module";
     SectionsModule,
     CategoriesModule,
     CourseAssistantModule,
-    UserModule,
+    UsersModule,
     MentorModule,
-    CommentsModule
+    LessonsModule
   ],
 })
 export class AppModule {}

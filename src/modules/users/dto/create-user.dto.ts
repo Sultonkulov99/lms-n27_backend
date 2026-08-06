@@ -21,9 +21,9 @@ export class CreateUserDto {
     password: string;
 
     @ApiProperty({
-        required: false,
         type: 'string',
+        format: 'binary'
     })
     @IsOptional()
-    file?: any;
+    file: any;
 }
