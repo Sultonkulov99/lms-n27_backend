@@ -38,10 +38,10 @@ model User {
   role       UserRoles
   created_at DateTime  @default(now())
   updated_at DateTime  @updatedAt
-
   mentor           MentorProfile[]
   courseAssistants CourseAssistant[]
   exams            Exams[]
+  payments         Payments[]
 }
 
 model MentorProfile {
@@ -77,8 +77,8 @@ model Categories {
   name       String
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
-
   courses Courses[]
+  payments Payments[]
 }
 
 model Courses {
@@ -95,6 +95,7 @@ model Courses {
 
   categories Categories @relation(fields: [categoryId], references: [id])
   sections   Sections[]
+  payments   Payments[]
 }
 
 model Sections {
@@ -169,4 +170,19 @@ model Comments {
   message    String
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
+}
+
+model Payments {
+  id Int @id @default(autoincrement())
+  userId Int 
+  courseId Int
+  categoryId Int
+  amount BigInt
+  status Boolean @default(true)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  user    User    @relation(fields: [userId], references: [id])
+  course Courses @relation(fields: [courseId], references: [id])
+  category Categories @relation(fields: [categoryId], references: [id])
 }

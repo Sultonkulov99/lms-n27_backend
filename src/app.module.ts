@@ -11,6 +11,9 @@ import { MaterialsModule } from "./modules/materials/materials.module";
 import { LessonsModule } from "./modules/lessons/lessons.module";
 import { UsersModule } from "./modules/users/users.module";
 import { CommentsModule } from "./modules/comments/comments.module";
+import { PaymentModule } from './modules/payment/payment.module';
+import { PaymentsModule } from './modules/payments/payments.module';
+import { PaymentModule } from './modules/payment/payment.module';
 
 @Module({
   imports: [
@@ -28,7 +31,9 @@ import { CommentsModule } from "./modules/comments/comments.module";
     SectionsModule,
     LessonsModule,
     CourseAssistantModule,
-    CommentsModule
+    CommentsModule,
+    PaymentModule,
+    PaymentsModule
   ],
 })
 export class AppModule {}
