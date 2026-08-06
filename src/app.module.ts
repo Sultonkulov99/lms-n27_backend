@@ -10,7 +10,9 @@ import { MentorModule } from "./modules/mentor/mentor.module";
 import { MaterialsModule } from "./modules/materials/materials.module";
 import { LessonsModule } from "./modules/lessons/lessons.module";
 import { UsersModule } from "./modules/users/users.module";
+import { ProfileModule } from "./modules/profile/profile.module";
 import { CommentsModule } from "./modules/comments/comments.module";
+import { PaymentsModule } from './modules/payments/payments.module';
 
 @Module({
   imports: [
@@ -22,13 +24,16 @@ import { CommentsModule } from "./modules/comments/comments.module";
     AuthModule,
     UsersModule,
     MentorModule,
+    LessonsModule,
+    ProfileModule,
     MaterialsModule,
     CategoriesModule,
     CoursesModule,
     SectionsModule,
     LessonsModule,
     CourseAssistantModule,
-    CommentsModule
+    CommentsModule,
+    PaymentsModule
   ],
 })
 export class AppModule {}
