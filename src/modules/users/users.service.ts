@@ -34,6 +34,32 @@ export class UsersService {
     };
   }
 
+  async getCountByRoles() {
+    const dbResult = await this.prisma.user.groupBy({
+      by: ["role"],
+      _count: {
+        _all: true,
+      },
+    });
+
+    const countsMap = dbResult.reduce(
+      (acc, item) => {
+        acc[item.role] = item._count._all;
+        return acc;
+      },
+      {} as Record<string, number>,
+    );
+
+    const allRoles = Object.values(UserRoles);
+
+    const finalResult: Record<string, number> = {};
+    allRoles.forEach((role) => {
+      finalResult[role] = countsMap[role] || 0;
+    });
+
+    return finalResult;
+  }
+
   async createAdmin(payload: CreateUserDto, file?: Express.Multer.File) {
     const admin = await this.prisma.user.findFirst({
       where: { role: UserRoles.ADMIN, phone: payload.phone },
