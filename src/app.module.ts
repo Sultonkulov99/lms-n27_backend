@@ -12,7 +12,7 @@ import { UsersModule } from "./modules/users/users.module";
 
 @Module({
   imports: [
-    ConfigModule.forRoot({  
+    ConfigModule.forRoot({
       isGlobal: true,
     }),
     PrismaModule,
