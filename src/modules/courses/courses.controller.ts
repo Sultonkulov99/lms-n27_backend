@@ -56,7 +56,7 @@ export class CoursesController {
   @Roles(UserRoles.SUPERADMIN)
   @ApiBearerAuth("access-token")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: "Faqat SUPERADMIN - Barcha kurslarni olish" })
+  @ApiOperation({ summary: "SUPERADMIN - Barcha kurslarni olish" })
   findAll() {
     return this.coursesService.findAll();
   }
@@ -65,7 +65,7 @@ export class CoursesController {
   @Roles(UserRoles.SUPERADMIN)
   @ApiBearerAuth("access-token")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: "Faqat SUPERADMIN - Kursni id bo'yicha olish" })
+  @ApiOperation({ summary: "SUPERADMIN - Kursni id bo'yicha olish" })
   findOne(@Param("id", ParseIntPipe) id: number) {
     return this.coursesService.findOne(id);
   }
@@ -74,7 +74,7 @@ export class CoursesController {
   @Roles(UserRoles.SUPERADMIN)
   @ApiBearerAuth("access-token")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: "Faqat SUPERADMIN - Yangi kurs yaratish" })
+  @ApiOperation({ summary: "SUPERADMIN - Yangi kurs yaratish" })
   @ApiConsumes("multipart/form-data")
   @ApiExtraModels(CreateCourseDto)
   @ApiBody({ type: CreateCourseDto })
@@ -90,7 +90,7 @@ export class CoursesController {
   @Roles(UserRoles.SUPERADMIN)
   @ApiBearerAuth("access-token")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: "Faqat SUPERADMIN - Kursni tahrirlash" })
+  @ApiOperation({ summary: "SUPERADMIN - Kursni tahrirlash" })
   @ApiConsumes("multipart/form-data")
   @ApiExtraModels(UpdateCourseDto)
   @ApiBody({ type: UpdateCourseDto })
@@ -107,7 +107,7 @@ export class CoursesController {
   @Roles(UserRoles.SUPERADMIN)
   @ApiBearerAuth("access-token")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: "Faqat SUPERADMIN - Kursni o'chirish" })
+  @ApiOperation({ summary: "SUPERADMIN - Kursni o'chirish" })
   remove(@Param("id", ParseIntPipe) id: number) {
     return this.coursesService.remove(id);
   }
