@@ -36,6 +36,7 @@ model User {
   phone      String    @unique
   password   String
   file       String?
+  email      String?
   role       UserRoles
   created_at DateTime  @default(now())
   updated_at DateTime  @updatedAt

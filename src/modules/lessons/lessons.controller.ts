@@ -12,19 +12,12 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import {
-  ApiTags,
-  ApiOperation,
-  ApiConsumes,
-  ApiBody,
-  ApiParam,
-  ApiExtraModels,
-  getSchemaPath,
-} from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiConsumes, ApiBody, ApiParam, ApiExtraModels, getSchemaPath } from '@nestjs/swagger';
 import { LessonsService } from './lessons.service';
 import { CreateLessonDto } from './dto/create-lesson.dto';
 import { UpdateLessonDto } from './dto/update-lesson.dto';
 import { videoMulterConfig } from 'src/common/config/video-multer.config';
+import { Roles } from 'src/common/decorators/roles.decorator';
 
 @ApiTags('Lessons')
 @Controller('lessons')
@@ -33,6 +26,7 @@ export class LessonsController {
 
   @Post()
   @ApiOperation({ summary: 'Yangi dars yaratish' })
+  @Roles("ADMIN" , "MENTOR" , "SUPERADMIN")
   @ApiConsumes('multipart/form-data')
   @ApiExtraModels(CreateLessonDto)
   @ApiBody({
@@ -63,11 +57,13 @@ export class LessonsController {
 
   @Get()
   @ApiOperation({ summary: 'Barcha darslarni olish' })
+  @Roles("ADMIN" , "MENTOR" , "SUPERADMIN" , "STUDENT")
   findAll() {
     return this.lessonsService.findAll();
   }
 
   @Get(':id')
+  @Roles("ADMIN" , "MENTOR" , "STUDENT" , "SUPERADMIN")
   @ApiOperation({ summary: 'Bitta darsni olish' })
   @ApiParam({ name: 'id', type: Number })
   findOne(@Param('id', ParseIntPipe) id: number) {
@@ -76,6 +72,7 @@ export class LessonsController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Darsni yangilash' })
+  @Roles("ADMIN" , "MENTOR" , "SUPERADMIN")
   @ApiParam({ name: 'id', type: Number })
   @ApiConsumes('multipart/form-data')
   @ApiExtraModels(UpdateLessonDto)
@@ -105,6 +102,7 @@ export class LessonsController {
   }
 
   @Delete(':id')
+  @Roles("ADMIN" , "MENTOR" , "SUPERADMIN")
   @ApiOperation({ summary: "Darsni o'chirish" })
   @ApiParam({ name: 'id', type: Number })
   remove(@Param('id', ParseIntPipe) id: number) {
