@@ -4,7 +4,6 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-
 }
 
 enum UserRoles {
@@ -42,6 +41,7 @@ model User {
 
   mentor           MentorProfile[]
   courseAssistants CourseAssistant[]
+  exams            Exams[]
 }
 
 model MentorProfile {
@@ -148,6 +148,7 @@ model Homeworks {
 model Exams {
   id         Int        @id @default(autoincrement())
   lessonId   Int
+  userId     Int
   questoin   String
   variantA   String
   variantB   String
@@ -158,14 +159,14 @@ model Exams {
   updated_at DateTime   @updatedAt
 
   lessons Lessons @relation(fields: [lessonId], references: [id])
+  user    User    @relation(fields: [userId], references: [id])
 }
 
-
 model Comments {
-  id         Int       @id @default(autoincrement())
+  id         Int      @id @default(autoincrement())
   fullName   String
-  phone      String   
-  message   String
-  created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
+  phone      String
+  message    String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 }
