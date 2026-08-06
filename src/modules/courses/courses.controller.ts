@@ -74,12 +74,7 @@ export class CoursesController {
   @Roles(UserRoles.SUPERADMIN)
   @ApiBearerAuth("access-token")
   @UseGuards(JwtAuthGuard, RolesGuard)
-<<<<<<< HEAD
   @ApiOperation({ summary: "SUPERADMIN - Yangi kurs yaratish" })
-  create(@Body() dto: CreateCourseDto) {
-    return this.coursesService.create(dto);
-=======
-  @ApiOperation({ summary: "Faqat SUPERADMIN - Yangi kurs yaratish" })
   @ApiConsumes("multipart/form-data")
   @ApiExtraModels(CreateCourseDto)
   @ApiBody({ type: CreateCourseDto })
@@ -89,19 +84,13 @@ export class CoursesController {
       throw new BadRequestException("Banner majburiy");
     }
     return this.coursesService.create(dto, files);
->>>>>>> 980613c0c55dd365ced22dcf1f47788cbca2eb4c
   }
 
   @Patch(":id")
   @Roles(UserRoles.SUPERADMIN)
   @ApiBearerAuth("access-token")
   @UseGuards(JwtAuthGuard, RolesGuard)
-<<<<<<< HEAD
   @ApiOperation({ summary: "SUPERADMIN - Kursni tahrirlash" })
-  update(@Param("id", ParseIntPipe) id: number, @Body() dto: UpdateCourseDto) {
-    return this.coursesService.update(id, dto);
-=======
-  @ApiOperation({ summary: "Faqat SUPERADMIN - Kursni tahrirlash" })
   @ApiConsumes("multipart/form-data")
   @ApiExtraModels(UpdateCourseDto)
   @ApiBody({ type: UpdateCourseDto })
@@ -112,7 +101,6 @@ export class CoursesController {
     @UploadedFiles() files: CourseFiles,
   ) {
     return this.coursesService.update(id, dto, files);
->>>>>>> 980613c0c55dd365ced22dcf1f47788cbca2eb4c
   }
 
   @Delete(":id")

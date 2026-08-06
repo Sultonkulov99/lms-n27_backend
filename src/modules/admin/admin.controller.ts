@@ -35,7 +35,7 @@ export class AdminController {
   @Roles(UserRoles.SUPERADMIN)
   @ApiBearerAuth("access-token")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: "Faqat SUPERADMIN" })
+  @ApiOperation({ summary: "SUPERADMIN" })
   async getAllAdmins() {
     return await this.service.getAllAdmins();
   }
@@ -46,7 +46,7 @@ export class AdminController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiConsumes("multipart/form-data")
   @UseInterceptors(FileInterceptor("file"))
-  @ApiOperation({ summary: "Faqat SUPERADMIN" })
+  @ApiOperation({ summary: "SUPERADMIN" })
   async createAdmin(
     @Body() payload: CreateAdminDto,
     @UploadedFile()
@@ -60,7 +60,7 @@ export class AdminController {
   @ApiBearerAuth("access-token")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiConsumes("multipart/form-data")
-  @ApiOperation({ summary: "Faqat SUPERADMIN" })
+  @ApiOperation({ summary: "SUPERADMIN" })
   @UseInterceptors(
     FileInterceptor("file", {
       storage: diskStorage({
@@ -86,7 +86,7 @@ export class AdminController {
   @Roles(UserRoles.SUPERADMIN)
   @ApiBearerAuth("access-token")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: "Faqat SUPERADMIN" })
+  @ApiOperation({ summary: "SUPERADMIN" })
   async deleteAdmin(@Param("id") id: number) {
     return await this.service.deleteAdmin(id);
   }

@@ -52,9 +52,9 @@ export class MaterialsController {
   @ApiOperation({ summary: "SUPERADMIN - Material yaratish" })
   @ApiConsumes("multipart/form-data")
   @UseInterceptors(
-    FilesInterceptor("files", 10, {
+    FilesInterceptor("file", 10, {
       storage: diskStorage({
-        destination: "./src/uploads/materials",
+        destination: "./uploads/materials",
         filename: (req, file, callback) => {
           const uniqueSuffix =
             Date.now() + "-" + Math.round(Math.random() * 1e9);
@@ -78,9 +78,9 @@ export class MaterialsController {
   @ApiOperation({ summary: "SUPERADMIN - Materialni tahrirlash" })
   @ApiConsumes("multipart/form-data")
   @UseInterceptors(
-    FilesInterceptor("files", 10, {
+    FilesInterceptor("file", 10, {
       storage: diskStorage({
-        destination: "./src/uploads/materials",
+        destination: "./uploads/materials",
         filename: (req, file, callback) => {
           const uniqueSuffix =
             Date.now() + "-" + Math.round(Math.random() * 1e9);

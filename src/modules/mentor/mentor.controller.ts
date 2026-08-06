@@ -61,14 +61,10 @@ export class MentorController {
   @ApiBearerAuth("access-token")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "SUPERADMIN - Update Mentor" })
-<<<<<<< HEAD
-  update(@Param("id") id: string, @Body() dto: Partial<CreateMentorDto>) {
-=======
   update(
     @Param("id") id: string,
     @Body() dto: UpdateMentorDto,
   ) {
->>>>>>> 980613c0c55dd365ced22dcf1f47788cbca2eb4c
     return this.mentorService.update(Number(id), dto);
   }
 

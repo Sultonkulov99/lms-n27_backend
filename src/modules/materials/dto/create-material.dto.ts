@@ -1,11 +1,14 @@
 import { ApiProperty } from "@nestjs/swagger";
-import { IsArray, IsInt, IsNotEmpty, IsString } from "class-validator";
+import { Transform } from "class-transformer";
+import { IsArray, IsInt, IsNotEmpty, IsOptional, IsString } from "class-validator";
 
 export class CreateMaterialDto {
   @ApiProperty({
     example: 1,
     description: "Lesson ID",
+    type: Number,
   })
+  @Transform(({ value }) => Number(value))
   @IsInt()
   @IsNotEmpty()
   lessonId: number;
@@ -19,12 +22,10 @@ export class CreateMaterialDto {
   description: string;
 
   @ApiProperty({
-    type: [String],
-    example: ["uploads/file-1.pdf", "uploads/file-2.jpg"],
+    type: "array",
+    items: { type: "string", format: "binary" },
     description: "Material file",
   })
-  @IsArray()
-  @IsString({ each: true })
-  @IsNotEmpty({ each: true })
-  file: string[];
+  @IsOptional()
+  file: any[];
 }

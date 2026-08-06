@@ -13,19 +13,22 @@ import { UpdateMaterialDto } from "./dto/update-material.dto";
 export class MaterialsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  findAll(page = 1, limit = 10) {
-    return this.prisma.courses.findMany({
-      skip: (page - 1) * limit,
-      take: limit,
-      include: { categories: true },
-      orderBy: { created_at: "desc" },
+  async findAll() {
+    return this.prisma.materials.findMany({
+      include: {
+        lessons: {
+          include: {
+            materials: true,
+          },
+        },
+      },
     });
   }
 
   async findOne(id: number) {
-    const section = await this.prisma.sections.findUnique({
+    const section = await this.prisma.materials.findUnique({
       where: { id },
-      include: { courses: true, lessons: true },
+      include: { lessons: true },
     });
 
     if (!section) throw new NotFoundException(`Material topilmadi (id: ${id})`);
@@ -47,7 +50,7 @@ export class MaterialsService {
     }
 
     const filePaths: string[] = files.map(
-      (file) => file.path || `src/uploads/${file.filename}`,
+      (file) => file.path || `uploads/${file.filename}`,
     );
 
     return this.prisma.materials.create({
@@ -97,7 +100,7 @@ export class MaterialsService {
       });
 
       const newFilePaths = files.map(
-        (file) => file.path || `src/uploads/${file.filename}`,
+        (file) => file.path || `uploads/${file.filename}`,
       );
 
       updateData.file = newFilePaths;
