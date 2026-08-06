@@ -159,3 +159,13 @@ model Exams {
 
   lessons Lessons @relation(fields: [lessonId], references: [id])
 }
+
+
+model Comments {
+  id         Int       @id @default(autoincrement())
+  fullName   String
+  phone      String   
+  message   String
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+}
