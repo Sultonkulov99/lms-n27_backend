@@ -11,6 +11,7 @@ import { MaterialsModule } from "./modules/materials/materials.module";
 import { LessonsModule } from "./modules/lessons/lessons.module";
 import { UsersModule } from "./modules/users/users.module";
 import { CommentsModule } from "./modules/comments/comments.module";
+import { StudentsModule } from "./modules/students/students.module";
 
 @Module({
   imports: [
@@ -28,7 +29,8 @@ import { CommentsModule } from "./modules/comments/comments.module";
     SectionsModule,
     LessonsModule,
     CourseAssistantModule,
-    CommentsModule
+    CommentsModule,
+    StudentsModule
   ],
 })
 export class AppModule {}
