@@ -7,6 +7,7 @@ import {
   Body,
   Param,
   UseGuards,
+  Patch,
 } from "@nestjs/common";
 import { MentorService } from "./mentor.service";
 import { Roles } from "src/common/decorators/roles.decorator";
@@ -19,7 +20,7 @@ import { UpdateMentorDto } from "./dto/mentor-update.dto";
 
 @Controller("mentors")
 export class MentorController {
-  constructor(private mentorService: MentorService) { }
+  constructor(private mentorService: MentorService) {}
 
   @Get()
   @Roles(UserRoles.SUPERADMIN)
@@ -47,16 +48,13 @@ export class MentorController {
   create(@Body() dto: CreateMentorDto) {
     return this.mentorService.create(dto);
   }
-  
-  @Put(":id")
+
+  @Patch(":id")
   @Roles(UserRoles.SUPERADMIN)
   @ApiBearerAuth("access-token")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "SUPERADMIN - Update Mentor" })
-  update(
-    @Param("id") id: string,
-    @Body() dto: UpdateMentorDto,
-  ) {
+  update(@Param("id") id: string, @Body() dto: UpdateMentorDto) {
     return this.mentorService.update(Number(id), dto);
   }
 

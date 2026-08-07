@@ -72,16 +72,19 @@ export class UsersService {
     };
   }
 
-  async createAdmin(payload: CreateUserDto, file?: Express.Multer.File) {
-    const admin = await this.prisma.user.findFirst({
-      where: { role: UserRoles.ADMIN, phone: payload.phone },
-    });
+  
+async createAdmin(payload: CreateUserDto, file?: Express.Multer.File) {
+  const existingUser = await this.prisma.user.findFirst({
+    where: { phone: payload.phone },
+  });
 
-    if (admin) {
-      throw new ConflictException("User has already existed");
-    }
+  if (existingUser) {
+    throw new ConflictException("Bu telefon raqami allaqachon ro'yxatdan o'tgan");
+  }
 
-    const hashedPassword = await bcrypt.hash(payload.password, 10);
+  const hashedPassword = await bcrypt.hash(payload.password, 10);
+
+  try {
     const newAdmin = await this.prisma.user.create({
       data: {
         ...payload,
@@ -91,11 +94,14 @@ export class UsersService {
       },
     });
 
-    return {
-      success: true,
-      data: newAdmin,
-    };
+    return { success: true, data: newAdmin };
+  } catch (error) {
+    if (error.code === "P2002") {
+      throw new ConflictException("Bu telefon raqami allaqachon band");
+    }
+    throw error;
   }
+}
 
   async updateAdmin(
     id: number,
