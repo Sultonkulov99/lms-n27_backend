@@ -1,38 +1,41 @@
-import {
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
-import { CreateHomeworkDto } from './dto/create-homework.dto';
-import { UpdateHomeworkDto } from './dto/update-homework.dto';
-import { PrismaService } from 'src/core/database/prisma.service';
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { PrismaClient } from "@prisma/client";
+import { CreateHomeworkDto } from "./dto/create-homework.dto";
+import { UpdateHomeworkDto } from "./dto/update-homework.dto";
+import { PrismaService } from "src/core/database/prisma.service";
 
 @Injectable()
 export class HomeworksService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(
-    dto: CreateHomeworkDto,
-    files?: Express.Multer.File[],
-  ) {
-    const uploadedFiles =
-      files?.map((file) => file.filename) || [];
+  async create(dto: CreateHomeworkDto, files?: Express.Multer.File[]) {
+    const uploadedFiles = files?.map((file) => file.filename) || [];
 
-    return await this.prisma.homeworks.create({
+    const homework = await this.prisma.homeworks.create({
       data: {
         lessonId: Number(dto.lessonId),
         description: dto.description,
         file: uploadedFiles,
       },
     });
+
+    return {
+      success: true,
+      data: homework,
+    };
   }
 
   async findAll() {
-    return await this.prisma.homeworks.findMany({
+    const homeworks = await this.prisma.homeworks.findMany({
       include: {
         lessons: true,
       },
     });
+
+    return {
+      success: true,
+      data: homeworks,
+    };
   }
 
   async findOne(id: number) {
@@ -46,10 +49,13 @@ export class HomeworksService {
     });
 
     if (!homework) {
-      throw new NotFoundException('Homework topilmadi');
+      throw new NotFoundException("Homework not found");
     }
 
-    return homework;
+    return {
+      succes: true,
+      data: homework,
+    };
   }
 
   async update(
@@ -61,7 +67,7 @@ export class HomeworksService {
 
     const uploadedFiles = files?.map((file) => file.filename);
 
-    return await this.prisma.homeworks.update({
+    const updated = await this.prisma.homeworks.update({
       where: {
         id,
       },
@@ -73,15 +79,25 @@ export class HomeworksService {
         }),
       },
     });
+
+    return {
+      success: true,
+      data: updated,
+    };
   }
 
   async remove(id: number) {
     await this.findOne(id);
 
-    return await this.prisma.homeworks.delete({
+    await this.prisma.homeworks.delete({
       where: {
         id,
       },
     });
+
+    return {
+      success: true,
+      message: `Homework (id:${id}) deleted successfully`,
+    };
   }
 }
