@@ -32,8 +32,8 @@ export class MentorService {
   }
 
   async getOne(id: number) {
-    const mentor = await this.prisma.user.findUnique({
-      where: { id },
+    const mentor = await this.prisma.user.findFirst({
+      where: { id, role: "MENTOR" },
       select: {
         id: true,
         fullName: true,
