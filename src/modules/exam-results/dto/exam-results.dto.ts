@@ -16,11 +16,17 @@ export class ExamResultsDto {
     startDate?: string;
 
     @ApiPropertyOptional({ description: "Tugash sanasi " })
+    @ApiPropertyOptional({
+        description: "Tugash sanasi",
+    })
     @IsOptional()
     @IsString()
     endDate?: string;
 
     @ApiPropertyOptional({ default: 1 })
+    @ApiPropertyOptional({
+        default: 1,
+    })
     @IsOptional()
     @Type(() => Number)
     @IsInt()
@@ -28,6 +34,9 @@ export class ExamResultsDto {
     page?: number = 1;
 
     @ApiPropertyOptional({ default: 10 })
+    @ApiPropertyOptional({
+        default: 10,
+    })
     @IsOptional()
     @Type(() => Number)
     @IsInt()

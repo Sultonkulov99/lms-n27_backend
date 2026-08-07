@@ -1,33 +1,24 @@
 import { Controller, Get, Query, UseGuards } from "@nestjs/common";
-import {
-    ApiBearerAuth,
-    ApiOperation,
-    ApiResponse,
-    ApiTags,
-} from "@nestjs/swagger";
-import { UserRoles } from "@prisma/client";
+import { ExamResultsDto } from "./dto/exam-results.dto";
+import { ExamResultsService } from "./exam-results.service";
+import { ApiBearerAuth, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { Roles } from "src/common/decorators/roles.decorator";
+import { UserRoles } from "@prisma/client";
 import { JwtAuthGuard } from "src/common/guards/jwt-auth.guard";
 import { RolesGuard } from "src/common/guards/roles.guard";
-import { ExamResultsService } from "./exam-results.service";
-import { ExamResultsDto } from "./dto/exam-results.dto";
 
-
-@ApiTags("Admin / Imtihon Natijalari")
-@ApiBearerAuth()
-@UseGuards(JwtAuthGuard, RolesGuard)
-@Roles(UserRoles.ADMIN, UserRoles.SUPERADMIN, UserRoles.MENTOR)
+@ApiTags("Exam-results")
 @Controller("exam-results")
 export class ExamResultsController {
-    constructor(private readonly examResultsService: ExamResultsService) {}
+    constructor(private readonly servive: ExamResultsService) {}
 
-    @ApiOperation({
-        summary:
-            "Imtihon natijalari ro'yxatini olish (Search, Date Filter va Pagination bilan)",
-    })
-    @ApiResponse({ status: 200, description: "Natijalar ro'yxati" })
     @Get()
-    findAll(@Query() query: ExamResultsDto) {
-        return this.examResultsService.findAll(query);
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @ApiBearerAuth("access-token")
+    @Roles(UserRoles.ADMIN, UserRoles.SUPERADMIN, UserRoles.MENTOR)
+    @ApiOperation({ summary: "Get Exam results" })
+    async findAll(@Query() query: ExamResultsDto) {
+        return this.servive.findAll(query);
     }
 }
+
