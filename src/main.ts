@@ -20,9 +20,6 @@ async function bootstrap() {
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('swagger', app, documentFactory);
 
-  const port = process.env.PORT ?? 3000
-  await app.listen(port, () => {
-    console.log("https://localhost:" + port)
-  });
+  await app.listen(3000,"0.0.0.0");
 }
 bootstrap();
