@@ -12,8 +12,12 @@ import { LessonsModule } from "./modules/lessons/lessons.module";
 import { UsersModule } from "./modules/users/users.module";
 import { ProfileModule } from "./modules/profile/profile.module";
 import { CommentsModule } from "./modules/comments/comments.module";
+
+import { HomeworksModule } from "./modules/homeworks/homeworks.module";
 import { StudentsModule } from "./modules/students/students.module";
 import { PaymentsModule } from "./modules/payments/payments.module";
+import { ExamModule } from "./modules/exam/exam.module";
+
 
 @Module({
   imports: [
@@ -34,9 +38,10 @@ import { PaymentsModule } from "./modules/payments/payments.module";
     LessonsModule,
     CourseAssistantModule,
     CommentsModule,
+    HomeworksModule,
     StudentsModule,
-    PaymentsModule
-    
+    PaymentsModule,
+    ExamModule,
   ],
 })
 export class AppModule {}
