@@ -14,6 +14,7 @@ import { ProfileModule } from "./modules/profile/profile.module";
 import { CommentsModule } from "./modules/comments/comments.module";
 import { StudentsModule } from "./modules/students/students.module";
 import { PaymentsModule } from "./modules/payments/payments.module";
+import { ExamModule } from "./modules/exam/exam.module";
 
 @Module({
   imports: [
@@ -35,8 +36,8 @@ import { PaymentsModule } from "./modules/payments/payments.module";
     CourseAssistantModule,
     CommentsModule,
     StudentsModule,
-    PaymentsModule
-    
+    PaymentsModule,
+    ExamModule,
   ],
 })
 export class AppModule {}
