@@ -42,6 +42,7 @@ model User {
   mentor           MentorProfile[]
   courseAssistants CourseAssistant[]
   exams            Exams[]
+  examResults      ExamResults[]
 }
 
 model MentorProfile {
@@ -117,10 +118,11 @@ model Lessons {
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
 
-  sections  Sections    @relation(fields: [sectionId], references: [id])
-  materials Materials[]
-  homeworks Homeworks[]
-  exams     Exams[]
+  sections    Sections      @relation(fields: [sectionId], references: [id])
+  materials   Materials[]
+  homeworks   Homeworks[]
+  exams       Exams[]
+  examResults ExamResults[]
 }
 
 model Materials {
@@ -169,4 +171,17 @@ model Comments {
   message    String
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
+}
+
+model ExamResults {
+  id            Int      @id @default(autoincrement())
+  userId        Int
+  lessonId      Int
+  correctAnswer Int
+  wrongAnswer   Int
+  isPassed      Boolean  @default(false)
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+  user          User     @relation(fields: [userId], references: [id])
+  lessons       Lessons  @relation(fields: [lessonId], references: [id])
 }
