@@ -13,7 +13,7 @@ export class LoginDto {
   phone!: string;
 
   @ApiProperty({
-    example: "Kebyu007!"
+    example: "SHAPTOLI"
   })
   @IsString()
   password!: string;
