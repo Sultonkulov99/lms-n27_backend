@@ -1,5 +1,6 @@
 import {
   ConflictException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from "@nestjs/common";
@@ -68,40 +69,41 @@ export class UsersService {
     });
 
     return {
-      dashboard: {...rolesStats, totalCourses},
+      dashboard: { ...rolesStats, totalCourses },
     };
   }
 
-  
-async createAdmin(payload: CreateUserDto, file?: Express.Multer.File) {
-  const existingUser = await this.prisma.user.findFirst({
-    where: { phone: payload.phone },
-  });
-
-  if (existingUser) {
-    throw new ConflictException("Bu telefon raqami allaqachon ro'yxatdan o'tgan");
-  }
-
-  const hashedPassword = await bcrypt.hash(payload.password, 10);
-
-  try {
-    const newAdmin = await this.prisma.user.create({
-      data: {
-        ...payload,
-        password: hashedPassword,
-        file: file?.filename ?? "empty",
-        role: UserRoles.ADMIN,
-      },
+  async createAdmin(payload: CreateUserDto, file?: Express.Multer.File) {
+    const existingUser = await this.prisma.user.findFirst({
+      where: { phone: payload.phone },
     });
 
-    return { success: true, data: newAdmin };
-  } catch (error) {
-    if (error.code === "P2002") {
-      throw new ConflictException("Bu telefon raqami allaqachon band");
+    if (existingUser) {
+      throw new ConflictException(
+        "Bu telefon raqami allaqachon ro'yxatdan o'tgan",
+      );
     }
-    throw error;
+
+    const hashedPassword = await bcrypt.hash(payload.password, 10);
+
+    try {
+      const newAdmin = await this.prisma.user.create({
+        data: {
+          ...payload,
+          password: hashedPassword,
+          file: file?.filename ?? "empty",
+          role: UserRoles.ADMIN,
+        },
+      });
+
+      return { success: true, data: newAdmin };
+    } catch (error: any) {
+      if (error.code === "P2002") {
+        throw new ConflictException("Bu telefon raqami allaqachon band");
+      }
+      throw error;
+    }
   }
-}
 
   async updateAdmin(
     id: number,
@@ -138,7 +140,12 @@ async createAdmin(payload: CreateUserDto, file?: Express.Multer.File) {
   }
 
   async deleteAdmin(id: number) {
-    const existingAdmin = await this.prisma.user.findFirst({ where: { id } });
+    const existingAdmin = await this.prisma.user.findFirst({
+      where: {
+        id,
+        role: UserRoles.ADMIN,
+      },
+    });
 
     if (!existingAdmin) throw new NotFoundException("Admin is not found");
 

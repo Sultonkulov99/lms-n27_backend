@@ -4,83 +4,90 @@ import { PrismaService } from "src/core/database/prisma.service";
 import { UpdateStudentDto } from "./dto/update-student.dto";
 
 export class StudentService {
-    constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) {}
 
-    async getAllStudents() {
-        const students = await this.prisma.user.findMany({
-            where: { role: UserRoles.STUDENT }, 
-            select: {
-                id: true,
-                file: true,
-                fullName: true,
-                phone: true,
-                role: true,
-                created_at: true,
-                updated_at: true,
-            }
-        })
+  async getAllStudents() {
+    const students = await this.prisma.user.findMany({
+      where: { role: UserRoles.STUDENT },
+      select: {
+        id: true,
+        file: true,
+        fullName: true,
+        phone: true,
+        role: true,
+        created_at: true,
+        updated_at: true,
+      },
+    });
 
-        return {
-            success: true,
-            students,
-        }
+    return {
+      success: true,
+      students,
+    };
+  }
+
+  async getOneStudent(id: number) {
+    const student = await this.prisma.user.findUnique({
+      where: { id, role: UserRoles.STUDENT },
+      select: {
+        id: true,
+        fullName: true,
+        phone: true,
+        role: true,
+        created_at: true,
+        updated_at: true,
+      },
+    });
+
+    if (!student) {
+      throw new NotFoundException("Bunaqa student yo'q. Yana bilmadim:)!");
+    }
+    return {
+      success: true,
+      student,
+    };
+  }
+
+  async updateStudent(id: number, dto: UpdateStudentDto) {
+    const ExistingStudent = await this.prisma.user.findFirst({ where: { id } });
+
+    if (!ExistingStudent) {
+      throw new NotFoundException("Student is not found");
     }
 
-    async getOneStudent(id: number) {
-        const student = await this.prisma.user.findUnique({
-            where: { id },
-            select: {
-                id: true,
-                fullName: true,
-                phone: true,
-                role: true,
-                created_at: true,
-                updated_at: true,
-            },
-        });
+    const student = await this.prisma.user.findFirst({
+      where: { role: UserRoles.ADMIN, phone: dto.phone },
+    });
 
-        if (!student) {
-            throw new NotFoundException("Bunaqa student yo'q. Yana bilmadim:)!");
-        }
-        return {
-            success: true,
-            student,
-        }
-    }
+    if (student) throw new ConflictException("Student has already existed");
 
-    async updateStudent(id: number, dto: UpdateStudentDto) {
-        const ExistingStudent = await this.prisma.user.findFirst({ where: { id }});
+    const updatedStudent = await this.prisma.user.update({
+      where: { id },
+      data: {
+        ...dto,
+      },
+    });
 
-        if (!ExistingStudent) {
-            throw new NotFoundException("Student is not found");
-        }
+    return {
+      success: true,
+      data: updatedStudent,
+    };
+  }
 
-        const student = await this.prisma.user.findFirst({ where: { role: UserRoles.ADMIN, phone: dto.phone } })
+  async deleteStudent(id: number) {
+    const ExistingStudent = await this.prisma.user.findFirst({
+      where: {
+        id,
+        role: UserRoles.STUDENT,
+      },
+    });
 
-        if (student) throw new ConflictException('Student has already existed')
+    if (!ExistingStudent) throw new NotFoundException("Student is not found");
 
-        const updatedStudent = await this.prisma.user.update({
-            where: { id },
-            data: {
-                ...dto,
-            }
-        })
+    await this.prisma.user.delete({ where: { id } });
 
-        return {
-            success: true,
-            data: updatedStudent,
-        }
-    }
-
-    async deleteStudent(id: number) {
-        const ExistingStudent = await this.prisma.user.findFirst({ where: { id } })
-
-        if (!ExistingStudent) throw new NotFoundException("Student is not found")
-
-        await this.prisma.user.delete({ where: { id } })
-
-        return {
-            success: true,
-        }
-    }
+    return {
+      success: true,
+    };
+  }
 }
