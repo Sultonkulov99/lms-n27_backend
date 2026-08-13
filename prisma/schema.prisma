@@ -229,6 +229,7 @@ model Payments {
   course Courses @relation(fields: [courseId], references: [id])
   category Categories @relation(fields: [categoryId], references: [id])
 }
+
 model ExamResults {
   id            Int      @id @default(autoincrement())
   userId        Int
@@ -238,6 +239,8 @@ model ExamResults {
   isPassed      Boolean  @default(false)
   created_at    DateTime @default(now())
   updated_at    DateTime @updatedAt
+  
   user          User     @relation(fields: [userId], references: [id])
   lessons       Lessons  @relation(fields: [lessonId], references: [id])
 }
+ 
