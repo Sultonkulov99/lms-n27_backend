@@ -17,12 +17,4 @@ export class CreatePaymentDto {
   @IsNumber()
   @IsNotEmpty()
   courseId: number;
-
-  @ApiProperty({
-    example: 500000,
-    required: true,
-  })
-  @IsNumber()
-  @IsNotEmpty()
-  amount: number;
 }

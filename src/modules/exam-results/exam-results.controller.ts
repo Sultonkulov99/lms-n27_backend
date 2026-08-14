@@ -14,7 +14,7 @@ export class ExamResultsController {
 
     @Get()
     @UseGuards(JwtAuthGuard, RolesGuard)
-    @ApiBearerAuth("access-token")
+    @ApiBearerAuth("accessToken")
     @Roles(UserRoles.ADMIN, UserRoles.SUPERADMIN, UserRoles.MENTOR)
     @ApiOperation({ summary: "Get Exam results" })
     async findAll(@Query() query: ExamResultsDto) {

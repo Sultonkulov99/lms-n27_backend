@@ -24,7 +24,7 @@ export class MentorController {
 
   @Get()
   @Roles(UserRoles.SUPERADMIN)
-  @ApiBearerAuth("access-token")
+  @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "SUPERADMIN - Get All Mentor" })
   getAll() {
@@ -33,7 +33,7 @@ export class MentorController {
 
   @Get(":id")
   @Roles(UserRoles.SUPERADMIN)
-  @ApiBearerAuth("access-token")
+  @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "SUPERADMIN - Get One Mentor" })
   getOne(@Param("id") id: string) {
@@ -42,7 +42,7 @@ export class MentorController {
 
   @Post()
   @Roles(UserRoles.SUPERADMIN)
-  @ApiBearerAuth("access-token")
+  @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "SUPERADMIN - Create Mentor" })
   create(@Body() dto: CreateMentorDto) {
@@ -51,7 +51,7 @@ export class MentorController {
 
   @Patch(":id")
   @Roles(UserRoles.SUPERADMIN)
-  @ApiBearerAuth("access-token")
+  @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "SUPERADMIN - Update Mentor" })
   update(@Param("id") id: string, @Body() dto: UpdateMentorDto) {
@@ -60,7 +60,7 @@ export class MentorController {
 
   @Delete(":id")
   @Roles(UserRoles.SUPERADMIN)
-  @ApiBearerAuth("access-token")
+  @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "SUPERADMIN - Delete Mentor" })
   remove(@Param("id") id: string) {

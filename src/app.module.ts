@@ -19,12 +19,18 @@ import { PaymentsModule } from "./modules/payments/payments.module";
 import { ExamModule } from "./modules/exam/exam.module";
 import { RedisModule } from "./common/redis/redis.module";
 import { BotModule } from "./modules/telegram/bot.module";
+import { ServeStaticModule } from "@nestjs/serve-static";
+import { join } from "path";
 
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: join(process.cwd(), "uploads"),
+      serveRoot: "/uploads",
     }),
     PrismaModule,
     SeederModule,
@@ -48,4 +54,4 @@ import { BotModule } from "./modules/telegram/bot.module";
     BotModule,
   ],
 })
-export class AppModule {}
+export class AppModule { }

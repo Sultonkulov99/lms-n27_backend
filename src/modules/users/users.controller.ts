@@ -33,7 +33,7 @@ export class UsersController {
 
   @Get("admin")
   @Roles(UserRoles.SUPERADMIN)
-  @ApiBearerAuth("access-token")
+  @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "Faqat SUPERADMIN" })
   async getAllAdmins() {
@@ -42,7 +42,7 @@ export class UsersController {
 
   @Get("dashboard")
   @Roles(UserRoles.SUPERADMIN)
-  @ApiBearerAuth("access-token")
+  @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "Faqat SUPERADMIN" })
   async getCountByRoleAndCoursess() {
@@ -51,7 +51,7 @@ export class UsersController {
 
   @Post("admin")
   @Roles(UserRoles.SUPERADMIN)
-  @ApiBearerAuth("access-token")
+  @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiConsumes("multipart/form-data")
   @ApiOperation({ summary: "Faqat SUPERADMIN" })
@@ -77,7 +77,7 @@ export class UsersController {
 
   @Patch("admin/:id")
   @Roles(UserRoles.SUPERADMIN)
-  @ApiBearerAuth("access-token")
+  @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiConsumes("multipart/form-data")
   @ApiOperation({ summary: "Faqat SUPERADMIN" })
@@ -104,7 +104,7 @@ export class UsersController {
 
   @Delete("admin/:id")
   @Roles(UserRoles.SUPERADMIN)
-  @ApiBearerAuth("access-token")
+  @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "Faqat SUPERADMIN" })
   async deleteAdmin(@Param("id") id: number) {
