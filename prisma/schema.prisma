@@ -49,6 +49,7 @@ model User {
   exams            Exams[]
   payments         Payments[]
   examAttempts     ExamAttempts[]
+  examResults      ExamResults[]
 }
 
 model MentorProfile {
@@ -130,6 +131,7 @@ model Lessons {
   homeworks Homeworks[]
   exams     Exams[]
   examAttempts ExamAttempts[] 
+  examResults ExamResults[]
 }
 
 model Materials {
@@ -226,4 +228,16 @@ model Payments {
   user    User    @relation(fields: [userId], references: [id])
   course Courses @relation(fields: [courseId], references: [id])
   category Categories @relation(fields: [categoryId], references: [id])
+}
+model ExamResults {
+  id            Int      @id @default(autoincrement())
+  userId        Int
+  lessonId      Int
+  correctAnswer Int
+  wrongAnswer   Int
+  isPassed      Boolean  @default(false)
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
+  user          User     @relation(fields: [userId], references: [id])
+  lessons       Lessons  @relation(fields: [lessonId], references: [id])
 }

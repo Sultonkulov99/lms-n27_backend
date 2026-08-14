@@ -121,16 +121,36 @@ export class HomeworksController {
     return this.homeworksService.create(dto, files);
   }
 
+  @Get()
+  @Roles(
+    UserRoles.SUPERADMIN,
+    UserRoles.ADMIN,
+    UserRoles.MENTOR,
+  )
+  findAll() {
+    return this.homeworksService.findAll();
+  }
+
+  @Get(":id")
+  @Roles(
+    UserRoles.SUPERADMIN,
+    UserRoles.ADMIN,
+    UserRoles.MENTOR,
+  )
+  findOne(
+    @Param("id", ParseIntPipe) id: number,
+  ) {
+    return this.homeworksService.findOne(id);
+  }
+
   @Patch(":id")
   @Roles(
-  UserRoles.SUPERADMIN,
-  UserRoles.ADMIN,
-  UserRoles.MENTOR,
-)
-  @ApiBearerAuth("access-token")
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: "SUPERADMIN - Homeworkni tahrirlash" })
+    UserRoles.SUPERADMIN,
+    UserRoles.ADMIN,
+    UserRoles.MENTOR,
+  )
   @ApiConsumes("multipart/form-data")
+
   @ApiBody({
     schema: {
       type: "object",
