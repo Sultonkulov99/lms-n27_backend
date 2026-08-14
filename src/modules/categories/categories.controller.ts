@@ -33,10 +33,6 @@ export class CategoriesController {
   }
 
   @Get()
-  @Roles(UserRoles.SUPERADMIN)
-  @ApiBearerAuth("access-token")
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: "SUPERADMIN - Get All Categories" })
   findAll() {
     return this.categoriesService.findAll();
   }

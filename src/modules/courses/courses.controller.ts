@@ -53,19 +53,11 @@ export class CoursesController {
   constructor(private readonly coursesService: CoursesService) {}
 
   @Get()
-  @Roles(UserRoles.SUPERADMIN)
-  @ApiBearerAuth("access-token")
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: "SUPERADMIN - Barcha kurslarni olish" })
   findAll() {
     return this.coursesService.findAll();
   }
 
   @Get(":id")
-  @Roles(UserRoles.SUPERADMIN)
-  @ApiBearerAuth("access-token")
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: "SUPERADMIN - Kursni id bo'yicha olish" })
   findOne(@Param("id", ParseIntPipe) id: number) {
     return this.coursesService.findOne(id);
   }

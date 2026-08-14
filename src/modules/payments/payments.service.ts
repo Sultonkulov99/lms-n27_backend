@@ -10,7 +10,7 @@ export class PaymentsService {
   async create(payload: CreatePaymentDto) {
     const payment = await this.prisma.payments.create({
       data: payload,
-      include: { course: true, user: true, category: true },
+      include: { course: true, user: true },
     });
 
     return {
@@ -21,7 +21,7 @@ export class PaymentsService {
 
   async findAll() {
     const payments = await this.prisma.payments.findMany({
-      include: { course: true, user: true, category: true },
+      include: { course: true, user: true},
       orderBy: { created_at: "desc" },
     });
 
@@ -34,7 +34,7 @@ export class PaymentsService {
   async findOne(id: number) {
     const existing = await this.prisma.payments.findUnique({
       where: { id },
-      include: { course: true, user: true, category: true },
+      include: { course: true, user: true },
     });
 
     if (!existing) {
@@ -54,7 +54,7 @@ export class PaymentsService {
       const payment = await this.prisma.payments.update({
         where: { id },
         data: payload,
-        include: { course: true, user: true, category: true },
+        include: { course: true, user: true },
       });
     } catch (error) {
       throw new NotFoundException("Payment not found");
