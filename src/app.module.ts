@@ -17,12 +17,18 @@ import { HomeworksModule } from "./modules/homeworks/homeworks.module";
 import { StudentsModule } from "./modules/students/students.module";
 import { PaymentsModule } from "./modules/payments/payments.module";
 import { ExamModule } from "./modules/exam/exam.module";
+import { ServeStaticModule } from "@nestjs/serve-static";
+import { join } from "path";
 
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+    }),
+    ServeStaticModule.forRoot({
+      rootPath: join(process.cwd(), "uploads"),
+      serveRoot: "/uploads",
     }),
     PrismaModule,
     SeederModule,
