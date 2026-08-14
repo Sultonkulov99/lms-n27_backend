@@ -69,7 +69,6 @@ export class AuthService {
   }
 
   async register(payload: RegisterDto, courseId: number) {
-    console.log("Hello")
     const existing = await this.prisma.user.findFirst({
       where: {
         phone: payload.phone,
@@ -82,17 +81,17 @@ export class AuthService {
       );
     }
 
-    const redisKey = `reg_${payload.phone}`;
-    const storedOtp = await this.redisService.get(redisKey);
-    if (!storedOtp || storedOtp !== payload.otp) {
-      throw new HttpException(
-        'Noto\'g\'ri yoki muddati o\'tgan tasdiqlash kodi',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
+    // const redisKey = `reg_${payload.phone}`;
+    // const storedOtp = await this.redisService.get(redisKey);
+    // if (!storedOtp || storedOtp !== payload.otp) {
+    //   throw new HttpException(
+    //     'Noto\'g\'ri yoki muddati o\'tgan tasdiqlash kodi',
+    //     HttpStatus.BAD_REQUEST,
+    //   );
+    // }
 
-    // Delete OTP after successful verification to prevent reuse
-    await this.redisService.del(redisKey);
+    // // Delete OTP after successful verification to prevent reuse
+    // await this.redisService.del(redisKey);
 
     const hashedPassword = await this.hashPassword(payload.password);
 

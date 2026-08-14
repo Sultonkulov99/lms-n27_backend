@@ -219,7 +219,7 @@ model Payments {
   id         Int      @id @default(autoincrement())
   userId     Int
   courseId   Int
-  amount     BigInt?
+  amount     Decimal?
   status     Boolean  @default(true)
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
