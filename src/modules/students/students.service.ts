@@ -27,7 +27,7 @@ export class StudentService {
             students,
         }
     }
-
+ 
     async getOneStudent(id: number) {
         const student = await this.prisma.user.findUnique({
             where: { id },
