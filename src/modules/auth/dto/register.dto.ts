@@ -34,9 +34,9 @@ export class RegisterDto {
   )
   password!: string;
 
-  // @ApiProperty({
-  //   example: '000000',
-  // })
-  // @IsString()
-  // otp: string;
+  @ApiProperty({
+    example: '000000',
+  })
+  @IsString()
+  otp: string;
 }
