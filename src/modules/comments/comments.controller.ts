@@ -9,13 +9,13 @@ import { CreateCommentsDto } from "./dto/create-comments";
 import { UpdateCommentsDto } from "./dto/update-comments";
 
 @ApiTags("Comments")
-@Controller()
+@Controller("comments")
 export class CommentsController {
-    constructor(private readonly service: CommentsService) {}
+    constructor(private readonly commentsService: CommentsService) {}
 
     @Post()
-    create(@Body() dto: CreateCommentsDto) {
-        return this.service.create(dto);
+    createComment(@Body() dto: CreateCommentsDto) {
+        return this.commentsService.create(dto);
     }
 
     @Roles(UserRoles.SUPERADMIN, UserRoles.ADMIN)
@@ -25,8 +25,8 @@ export class CommentsController {
     @ApiOperation({
         summary: "Faqat SUPERADMIN va ADMIN - Barcha commentlarni ko'rish",
     })
-    findAll() {
-        return this.service.findAll();
+    findAllComments() {
+        return this.commentsService.findAll();
     }
 
     @Get(":id")
@@ -36,8 +36,8 @@ export class CommentsController {
     @ApiOperation({
         summary: "Faqat SUPERADMIN va ADMIN -commentlarni id bo'yicha ko'rish",
     })
-    findOne(@Param("id") id: string) {
-        return this.service.findOne(+id);
+    findOneComment(@Param("id") id: string) {
+        return this.commentsService.findOne(+id);
     }
 
     @ApiOperation({
@@ -48,7 +48,7 @@ export class CommentsController {
     @ApiBearerAuth("access-token")
     @UseGuards(JwtAuthGuard, RolesGuard)
     update(@Param("id") id: string, @Body() dto: UpdateCommentsDto) {
-        return this.service.update(+id, dto);
+        return this.commentsService.update(+id, dto);
     }
 
     @Delete(":id")
@@ -58,7 +58,7 @@ export class CommentsController {
     @ApiOperation({
         summary: "Faqat SUPERADMIN va ADMIN - Commentlarni o'chirish",
     })
-    delete(@Param("id") id: string) {
-        return this.service.delete(+id);
+    deleteComment(@Param("id") id: string) {
+        return this.commentsService.delete(+id);
     }
 }
