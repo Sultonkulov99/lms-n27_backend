@@ -1,10 +1,12 @@
-import { ConflictException, NotFoundException } from "@nestjs/common";
+import { ConflictException, Injectable, NotFoundException } from "@nestjs/common";
 import { UserRoles } from "@prisma/client";
 import { PrismaService } from "src/core/database/prisma.service";
 import { UpdateStudentDto } from "./dto/update-student.dto";
 
+@Injectable()
 export class StudentService {
     constructor(private readonly prisma: PrismaService) {}
+
 
     async getAllStudents() {
         const students = await this.prisma.user.findMany({
@@ -25,7 +27,7 @@ export class StudentService {
             students,
         }
     }
-
+ 
     async getOneStudent(id: number) {
         const student = await this.prisma.user.findUnique({
             where: { id },
