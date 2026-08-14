@@ -31,7 +31,7 @@ import { join } from "path";
       serveRoot: "/uploads",
     }),
     PrismaModule,
-    // SeederModule,
+    SeederModule,
     AuthModule,
     UsersModule,
     MentorModule,
