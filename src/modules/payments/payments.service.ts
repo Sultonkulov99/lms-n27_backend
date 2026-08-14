@@ -10,7 +10,7 @@ export class PaymentsService {
   async create(payload: CreatePaymentDto) {
     const payment = await this.prisma.payments.create({
       data: payload,
-      include: { course: true, user: true, category: true },
+      include: { course: true, user: true },
     });
 
     return {
