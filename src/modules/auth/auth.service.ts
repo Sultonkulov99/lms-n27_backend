@@ -13,7 +13,6 @@ import { User, UserRoles } from "@prisma/client";
 import { RegisterDto } from "./dto/register.dto";
 import { LoginDto } from "./dto/login.dto";
 import { RedisService } from "src/common/redis/redis.service";
-import { TokenConfig } from "src/common/config/token.config";
 import { PaymentsService } from "../payments/payments.service";
 import { JWTAccessOptions, JWTRefreshOptions } from "src/common/config/jwt";
 
@@ -21,7 +20,6 @@ import { JWTAccessOptions, JWTRefreshOptions } from "src/common/config/jwt";
 export class AuthService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly tokenConfig: TokenConfig,
     private readonly redisService: RedisService,
     private readonly jwtService: JwtService,
     private readonly payments: PaymentsService,
@@ -89,7 +87,7 @@ export class AuthService {
         HttpStatus.BAD_REQUEST,
       );
     }
-    
+
 
     // Delete OTP after successful verification to prevent reuse
     await this.redisService.del(redisKey);
@@ -118,16 +116,14 @@ export class AuthService {
         }
       })
 
-      return this.generateToken(user);
+      return {
+        data: result,
+        tokens: await this.generateToken(user)
+      };
     } catch (error) {
       await this.prisma.user.delete({ where: { id: user.id } })
       throw error
     }
-
-    // return {
-    //   success: true,
-    //   data: result,
-    // };
   }
 
   async login(payload: LoginDto) {
@@ -154,7 +150,7 @@ export class AuthService {
 
     return {
       success: true,
-      access_token: await this.generateToken(result),
+      tokens: await this.generateToken(result),
       data: result
     };
   }
