@@ -85,4 +85,43 @@ export class StudentService {
             success: true,
         }
     }
+
+
+
+
+    async getMyCourses(userId: number) {
+    const payments = await this.prisma.payments.findMany({
+        where: {
+            userId,
+            status: true,
+        },
+        select: {
+            id: true,
+            amount: true,
+            created_at: true,
+            course: {
+                select: {
+                    id: true,
+                    banner: true,
+                    name: true,
+                    description: true,
+                    level: true,
+                    price: true,
+                    categories: {
+                        select: { id: true, name: true },
+                    },
+                },
+            },
+        },
+        orderBy: { created_at: "desc" },
+    });
+
+    const courses = payments.map((p) => p.course);
+
+    return {
+        success: true,
+        courses,
+    };
+}
+
 }
