@@ -25,11 +25,11 @@ export class CategoriesController {
 
   @Post()
   @Roles(UserRoles.SUPERADMIN)
-  @ApiBearerAuth("access-token")
+  @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "SUPERADMIN - Create Category" })
-  create(@Body() dto: CreateCategoryDto) {
-    return this.categoriesService.create(dto);
+  async create(@Body() dto: CreateCategoryDto) {
+    return await this.categoriesService.create(dto);
   }
 
   @Get()
@@ -39,7 +39,7 @@ export class CategoriesController {
 
   @Get(":id")
   @Roles(UserRoles.SUPERADMIN)
-  @ApiBearerAuth("access-token")
+  @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "SUPERADMIN - Get Category By ID" })
   findOne(@Param("id") id: string) {
@@ -48,7 +48,7 @@ export class CategoriesController {
 
   @Put(":id")
   @Roles(UserRoles.SUPERADMIN)
-  @ApiBearerAuth("access-token")
+  @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "SUPERADMIN - Update Category" })
   update(@Param("id") id: string, @Body() dto: UpdateCategoryDto) {
@@ -57,7 +57,7 @@ export class CategoriesController {
 
   @Delete(":id")
   @Roles(UserRoles.SUPERADMIN)
-  @ApiBearerAuth("access-token")
+  @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "SUPERADMIN - Delete Category" })
   remove(@Param("id") id: string) {

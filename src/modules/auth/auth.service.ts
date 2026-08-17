@@ -1,5 +1,7 @@
 import {
   ConflictException,
+  HttpException,
+  HttpStatus,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -7,15 +9,22 @@ import {
 import { PrismaService } from "src/core/database/prisma.service";
 import * as argon from "argon2";
 import { JwtService } from "@nestjs/jwt";
-import { UserRoles } from "@prisma/client";
+import { User, UserRoles } from "@prisma/client";
 import { RegisterDto } from "./dto/register.dto";
 import { LoginDto } from "./dto/login.dto";
+import { RedisService } from "src/common/redis/redis.service";
+import { TokenConfig } from "src/common/config/token.config";
+import { PaymentsService } from "../payments/payments.service";
+import { JWTAccessOptions, JWTRefreshOptions } from "src/common/config/jwt";
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly prisma: PrismaService,
+    private readonly tokenConfig: TokenConfig,
+    private readonly redisService: RedisService,
     private readonly jwtService: JwtService,
+    private readonly payments: PaymentsService,
   ) { }
 
   private async hashPassword(password: string) {
@@ -29,7 +38,37 @@ export class AuthService {
     return await argon.verify(hashedPassword, originalPassword);
   }
 
-  async register(payload: RegisterDto) {
+  async generateToken(
+    user: Pick<User, 'id' | 'role'>,
+    accessTokenOnly?: boolean
+  ) {
+    const tokens: { accessToken?: string, refreshToken?: string } = {
+      accessToken: undefined,
+      refreshToken: undefined,
+    };
+
+    tokens.accessToken = await this.jwtService.signAsync(
+      {
+        id: user.id,
+        role: user.role,
+      },
+      JWTAccessOptions,
+    );
+    if (!accessTokenOnly) {
+      tokens.refreshToken = await this.jwtService.signAsync(
+        {
+          id: user.id,
+        },
+        JWTRefreshOptions,
+      );
+    } else {
+      delete tokens.refreshToken;
+    }
+
+    return tokens;
+  }
+
+  async register(payload: RegisterDto, courseId: number) {
     const existing = await this.prisma.user.findFirst({
       where: {
         phone: payload.phone,
@@ -41,6 +80,19 @@ export class AuthService {
         "Bunday raqamli foydalanuvchi allaqachon mavjud!",
       );
     }
+
+    const redisKey = `reg_${payload.phone}`;
+    const storedOtp = await this.redisService.get(redisKey);
+    if (!storedOtp || storedOtp !== payload.otp) {
+      throw new HttpException(
+        'Noto\'g\'ri yoki muddati o\'tgan tasdiqlash kodi',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    
+
+    // Delete OTP after successful verification to prevent reuse
+    await this.redisService.del(redisKey);
 
     const hashedPassword = await this.hashPassword(payload.password);
 
@@ -55,10 +107,27 @@ export class AuthService {
 
     const { password, ...result } = user;
 
-    return {
-      success: true,
-      data: result,
-    };
+    try {
+      const { course } = await this.payments.checkCoursePurchased(courseId, user.id);
+
+      await this.prisma.payments.create({
+        data: {
+          courseId,
+          userId: user.id,
+          amount: Number(course.price),
+        }
+      })
+
+      return this.generateToken(user);
+    } catch (error) {
+      await this.prisma.user.delete({ where: { id: user.id } })
+      throw error
+    }
+
+    // return {
+    //   success: true,
+    //   data: result,
+    // };
   }
 
   async login(payload: LoginDto) {
@@ -85,8 +154,8 @@ export class AuthService {
 
     return {
       success: true,
-      access_token: this.jwtService.sign({id:existing.id, role:existing.role},{secret:process.env.SECRET_KEY}),
-      data: result,
+      access_token: await this.generateToken(result),
+      data: result
     };
   }
 

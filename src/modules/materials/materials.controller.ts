@@ -29,7 +29,7 @@ export class MaterialsController {
 
   @Get()
   @Roles(UserRoles.SUPERADMIN)
-  @ApiBearerAuth("access-token")
+  @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "SUPERADMIN - Barcha materiallarni olish" })
   findAll() {
@@ -38,7 +38,7 @@ export class MaterialsController {
 
   @Get(":id")
   @Roles(UserRoles.SUPERADMIN)
-  @ApiBearerAuth("access-token")
+  @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "SUPERADMIN - Materialni id bo'yicha olish" })
   findOne(@Param("id", ParseIntPipe) id: number) {
@@ -47,7 +47,7 @@ export class MaterialsController {
 
   @Post()
   @Roles(UserRoles.SUPERADMIN)
-  @ApiBearerAuth("access-token")
+  @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "SUPERADMIN - Material yaratish" })
   @ApiConsumes("multipart/form-data")
@@ -73,7 +73,7 @@ export class MaterialsController {
 
   @Patch(":id")
   @Roles(UserRoles.SUPERADMIN)
-  @ApiBearerAuth("access-token")
+  @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "SUPERADMIN - Materialni tahrirlash" })
   @ApiConsumes("multipart/form-data")
@@ -100,7 +100,7 @@ export class MaterialsController {
 
   @Delete(":id")
   @Roles(UserRoles.SUPERADMIN)
-  @ApiBearerAuth("access-token")
+  @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "SUPERADMIN - Material o'chirish" })
   remove(@Param("id", ParseIntPipe) id: number) {

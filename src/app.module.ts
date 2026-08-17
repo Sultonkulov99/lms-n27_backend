@@ -17,6 +17,8 @@ import { HomeworksModule } from "./modules/homeworks/homeworks.module";
 import { StudentsModule } from "./modules/students/students.module";
 import { PaymentsModule } from "./modules/payments/payments.module";
 import { ExamModule } from "./modules/exam/exam.module";
+import { RedisModule } from "./common/redis/redis.module";
+import { BotModule } from "./modules/telegram/bot.module";
 import { ServeStaticModule } from "@nestjs/serve-static";
 import { join } from "path";
 
@@ -48,6 +50,8 @@ import { join } from "path";
     StudentsModule,
     PaymentsModule,
     ExamModule,
+    RedisModule,
+    BotModule,
   ],
 })
-export class AppModule {}
+export class AppModule { }

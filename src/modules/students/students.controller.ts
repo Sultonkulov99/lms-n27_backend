@@ -12,8 +12,8 @@ export class StudentController {
     constructor(private readonly service: StudentService) {}
 
     @Get()
-    @Roles(UserRoles.ADMIN)
-    @ApiBearerAuth('access-token')
+    @Roles(UserRoles.SUPERADMIN)
+    @ApiBearerAuth('accessToken')
     @UseGuards(JwtAuthGuard, RolesGuard)
     @ApiOperation({ summary: "Faqat ADMIN - Barcha studentlarni olish" })
     async getAllStudents() {
@@ -22,7 +22,7 @@ export class StudentController {
 
     @Patch(":id")
     @Roles(UserRoles.ADMIN)
-    @ApiBearerAuth('access-token')
+    @ApiBearerAuth('accessToken')
     @UseGuards(JwtAuthGuard, RolesGuard)
     @ApiOperation({ summary: "Faqat ADMIN - Studentbi tahrirlash" })
     async updateStudent(@Param("id") id: number, @Body() payload: UpdateStudentDto) {
@@ -31,7 +31,7 @@ export class StudentController {
 
     @Delete(":id")
     @Roles(UserRoles.ADMIN)
-    @ApiBearerAuth('access-token')
+    @ApiBearerAuth('accessToken')
     @UseGuards(JwtAuthGuard, RolesGuard)
     @ApiOperation({ summary: "Faqat ADMIN - Studentni o'chiradi" })
     async deleteStudent(@Param("id") id: number) {

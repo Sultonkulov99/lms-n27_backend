@@ -25,7 +25,7 @@ export class SectionsController {
 
   @Get()
   @Roles(UserRoles.SUPERADMIN)
-  @ApiBearerAuth("access-token")
+  @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "SUPERADMIN - Barcha bo'limlarni olish" })
   findAll() {
@@ -34,7 +34,7 @@ export class SectionsController {
 
   @Get(":id")
   @Roles(UserRoles.SUPERADMIN)
-  @ApiBearerAuth("access-token")
+  @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "SUPERADMIN - Bo'limni id bo'yicha olish" })
   findOne(@Param("id", ParseIntPipe) id: number) {
@@ -43,7 +43,7 @@ export class SectionsController {
 
   @Post()
   @Roles(UserRoles.SUPERADMIN)
-  @ApiBearerAuth("access-token")
+  @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "SUPERADMIN - Yangi bo'lim yaratish" })
   create(@Body() dto: CreateSectionDto) {
@@ -52,7 +52,7 @@ export class SectionsController {
 
   @Patch(":id")
   @Roles(UserRoles.SUPERADMIN)
-  @ApiBearerAuth("access-token")
+  @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "SUPERADMIN - Bo'limni tahrirlash" })
   update(@Param("id", ParseIntPipe) id: number, @Body() dto: UpdateSectionDto) {
@@ -61,7 +61,7 @@ export class SectionsController {
 
   @Delete(":id")
   @Roles(UserRoles.SUPERADMIN)
-  @ApiBearerAuth("access-token")
+  @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "SUPERADMIN - Bo'limni o'chirish" })
   remove(@Param("id", ParseIntPipe) id: number) {

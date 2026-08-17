@@ -1,27 +1,53 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { HttpException, HttpStatus, Injectable, NotFoundException } from "@nestjs/common";
 import { CreatePaymentDto } from "./dto/create-payment.dto";
 import { UpdatePaymentDto } from "./dto/update-payment.dto";
 import { PrismaService } from "src/core/database/prisma.service";
 
 @Injectable()
 export class PaymentsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
+
+  async checkCoursePurchased(courseId: number, userId: number) {
+    const course = await this.prisma.courses.findUnique({
+      where: {
+        id: courseId,
+      },
+    });
+    if (!course) {
+      throw new HttpException('Course not found', HttpStatus.NOT_FOUND);
+    }
+    const purchased = await this.prisma.payments.findFirst({
+      where: {
+        courseId: courseId,
+        userId: userId,
+      },
+    });
+    if (purchased) {
+      throw new HttpException(
+        'This course already purchased',
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+    return { purchased, course };
+  }
 
   async create(payload: CreatePaymentDto) {
-    const payment = await this.prisma.payments.create({
-      data: payload,
-      include: { course: true, user: true },
+    const { course } = await this.checkCoursePurchased(
+      payload.courseId,
+      payload.userId,
+    );
+    return this.prisma.payments.create({
+      data: {
+        courseId: payload.courseId,
+        userId: payload.userId,
+        amount: Number(course.price),
+      },
     });
-
-    return {
-      success: true,
-      data: true,
-    };
   }
 
   async findAll() {
     const payments = await this.prisma.payments.findMany({
-      include: { course: true, user: true},
+      include: { course: true, user: true },
       orderBy: { created_at: "desc" },
     });
 

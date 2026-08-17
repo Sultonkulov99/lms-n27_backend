@@ -12,6 +12,6 @@ export const config = new DocumentBuilder()
       description: "JWT Superadmin tokenini kiriting",
       in: "header",
     },
-    "access-token",
+    "accessToken",
   )
   .build();
