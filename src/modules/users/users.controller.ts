@@ -32,10 +32,10 @@ export class UsersController {
   constructor(private readonly service: UsersService) {}
 
   @Get("admin")
-  @Roles(UserRoles.SUPERADMIN)
-  @ApiBearerAuth("access-token")
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: "Faqat SUPERADMIN" })
+  // @Roles(UserRoles.SUPERADMIN)
+  // @ApiBearerAuth("access-token")
+  // @UseGuards(JwtAuthGuard, RolesGuard)
+  // @ApiOperation({ summary: "Faqat SUPERADMIN" })
   async getAllAdmins() {
     return await this.service.getAllAdmins();
   }

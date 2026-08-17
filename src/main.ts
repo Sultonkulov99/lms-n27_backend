@@ -3,9 +3,11 @@ import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 import { config } from './common/config/swagger';
 import { ValidationPipe } from '@nestjs/common';
+import { NestExpressApplication } from '@nestjs/platform-express';
+import { join } from 'node:path';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create<NestExpressApplication>(AppModule);
 
 
   app.setGlobalPrefix('api/v1');
@@ -24,6 +26,21 @@ async function bootstrap() {
     },
   });
 
-  await app.listen(3000,"0.0.0.0");
+  app.useStaticAssets(
+    join(process.cwd(), "uploads"),
+    {
+      prefix: "/uploads/",
+    },
+  );
+
+  app.enableCors({
+    origin: [
+      "http://localhost:3000",
+      "http://10.10.1.163:3000",
+    ],
+    credentials: true,
+  });
+
+  await app.listen(4000,"0.0.0.0");
 }
 bootstrap();

@@ -57,8 +57,11 @@ export class CoursesService {
       return await this.prisma.courses.create({
         data: {
           ...rest,
-          banner: bannerFile.path,
-          introVideo: introVideoFile?.path,
+          // Multer path o'rniga to'g'ri web URL formatida saqlaymiz:
+          banner: `/uploads/banners/${bannerFile.filename}`,
+          introVideo: introVideoFile
+            ? `/uploads/videos/${introVideoFile.filename}`
+            : null,
         },
         include: { categories: true },
       });
@@ -91,18 +94,27 @@ export class CoursesService {
         where: { id },
         data: {
           ...rest,
-          ...(bannerFile && { banner: bannerFile.path }),
-          ...(introVideoFile && { introVideo: introVideoFile.path }),
+          ...(bannerFile && {
+            banner: `/uploads/banners/${bannerFile.filename}`,
+          }),
+          ...(introVideoFile && {
+            introVideo: `/uploads/videos/${introVideoFile.filename}`,
+          }),
         },
         include: { categories: true },
       });
 
-      const oldFiles: Express.Multer.File[] = [];
-      if (bannerFile && existing.banner)
-        oldFiles.push({ path: existing.banner } as any);
-      if (introVideoFile && existing.introVideo)
-        oldFiles.push({ path: existing.introVideo } as any);
-      if (oldFiles.length) await this.deleteUploadedFiles(oldFiles);
+      // Yangi fayl kelganda eski fayllarni diskdan tozalash
+      const oldPaths: string[] = [];
+      if (bannerFile && existing.banner) {
+        oldPaths.push(`.${existing.banner}`); // Masalan: ./uploads/banners/filename.png
+      }
+      if (introVideoFile && existing.introVideo) {
+        oldPaths.push(`.${existing.introVideo}`);
+      }
+      if (oldPaths.length) {
+        await this.deleteFilesByPath(oldPaths);
+      }
 
       return updated;
     } catch (error) {
@@ -138,6 +150,20 @@ export class CoursesService {
               console.error(`Faylni o'chirib bo'lmadi: ${f.path}`, err.message),
             ),
         ),
+    );
+  }
+  private async deleteFilesByPath(paths: string[]) {
+    await Promise.all(
+      paths.map((filePath) =>
+        fs
+          .unlink(filePath)
+          .catch((err) =>
+            console.error(
+              `Eski faylni o'chirib bo'lmadi: ${filePath}`,
+              err.message,
+            ),
+          ),
+      ),
     );
   }
 }

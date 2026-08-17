@@ -13,7 +13,7 @@ import * as bcrypt from "bcrypt";
 
 @Injectable()
 export class UsersService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async getAllAdmins() {
     const admins = await this.prisma.user.findMany({
@@ -79,9 +79,7 @@ export class UsersService {
     });
 
     if (existingUser) {
-      throw new ConflictException(
-        "Bu telefon raqami allaqachon ro'yxatdan o'tgan",
-      );
+      throw new ConflictException("Bu telefon raqami allaqachon ro'yxatdan o'tgan");
     }
 
     const hashedPassword = await bcrypt.hash(payload.password, 10);
@@ -139,13 +137,9 @@ export class UsersService {
     };
   }
 
-  async deleteAdmin(id: number) {
-    const existingAdmin = await this.prisma.user.findFirst({
-      where: {
-        id,
-        role: UserRoles.ADMIN,
-      },
-    });
+
+    async deleteAdmin(id: number) {
+    const existingAdmin = await this.prisma.user.findFirst({ where: { id } });
 
     if (!existingAdmin) throw new NotFoundException("Admin is not found");
 
@@ -156,6 +150,7 @@ export class UsersService {
       data: existingAdmin,
     };
   }
+
 
   private generateFileName(file: Express.Multer.File) {
     const ext = file?.originalname?.split(".")?.at(-1);
