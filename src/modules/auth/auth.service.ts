@@ -89,6 +89,7 @@ export class AuthService {
         HttpStatus.BAD_REQUEST,
       );
     }
+    
 
     // Delete OTP after successful verification to prevent reuse
     await this.redisService.del(redisKey);
