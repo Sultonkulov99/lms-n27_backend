@@ -9,6 +9,12 @@ import { CreateCourseDto } from "./dto/create-course.dto";
 import { UpdateCourseDto } from "./dto/update-course.dto";
 import * as fs from "fs/promises";
 import { CourseFiles } from "./courses.controller";
+import { UserRoles } from "@prisma/client";
+
+export interface Current {
+  id: number;
+  role: UserRoles;
+}
 
 @Injectable()
 export class CoursesService {
@@ -18,7 +24,7 @@ export class CoursesService {
     return this.prisma.courses.findMany({
       skip: (page - 1) * limit,
       take: limit,
-      include: { categories: true },
+      include: { categories: true, users: true, sections: true },
       orderBy: { created_at: "desc" },
     });
   }
@@ -26,7 +32,7 @@ export class CoursesService {
   async findOne(id: number) {
     const course = await this.prisma.courses.findUnique({
       where: { id },
-      include: { categories: true, sections: true },
+      include: { categories: true, sections: true, users: true },
     });
 
     if (!course) throw new NotFoundException(`Kurs topilmadi (id: ${id})`);
@@ -34,7 +40,7 @@ export class CoursesService {
     return course;
   }
 
-  async create(dto: CreateCourseDto, files: CourseFiles) {
+  async create(dto: CreateCourseDto, files: CourseFiles, user: Current) {
     const bannerFile = files.banner?.[0];
     const introVideoFile = files.introVideo?.[0];
 
@@ -57,7 +63,7 @@ export class CoursesService {
       return await this.prisma.courses.create({
         data: {
           ...rest,
-          // Multer path o'rniga to'g'ri web URL formatida saqlaymiz:
+          teacherId: user.id,
           banner: `/uploads/banners/${bannerFile.filename}`,
           introVideo: introVideoFile
             ? `/uploads/videos/${introVideoFile.filename}`
@@ -71,7 +77,12 @@ export class CoursesService {
     }
   }
 
-  async update(id: number, dto: UpdateCourseDto, files: CourseFiles) {
+  async update(
+    id: number,
+    dto: UpdateCourseDto,
+    files: CourseFiles,
+    user: Current,
+  ) {
     const existing = await this.findOne(id);
     const bannerFile = files?.banner?.[0];
     const introVideoFile = files?.introVideo?.[0];
@@ -104,10 +115,9 @@ export class CoursesService {
         include: { categories: true },
       });
 
-      // Yangi fayl kelganda eski fayllarni diskdan tozalash
       const oldPaths: string[] = [];
       if (bannerFile && existing.banner) {
-        oldPaths.push(`.${existing.banner}`); // Masalan: ./uploads/banners/filename.png
+        oldPaths.push(`.${existing.banner}`);
       }
       if (introVideoFile && existing.introVideo) {
         oldPaths.push(`.${existing.introVideo}`);

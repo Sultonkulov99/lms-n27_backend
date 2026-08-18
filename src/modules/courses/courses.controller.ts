@@ -23,12 +23,13 @@ import {
 import { CoursesService } from "./courses.service";
 import { CreateCourseDto } from "./dto/create-course.dto";
 import { UpdateCourseDto } from "./dto/update-course.dto";
-import { UserRoles } from "@prisma/client";
+import { User, UserRoles } from "@prisma/client";
 import { Roles } from "src/common/decorators/roles.decorator";
 import { JwtAuthGuard } from "src/common/guards/jwt-auth.guard";
 import { RolesGuard } from "src/common/guards/roles.guard";
 import { FileFieldsInterceptor } from "@nestjs/platform-express";
 import { courseFileFilter, courseFileStorage } from "./courses.multer";
+import { CurrentUser } from "src/common/decorators/current-user.decorator";
 
 const fileInterceptor = FileFieldsInterceptor(
   [
@@ -63,7 +64,7 @@ export class CoursesController {
   }
 
   @Post()
-  @Roles(UserRoles.SUPERADMIN)
+  @Roles(UserRoles.SUPERADMIN, UserRoles.MENTOR)
   @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "SUPERADMIN - Yangi kurs yaratish" })
@@ -71,15 +72,19 @@ export class CoursesController {
   @ApiExtraModels(CreateCourseDto)
   @ApiBody({ type: CreateCourseDto })
   @UseInterceptors(fileInterceptor)
-  create(@Body() dto: CreateCourseDto, @UploadedFiles() files: CourseFiles) {
+  create(
+    @Body() dto: CreateCourseDto,
+    @UploadedFiles() files: CourseFiles,
+    @CurrentUser() user: { id: number; role: UserRoles },
+  ) {
     if (!files?.banner?.[0]) {
       throw new BadRequestException("Banner majburiy");
     }
-    return this.coursesService.create(dto, files);
+    return this.coursesService.create(dto, files, user);
   }
 
   @Patch(":id")
-  @Roles(UserRoles.SUPERADMIN)
+  @Roles(UserRoles.SUPERADMIN, UserRoles.MENTOR)
   @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "SUPERADMIN - Kursni tahrirlash" })
@@ -91,12 +96,13 @@ export class CoursesController {
     @Param("id", ParseIntPipe) id: number,
     @Body() dto: UpdateCourseDto,
     @UploadedFiles() files: CourseFiles,
+    @CurrentUser() user: { id: number; role: UserRoles },
   ) {
-    return this.coursesService.update(id, dto, files);
+    return this.coursesService.update(id, dto, files, user);
   }
 
   @Delete(":id")
-  @Roles(UserRoles.SUPERADMIN)
+  @Roles(UserRoles.SUPERADMIN, UserRoles.MENTOR)
   @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "SUPERADMIN - Kursni o'chirish" })
