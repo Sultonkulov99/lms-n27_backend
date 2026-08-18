@@ -19,6 +19,7 @@ import { PaymentsModule } from "./modules/payments/payments.module";
 import { ExamModule } from "./modules/exam/exam.module";
 import { ServeStaticModule } from "@nestjs/serve-static";
 import { join } from "path";
+import { AssistantsModule } from "./modules/assistants/assistants.module";
 
 
 @Module({
@@ -42,6 +43,7 @@ import { join } from "path";
     CoursesModule,
     SectionsModule,
     LessonsModule,
+    AssistantsModule,
     CourseAssistantModule,
     CommentsModule,
     HomeworksModule,
