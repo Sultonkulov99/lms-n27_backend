@@ -23,46 +23,56 @@ export class MentorController {
   constructor(private mentorService: MentorService) {}
 
   @Get()
-  @Roles(UserRoles.SUPERADMIN)
+  @Roles(UserRoles.SUPERADMIN,
+    UserRoles.ADMIN
+  )
   @ApiBearerAuth("access-token")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: "SUPERADMIN - Get All Mentor" })
+  @ApiOperation({ summary: "SUPERADMIN, Admin - Get All Mentor" })
   getAll() {
     return this.mentorService.getAll();
   }
 
   @Get(":id")
-  @Roles(UserRoles.SUPERADMIN)
+  @Roles(UserRoles.SUPERADMIN,
+    UserRoles.ADMIN
+  )
   @ApiBearerAuth("access-token")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: "SUPERADMIN - Get One Mentor" })
+  @ApiOperation({ summary: "SUPERADMIN, Admin - Get One Mentor" })
   getOne(@Param("id") id: string) {
     return this.mentorService.getOne(Number(id));
   }
 
   @Post()
-  @Roles(UserRoles.SUPERADMIN)
+  @Roles(UserRoles.SUPERADMIN,
+    UserRoles.ADMIN
+  )
   @ApiBearerAuth("access-token")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: "SUPERADMIN - Create Mentor" })
+  @ApiOperation({ summary: "SUPERADMIN, Admin- Create Mentor" })
   create(@Body() dto: CreateMentorDto) {
     return this.mentorService.create(dto);
   }
 
   @Patch(":id")
-  @Roles(UserRoles.SUPERADMIN)
+  @Roles(UserRoles.SUPERADMIN,
+    UserRoles.ADMIN
+  )
   @ApiBearerAuth("access-token")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: "SUPERADMIN - Update Mentor" })
+  @ApiOperation({ summary: "SUPERADMIN, Admin - Update Mentor" })
   update(@Param("id") id: string, @Body() dto: UpdateMentorDto) {
     return this.mentorService.update(Number(id), dto);
   }
 
   @Delete(":id")
-  @Roles(UserRoles.SUPERADMIN)
+  @Roles(UserRoles.SUPERADMIN,
+    UserRoles.ADMIN
+  )
   @ApiBearerAuth("access-token")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: "SUPERADMIN - Delete Mentor" })
+  @ApiOperation({ summary: "SUPERADMIN, Admin - Delete Mentor" })
   remove(@Param("id") id: string) {
     return this.mentorService.remove(Number(id));
   }
