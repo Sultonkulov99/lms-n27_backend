@@ -69,7 +69,12 @@ export class CoursesService {
             ? `/uploads/videos/${introVideoFile.filename}`
             : null,
         },
-        include: { categories: true },
+        include: {
+          categories: true,
+          user: true,
+          payments: true,
+          sections: true,
+        },
       });
     } catch (error) {
       await this.deleteUploadedFiles([bannerFile, introVideoFile]);
@@ -105,6 +110,7 @@ export class CoursesService {
         where: { id },
         data: {
           ...rest,
+          teacherId: user.id,
           ...(bannerFile && {
             banner: `/uploads/banners/${bannerFile.filename}`,
           }),
@@ -112,7 +118,12 @@ export class CoursesService {
             introVideo: `/uploads/videos/${introVideoFile.filename}`,
           }),
         },
-        include: { categories: true },
+        include: {
+          categories: true,
+          user: true,
+          sections: true,
+          payments: true,
+        },
       });
 
       const oldPaths: string[] = [];
