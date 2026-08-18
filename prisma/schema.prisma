@@ -50,6 +50,7 @@ model User {
   payments         Payments[]
   examAttempts     ExamAttempts[]
   examResults      ExamResults[]
+  courses          Courses[]
 }
 
 model MentorProfile {
@@ -90,6 +91,7 @@ model Categories {
 
 model Courses {
   id          Int         @id @default(autoincrement())
+  teacherId   Int?
   banner      String
   introVideo  String?
   name        String
@@ -100,6 +102,7 @@ model Courses {
   created_at  DateTime    @default(now())
   updated_at  DateTime    @updatedAt
 
+  user       User?      @relation(fields: [teacherId], references: [id])
   categories Categories @relation(fields: [categoryId], references: [id])
   sections   Sections[]
   payments   Payments[]
