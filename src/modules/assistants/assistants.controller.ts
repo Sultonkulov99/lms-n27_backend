@@ -10,8 +10,8 @@ import {
   UseGuards,
   UseInterceptors,
 } from "@nestjs/common";
-import { UsersService } from "./users.service";
-import { CreateUserDto } from "./dto/create-user.dto";
+import { AssistantsService } from "./assistants.service";
+import { CreateAssistantDto } from "./dto/create-assistant.dto";
 import {
   ApiBearerAuth,
   ApiConsumes,
@@ -25,31 +25,23 @@ import { RolesGuard } from "src/common/guards/roles.guard";
 import { UserRoles } from "@prisma/client";
 import { diskStorage } from "multer";
 import { extname } from "path";
-import { UpdateUserDto } from "./dto/update-user.dto";
+import { UpdateAssistantDto } from "./dto/update-assistant.dto";
 
+@ApiTags('Assistants')
 @Controller("user")
-export class UsersController {
-  constructor(private readonly service: UsersService) {}
+export class AssistantsController {
+  constructor(private readonly service: AssistantsService) {}
 
-  @Get("admin")
+  @Get("assistant")
   @Roles(UserRoles.SUPERADMIN)
   @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "Faqat SUPERADMIN" })
-  async getAllAdmins() {
-    return await this.service.getAllAdmins();
+  async getAllAssistants() {
+    return await this.service.getAllAssistants();
   }
 
-  @Get("dashboard")
-  @Roles(UserRoles.SUPERADMIN)
-  @ApiBearerAuth("accessToken")
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: "Faqat SUPERADMIN" })
-  async getCountByRoleAndCoursess() {
-    return await this.service.getCountByRolesAndCourses();
-  }
-
-  @Post("admin")
+  @Post("assistant")
   @Roles(UserRoles.SUPERADMIN)
   @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -68,14 +60,14 @@ export class UsersController {
       limits: { fileSize: 5 * 1024 * 1024 },
     }),
   )
-  async createAdmin(
-    @Body() payload: CreateUserDto,
+  async createAssistant(
+    @Body() payload: CreateAssistantDto,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    return await this.service.createAdmin(payload, file);
+    return await this.service.createAssistant(payload, file);
   }
 
-  @Patch("admin/:id")
+  @Patch("assistant/:id")
   @Roles(UserRoles.SUPERADMIN)
   @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -94,20 +86,20 @@ export class UsersController {
       limits: { fileSize: 5 * 1024 * 1024 },
     }),
   )
-  async updateAdmin(
+  async updateAssistant(
     @Param("id") id: number,
-    @Body() payload: UpdateUserDto,
+    @Body() payload: UpdateAssistantDto,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    return await this.service.updateAdmin(id, payload, file);
+    return await this.service.updateAssistant(id, payload, file);
   }
 
-  @Delete("admin/:id")
+  @Delete("assistant/:id")
   @Roles(UserRoles.SUPERADMIN)
   @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "Faqat SUPERADMIN" })
-  async deleteAdmin(@Param("id") id: number) {
-    return await this.service.deleteAdmin(id);
+  async deleteAssistant(@Param("id") id: number) {
+    return await this.service.deleteAssistant(id);
   }
 }

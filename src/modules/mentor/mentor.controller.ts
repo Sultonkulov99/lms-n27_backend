@@ -23,21 +23,17 @@ export class MentorController {
   constructor(private mentorService: MentorService) {}
 
   @Get()
-  @Roles(UserRoles.SUPERADMIN,
-    UserRoles.ADMIN
-  )
-  @ApiBearerAuth("access-token")
+  @Roles(UserRoles.SUPERADMIN)
+  @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: "SUPERADMIN, Admin - Get All Mentor" })
+  @ApiOperation({ summary: "SUPERADMIN - Get All Mentor" })
   getAll() {
     return this.mentorService.getAll();
   }
 
   @Get(":id")
-  @Roles(UserRoles.SUPERADMIN,
-    UserRoles.ADMIN
-  )
-  @ApiBearerAuth("access-token")
+  @Roles(UserRoles.SUPERADMIN)
+  @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "SUPERADMIN, Admin - Get One Mentor" })
   getOne(@Param("id") id: string) {
@@ -45,10 +41,8 @@ export class MentorController {
   }
 
   @Post()
-  @Roles(UserRoles.SUPERADMIN,
-    UserRoles.ADMIN
-  )
-  @ApiBearerAuth("access-token")
+  @Roles(UserRoles.SUPERADMIN)
+  @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "SUPERADMIN, Admin- Create Mentor" })
   create(@Body() dto: CreateMentorDto) {
@@ -56,21 +50,20 @@ export class MentorController {
   }
 
   @Patch(":id")
-  @Roles(UserRoles.SUPERADMIN,
-    UserRoles.ADMIN
-  )
-  @ApiBearerAuth("access-token")
+  @Roles(UserRoles.SUPERADMIN)
+  @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "SUPERADMIN, Admin - Update Mentor" })
-  update(@Param("id") id: string, @Body() dto: UpdateMentorDto) {
+  update(
+    @Param("id") id: string,
+    @Body() dto: UpdateMentorDto,
+  ) {
     return this.mentorService.update(Number(id), dto);
   }
 
   @Delete(":id")
-  @Roles(UserRoles.SUPERADMIN,
-    UserRoles.ADMIN
-  )
-  @ApiBearerAuth("access-token")
+  @Roles(UserRoles.SUPERADMIN)
+  @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "SUPERADMIN, Admin - Delete Mentor" })
   remove(@Param("id") id: string) {

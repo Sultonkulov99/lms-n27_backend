@@ -17,8 +17,11 @@ import { HomeworksModule } from "./modules/homeworks/homeworks.module";
 import { StudentsModule } from "./modules/students/students.module";
 import { PaymentsModule } from "./modules/payments/payments.module";
 import { ExamModule } from "./modules/exam/exam.module";
+import { RedisModule } from "./common/redis/redis.module";
+import { BotModule } from "./modules/telegram/bot.module";
 import { ServeStaticModule } from "@nestjs/serve-static";
 import { join } from "path";
+import { AssistantsModule } from "./modules/assistants/assistants.module";
 
 
 @Module({
@@ -42,12 +45,15 @@ import { join } from "path";
     CoursesModule,
     SectionsModule,
     LessonsModule,
+    AssistantsModule,
     CourseAssistantModule,
     CommentsModule,
     HomeworksModule,
     StudentsModule,
     PaymentsModule,
     ExamModule,
+    RedisModule,
+    BotModule,
   ],
 })
-export class AppModule {}
+export class AppModule { }

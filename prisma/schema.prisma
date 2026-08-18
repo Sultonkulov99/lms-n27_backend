@@ -35,15 +35,15 @@ enum AttemptStatus {
 }
 
 model User {
-  id         Int       @id @default(autoincrement())
-  fullName   String
-  phone      String    @unique
-  password   String
-  file       String?
-  email      String?
-  role       UserRoles
-  created_at DateTime  @default(now())
-  updated_at DateTime  @updatedAt
+  id               Int               @id @default(autoincrement())
+  fullName         String
+  phone            String            @unique
+  password         String
+  file             String?
+  email            String?
+  role             UserRoles
+  created_at       DateTime          @default(now())
+  updated_at       DateTime          @updatedAt
   mentor           MentorProfile[]
   courseAssistants CourseAssistant[]
   exams            Exams[]
@@ -81,11 +81,11 @@ model CourseAssistant {
 }
 
 model Categories {
-  id         Int      @id @default(autoincrement())
+  id         Int       @id @default(autoincrement())
   name       String
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-  courses Courses[]
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  courses    Courses[]
 }
 
 model Courses {
@@ -125,12 +125,12 @@ model Lessons {
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
 
-  sections  Sections    @relation(fields: [sectionId], references: [id])
-  materials Materials[]
-  homeworks Homeworks[]
-  exams     Exams[]
-  examAttempts ExamAttempts[] 
-  examResults ExamResults[]
+  sections     Sections       @relation(fields: [sectionId], references: [id])
+  materials    Materials[]
+  homeworks    Homeworks[]
+  exams        Exams[]
+  examAttempts ExamAttempts[]
+  examResults  ExamResults[]
 }
 
 model Materials {
@@ -168,8 +168,8 @@ model Exams {
   created_at DateTime   @default(now())
   updated_at DateTime   @updatedAt
 
-  lessons Lessons @relation(fields: [lessonId], references: [id])
-  user    User    @relation(fields: [userId], references: [id])
+  lessons Lessons       @relation(fields: [lessonId], references: [id])
+  user    User          @relation(fields: [userId], references: [id])
   answers ExamAnswers[]
 }
 
@@ -191,6 +191,7 @@ model ExamAttempts {
 
   @@unique([lessonId, userId])
 }
+
 model ExamAnswers {
   id         Int        @id @default(autoincrement())
   attemptId  Int
@@ -215,15 +216,15 @@ model Comments {
 }
 
 model Payments {
-  id Int @id @default(autoincrement())
-  userId Int 
-  courseId Int
-  amount BigInt
-  status Boolean @default(true)
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  courseId   Int
+  amount     Decimal?
+  status     Boolean  @default(true)
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
-  user    User    @relation(fields: [userId], references: [id])
+  user   User    @relation(fields: [userId], references: [id])
   course Courses @relation(fields: [courseId], references: [id])
 }
 
@@ -236,8 +237,7 @@ model ExamResults {
   isPassed      Boolean  @default(false)
   created_at    DateTime @default(now())
   updated_at    DateTime @updatedAt
-  
-  user          User     @relation(fields: [userId], references: [id])
-  lessons       Lessons  @relation(fields: [lessonId], references: [id])
+
+  user    User    @relation(fields: [userId], references: [id])
+  lessons Lessons @relation(fields: [lessonId], references: [id])
 }
- 

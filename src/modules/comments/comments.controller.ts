@@ -19,7 +19,7 @@ export class CommentsController {
     }
 
     @Roles(UserRoles.SUPERADMIN, UserRoles.ADMIN)
-    @ApiBearerAuth("access-token")
+    @ApiBearerAuth("accessToken")
     @UseGuards(JwtAuthGuard, RolesGuard)
     @Get()
     @ApiOperation({
@@ -31,7 +31,7 @@ export class CommentsController {
 
     @Get(":id")
     @Roles(UserRoles.SUPERADMIN, UserRoles.ADMIN)
-    @ApiBearerAuth("access-token")
+    @ApiBearerAuth("accessToken")
     @UseGuards(JwtAuthGuard, RolesGuard)
     @ApiOperation({
         summary: "Faqat SUPERADMIN va ADMIN -commentlarni id bo'yicha ko'rish",
@@ -45,7 +45,7 @@ export class CommentsController {
     })
     @Put(":id")
     @Roles(UserRoles.SUPERADMIN, UserRoles.ADMIN)
-    @ApiBearerAuth("access-token")
+    @ApiBearerAuth("accessToken")
     @UseGuards(JwtAuthGuard, RolesGuard)
     update(@Param("id") id: string, @Body() dto: UpdateCommentsDto) {
         return this.commentsService.update(+id, dto);
@@ -53,7 +53,7 @@ export class CommentsController {
 
     @Delete(":id")
     @Roles(UserRoles.SUPERADMIN, UserRoles.ADMIN)
-    @ApiBearerAuth("access-token")
+    @ApiBearerAuth("accessToken")
     @UseGuards(JwtAuthGuard, RolesGuard)
     @ApiOperation({
         summary: "Faqat SUPERADMIN va ADMIN - Commentlarni o'chirish",
