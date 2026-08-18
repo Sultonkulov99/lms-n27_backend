@@ -23,6 +23,8 @@ services:
     build: .
     container_name: lms_n27_app
     restart: always
+    volumes:
+      - /opt/lms/uploads:/app/uploads
     env_file:
       - .env
     ports:
