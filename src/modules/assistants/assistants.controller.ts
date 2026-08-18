@@ -34,7 +34,7 @@ export class AssistantsController {
 
   @Get("assistant")
   @Roles(UserRoles.SUPERADMIN)
-  @ApiBearerAuth("access-token")
+  @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "Faqat SUPERADMIN" })
   async getAllAssistants() {
@@ -43,7 +43,7 @@ export class AssistantsController {
 
   @Post("assistant")
   @Roles(UserRoles.SUPERADMIN)
-  @ApiBearerAuth("access-token")
+  @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiConsumes("multipart/form-data")
   @ApiOperation({ summary: "Faqat SUPERADMIN" })
@@ -69,7 +69,7 @@ export class AssistantsController {
 
   @Patch("assistant/:id")
   @Roles(UserRoles.SUPERADMIN)
-  @ApiBearerAuth("access-token")
+  @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiConsumes("multipart/form-data")
   @ApiOperation({ summary: "Faqat SUPERADMIN" })
@@ -96,7 +96,7 @@ export class AssistantsController {
 
   @Delete("assistant/:id")
   @Roles(UserRoles.SUPERADMIN)
-  @ApiBearerAuth("access-token")
+  @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "Faqat SUPERADMIN" })
   async deleteAssistant(@Param("id") id: number) {
