@@ -23,7 +23,7 @@ export class StudentController {
 
     @Get("my-courses")
     @Roles(UserRoles.STUDENT)
-    @ApiBearerAuth('access-token')
+    @ApiBearerAuth('accessToken')
     @UseGuards(JwtAuthGuard, RolesGuard)
     @ApiOperation({ summary: "Faqat STUDENT - o'zi to'lagan kurslarni olish" })
     async getMyCourses(@CurrentUser() user: { id: number }) {
