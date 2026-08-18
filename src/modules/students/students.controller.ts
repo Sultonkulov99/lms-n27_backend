@@ -13,7 +13,7 @@ export class StudentController {
     constructor(private readonly service: StudentService) { }
 
     @Get()
-    @Roles(UserRoles.SUPERADMIN)
+    @Roles(UserRoles.SUPERADMIN , UserRoles.ADMIN)
     @ApiBearerAuth('accessToken')
     @UseGuards(JwtAuthGuard, RolesGuard)
     @ApiOperation({ summary: "Faqat ADMIN - Barcha studentlarni olish" })
@@ -21,9 +21,10 @@ export class StudentController {
         return await this.service.getAllStudents();
     }
 
+
     @Get("my-courses")
-    @Roles(UserRoles.STUDENT)
-    @ApiBearerAuth('access-token')
+    @Roles(UserRoles.STUDENT , UserRoles.SUPERADMIN)
+    @ApiBearerAuth('accessToken')
     @UseGuards(JwtAuthGuard, RolesGuard)
     @ApiOperation({ summary: "Faqat STUDENT - o'zi to'lagan kurslarni olish" })
     async getMyCourses(@CurrentUser() user: { id: number }) {
@@ -31,7 +32,7 @@ export class StudentController {
     }
 
     @Patch(":id")
-    @Roles(UserRoles.ADMIN)
+    @Roles(UserRoles.ADMIN , UserRoles.SUPERADMIN , UserRoles.STUDENT)
     @ApiBearerAuth('accessToken')
     @UseGuards(JwtAuthGuard, RolesGuard)
     @ApiOperation({ summary: "Faqat ADMIN - Studentbi tahrirlash" })
@@ -40,7 +41,7 @@ export class StudentController {
     }
 
     @Delete(":id")
-    @Roles(UserRoles.ADMIN)
+    @Roles(UserRoles.ADMIN , UserRoles.SUPERADMIN)
     @ApiBearerAuth('accessToken')
     @UseGuards(JwtAuthGuard, RolesGuard)
     @ApiOperation({ summary: "Faqat ADMIN - Studentni o'chiradi" })
