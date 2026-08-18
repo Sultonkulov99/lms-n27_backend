@@ -9,7 +9,7 @@ import { PrismaService } from "src/core/database/prisma.service";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
 import { randomUUID } from "node:crypto";
-import * as bcrypt from "bcrypt";
+import * as argon from "argon2"
 
 @Injectable()
 export class UsersService {
@@ -82,7 +82,7 @@ export class UsersService {
       throw new ConflictException("Bu telefon raqami allaqachon ro'yxatdan o'tgan");
     }
 
-    const hashedPassword = await bcrypt.hash(payload.password, 10);
+    const hashedPassword = await argon.hash(payload.password);
 
     try {
       const newAdmin = await this.prisma.user.create({
@@ -126,7 +126,7 @@ export class UsersService {
       where: { id },
       data: {
         ...rest,
-        ...(password && { password: await bcrypt.hash(password, 10) }),
+        ...(password && { password: await argon.hash(password) }),
         ...(file && { file: file.filename }),
       },
     });
