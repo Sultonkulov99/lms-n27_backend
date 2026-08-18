@@ -73,7 +73,6 @@ export class UsersService {
     };
   }
 
-
   async createAdmin(payload: CreateUserDto, file?: Express.Multer.File) {
     const existingUser = await this.prisma.user.findFirst({
       where: { phone: payload.phone },
@@ -96,7 +95,7 @@ export class UsersService {
       });
 
       return { success: true, data: newAdmin };
-    } catch (error) {
+    } catch (error: any) {
       if (error.code === "P2002") {
         throw new ConflictException("Bu telefon raqami allaqachon band");
       }

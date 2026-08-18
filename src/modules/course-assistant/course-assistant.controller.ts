@@ -4,8 +4,8 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Post,
-  Put,
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -51,7 +51,7 @@ export class CourseAssistantController {
     return this.courseAssistantService.findOne(+id);
   }
 
-  @Put(':id')
+  @Patch(':id')
   @Roles(UserRoles.SUPERADMIN)
   @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
