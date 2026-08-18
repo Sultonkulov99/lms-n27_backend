@@ -31,7 +31,7 @@ export class ExamController {
   constructor(private examService: ExamService) {}
 
   @Get()
-  @ApiBearerAuth("access-token")
+  @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: "Get all exams (optionally by lessonId)" })
   @ApiQuery({ name: "lessonId", required: false, type: Number })
@@ -43,7 +43,7 @@ export class ExamController {
   }
 
   @Get(":id")
-  @ApiBearerAuth("access-token")
+  @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: "Get one exam by id" })
   getOne(@Param("id", ParseIntPipe) id: number) {
@@ -52,7 +52,7 @@ export class ExamController {
 
   @Post()
   @Roles(UserRoles.SUPERADMIN)
-  @ApiBearerAuth("access-token")
+  @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "SUPERADMIN - Create exam" })
   create(@Body() dto: CreateExamDto, @Req() req) {
@@ -61,7 +61,7 @@ export class ExamController {
 
   @Patch(":id")
   @Roles(UserRoles.SUPERADMIN)
-  @ApiBearerAuth("access-token")
+  @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "SUPERADMIN - Update exam" })
   update(@Param("id", ParseIntPipe) id: number, @Body() dto: UpdateExamDto) {
@@ -70,7 +70,7 @@ export class ExamController {
 
   @Delete(":id")
   @Roles(UserRoles.SUPERADMIN)
-  @ApiBearerAuth("access-token")
+  @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "SUPERADMIN - Delete exam" })
   remove(@Param("id", ParseIntPipe) id: number) {

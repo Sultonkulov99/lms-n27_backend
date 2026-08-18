@@ -64,7 +64,7 @@ export class CoursesController {
 
   @Post()
   @Roles(UserRoles.SUPERADMIN)
-  @ApiBearerAuth("access-token")
+  @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "SUPERADMIN - Yangi kurs yaratish" })
   @ApiConsumes("multipart/form-data")
@@ -80,7 +80,7 @@ export class CoursesController {
 
   @Patch(":id")
   @Roles(UserRoles.SUPERADMIN)
-  @ApiBearerAuth("access-token")
+  @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "SUPERADMIN - Kursni tahrirlash" })
   @ApiConsumes("multipart/form-data")
@@ -97,7 +97,7 @@ export class CoursesController {
 
   @Delete(":id")
   @Roles(UserRoles.SUPERADMIN)
-  @ApiBearerAuth("access-token")
+  @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "SUPERADMIN - Kursni o'chirish" })
   remove(@Param("id", ParseIntPipe) id: number) {
