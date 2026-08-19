@@ -1,0 +1,105 @@
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  UploadedFile,
+  UseGuards,
+  UseInterceptors,
+} from "@nestjs/common";
+import { AssistantsService } from "./assistants.service";
+import { CreateAssistantDto } from "./dto/create-assistant.dto";
+import {
+  ApiBearerAuth,
+  ApiConsumes,
+  ApiOperation,
+  ApiTags,
+} from "@nestjs/swagger";
+import { FileInterceptor } from "@nestjs/platform-express";
+import { Roles } from "src/common/decorators/roles.decorator";
+import { JwtAuthGuard } from "src/common/guards/jwt-auth.guard";
+import { RolesGuard } from "src/common/guards/roles.guard";
+import { UserRoles } from "@prisma/client";
+import { diskStorage } from "multer";
+import { extname } from "path";
+import { UpdateAssistantDto } from "./dto/update-assistant.dto";
+
+@ApiTags('Assistants')
+@Controller("user")
+export class AssistantsController {
+  constructor(private readonly service: AssistantsService) {}
+
+  @Get("assistant")
+  @Roles(UserRoles.SUPERADMIN)
+  @ApiBearerAuth("accessToken")
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiOperation({ summary: "Faqat SUPERADMIN" })
+  async getAllAssistants() {
+    return await this.service.getAllAssistants();
+  }
+
+  @Post("assistant")
+  @Roles(UserRoles.SUPERADMIN)
+  @ApiBearerAuth("accessToken")
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiConsumes("multipart/form-data")
+  @ApiOperation({ summary: "Faqat SUPERADMIN" })
+  @UseInterceptors(
+    FileInterceptor("file", {
+      storage: diskStorage({
+        destination: "./uploads/avatars",
+        filename: (req, file, callback) => {
+          const uniqueSuffix =
+            Date.now() + "-" + Math.round(Math.random() * 1e9);
+          callback(null, `${uniqueSuffix}${extname(file.originalname)}`);
+        },
+      }),
+      limits: { fileSize: 5 * 1024 * 1024 },
+    }),
+  )
+  async createAssistant(
+    @Body() payload: CreateAssistantDto,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    return await this.service.createAssistant(payload, file);
+  }
+
+  @Patch("assistant/:id")
+  @Roles(UserRoles.SUPERADMIN)
+  @ApiBearerAuth("accessToken")
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiConsumes("multipart/form-data")
+  @ApiOperation({ summary: "Faqat SUPERADMIN" })
+  @UseInterceptors(
+    FileInterceptor("file", {
+      storage: diskStorage({
+        destination: "./uploads/avatars",
+        filename: (req, file, callback) => {
+          const uniqueSuffix =
+            Date.now() + "-" + Math.round(Math.random() * 1e9);
+          callback(null, `${uniqueSuffix}${extname(file.originalname)}`);
+        },
+      }),
+      limits: { fileSize: 5 * 1024 * 1024 },
+    }),
+  )
+  async updateAssistant(
+    @Param("id") id: number,
+    @Body() payload: UpdateAssistantDto,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    return await this.service.updateAssistant(id, payload, file);
+  }
+
+  @Delete("assistant/:id")
+  @Roles(UserRoles.SUPERADMIN)
+  @ApiBearerAuth("accessToken")
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiOperation({ summary: "Faqat SUPERADMIN" })
+  async deleteAssistant(@Param("id") id: number) {
+    return await this.service.deleteAssistant(id);
+  }
+}

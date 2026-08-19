@@ -4,8 +4,8 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Post,
-  Put,
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -22,12 +22,12 @@ import { RolesGuard } from 'src/common/guards/roles.guard';
 export class CourseAssistantController {
   constructor(
     private readonly courseAssistantService: CourseAssistantService,
-  ) {}
+  ) { }
 
   @Post()
   @Roles(UserRoles.SUPERADMIN)
-    @ApiBearerAuth("accessToken")
-    @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiBearerAuth("accessToken")
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: 'SUPERADMIN - Create Course Assistant' })
   create(@Body() dto: CreateCourseAssistantDto) {
     return this.courseAssistantService.create(dto);
@@ -51,7 +51,7 @@ export class CourseAssistantController {
     return this.courseAssistantService.findOne(+id);
   }
 
-  @Put(':id')
+  @Patch(':id')
   @Roles(UserRoles.SUPERADMIN)
   @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)

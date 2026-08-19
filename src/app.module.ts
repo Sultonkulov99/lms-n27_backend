@@ -21,6 +21,7 @@ import { RedisModule } from "./common/redis/redis.module";
 import { BotModule } from "./modules/telegram/bot.module";
 import { ServeStaticModule } from "@nestjs/serve-static";
 import { join } from "path";
+import { AssistantsModule } from "./modules/assistants/assistants.module";
 
 
 @Module({
@@ -44,6 +45,7 @@ import { join } from "path";
     CoursesModule,
     SectionsModule,
     LessonsModule,
+    AssistantsModule,
     CourseAssistantModule,
     CommentsModule,
     HomeworksModule,
