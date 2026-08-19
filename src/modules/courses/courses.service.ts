@@ -63,7 +63,7 @@ export class CoursesService {
       return await this.prisma.courses.create({
         data: {
           ...rest,
-          teacherId: user.id,
+          teacherId: dto.teacherId !== undefined ? dto.teacherId : null,
           banner: `/uploads/banners/${bannerFile.filename}`,
           introVideo: introVideoFile
             ? `/uploads/videos/${introVideoFile.filename}`
@@ -110,7 +110,7 @@ export class CoursesService {
         where: { id },
         data: {
           ...rest,
-          teacherId: user.id,
+          ...(dto.teacherId !== undefined && { teacherId: dto.teacherId }),
           ...(bannerFile && {
             banner: `/uploads/banners/${bannerFile.filename}`,
           }),
@@ -148,8 +148,9 @@ export class CoursesService {
     const existing = await this.findOne(id);
 
     try {
-      return await this.prisma.courses.delete({
+      return await this.prisma.courses.update({
         where: { id },
+        data: { status: 'INACTIVE' },
       });
     } catch (error) {
       throw new ConflictException(

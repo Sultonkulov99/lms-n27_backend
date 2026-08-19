@@ -149,8 +149,9 @@ export class MentorService {
       throw new NotFoundException("Mentor not found");
     }
 
-    await this.prisma.user.delete({
+    await this.prisma.user.update({
       where: { id },
+      data: { status: 'INACTIVE' },
     });
 
     return {
