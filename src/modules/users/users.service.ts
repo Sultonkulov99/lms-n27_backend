@@ -24,6 +24,7 @@ export class UsersService {
         phone: true,
         file: true,
         role: true,
+        status: true,
         created_at: true,
         updated_at: true,
       },
