@@ -244,3 +244,13 @@ model ExamResults {
   user    User    @relation(fields: [userId], references: [id])
   lessons Lessons @relation(fields: [lessonId], references: [id])
 }
+
+model Notification {
+  id         Int      @id @default(autoincrement())
+  title      String
+  message    String
+  type       String   @default("COMMENT")
+  isRead     Boolean  @default(false)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+}

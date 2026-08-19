@@ -5,15 +5,28 @@ import {
 import { PrismaService } from "src/core/database/prisma.service";
 import { CreateCommentsDto } from "./dto/create-comments";
 import { UpdateCommentsDto } from "./dto/update-comments";
+import { NotificationsService } from "../notifications/notifications.service";
 
 @Injectable()
 export class CommentsService {
-    constructor(private readonly prisma: PrismaService) {}
+    constructor(
+        private readonly prisma: PrismaService,
+        private readonly notificationsService: NotificationsService
+    ) {}
 
     async create(dto: CreateCommentsDto) {
-        return await this.prisma.comments.create({
+        const comment = await this.prisma.comments.create({
             data: dto,
         });
+
+        // Emit notification
+        await this.notificationsService.create(
+            "Yangi xabar",
+            `${dto.fullName} qoldirdi: ${dto.message.substring(0, 50)}${dto.message.length > 50 ? '...' : ''}`,
+            "COMMENT"
+        );
+
+        return comment;
     }
 
     async findAll() {
