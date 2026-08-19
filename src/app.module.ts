@@ -23,6 +23,7 @@ import { ServeStaticModule } from "@nestjs/serve-static";
 import { join } from "path";
 import { AssistantsModule } from "./modules/assistants/assistants.module";
 import { NotificationsModule } from './modules/notifications/notifications.module';
+import { CourseCommentsModule } from './modules/course-comments/course-comments.module';
 
 
 @Module({
@@ -56,6 +57,7 @@ import { NotificationsModule } from './modules/notifications/notifications.modul
     RedisModule,
     BotModule,
     NotificationsModule,
+    CourseCommentsModule,
   ],
 })
 export class AppModule { }
