@@ -90,10 +90,57 @@ export class StudentService {
 
         if (!ExistingStudent) throw new NotFoundException("Student is not found")
 
-        await this.prisma.user.delete({ where: { id } })
+        try {
+            // Delete related records in the correct order (respecting foreign keys)
+            
+            // 1. Delete exam answers (depends on examAttempts)
+            await this.prisma.examAnswers.deleteMany({
+                where: {
+                    attempt: {
+                        userId: id
+                    }
+                }
+            });
 
-        return {
-            success: true,
+            // 2. Delete exam attempts
+            await this.prisma.examAttempts.deleteMany({
+                where: { userId: id }
+            });
+
+            // 3. Delete exam results
+            await this.prisma.examResults.deleteMany({
+                where: { userId: id }
+            });
+
+            // 4. Delete exams created by this user
+            await this.prisma.exams.deleteMany({
+                where: { userId: id }
+            });
+
+            // 5. Delete payments
+            await this.prisma.payments.deleteMany({
+                where: { userId: id }
+            });
+
+            // 6. Delete course assistants
+            await this.prisma.courseAssistant.deleteMany({
+                where: { userId: id }
+            });
+
+            // 7. Delete mentor profile if exists
+            await this.prisma.mentorProfile.deleteMany({
+                where: { userId: id }
+            });
+
+            // 8. Finally delete the user
+            await this.prisma.user.delete({ where: { id } })
+
+            return {
+                success: true,
+                message: "Student successfully deleted with all related records"
+            }
+        } catch (error) {
+            throw new Error(`Failed to delete student: ${error.message}`)
         }
     }
 
@@ -106,10 +153,7 @@ export class StudentService {
             userId,
             status: true,
         },
-        select: {
-            id: true,
-            amount: true,
-            created_at: true,
+        include: {
             course: {
                 select: {
                     id: true,
@@ -127,12 +171,25 @@ export class StudentService {
         orderBy: { created_at: "desc" },
     });
 
-    const courses = payments.map((p) => p.course);
+    const myCourses = payments.map((payment) => ({
+        course: {
+            id: payment.course.id,
+            title: payment.course.name,
+            description: payment.course.description,
+            thumbnail: payment.course.banner,
+            categoryId: payment.course.categories?.id,
+            category: {
+                id: payment.course.categories?.id,
+                name: payment.course.categories?.name,
+            },
+            createdAt: payment.created_at.toISOString(),
+            updatedAt: payment.created_at.toISOString(),
+        },
+        progress: 0, // Yoki ExamAttempts'dan hisoblash mumkin
+        lastAccessedAt: payment.created_at.toISOString(),
+    }));
 
-    return {
-        success: true,
-        courses,
-    };
+    return myCourses;
 }
 
 }
