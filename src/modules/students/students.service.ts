@@ -16,6 +16,7 @@ export class StudentService {
                 fullName: true,
                 phone: true,
                 role: true,
+                status: true,
                 created_at: true,
                 updated_at: true,
             }
@@ -35,6 +36,7 @@ export class StudentService {
                 fullName: true,
                 phone: true,
                 role: true,
+                status: true,
                 created_at: true,
                 updated_at: true,
             },
@@ -79,69 +81,16 @@ export class StudentService {
         if (!ExistingStudent) throw new NotFoundException("Student is not found")
 
         try {
-            // Delete related records in the correct order (respecting foreign keys)
-            
-            // 1. Delete exam answers first (has foreign keys to both examAttempts and exams)
-            await this.prisma.examAnswers.deleteMany({
-                where: {
-                    OR: [
-                        {
-                            attempt: {
-                                userId: id
-                            }
-                        },
-                        {
-                            exam: {
-                                userId: id
-                            }
-                        }
-                    ]
-                }
+            await this.prisma.user.update({ 
+                where: { id },
+                data: { status: 'INACTIVE' }
             });
-
-            // 2. Delete exam attempts
-            await this.prisma.examAttempts.deleteMany({
-                where: { userId: id }
-            });
-
-            // 3. Delete exam results
-            await this.prisma.examResults.deleteMany({
-                where: { userId: id }
-            });
-
-            // 4. Delete exams created by this user
-            await this.prisma.exams.deleteMany({
-                where: { userId: id }
-            });
-
-            // 5. Delete payments
-            await this.prisma.payments.deleteMany({
-                where: { userId: id }
-            });
-
-            // 6. Delete courses created by this user (teacher)
-            await this.prisma.courses.deleteMany({
-                where: { teacherId: { equals: id } }
-            });
-
-            // 7. Delete course assistants
-            await this.prisma.courseAssistant.deleteMany({
-                where: { userId: id }
-            });
-
-            // 8. Delete mentor profile if exists
-            await this.prisma.mentorProfile.deleteMany({
-                where: { userId: id }
-            });
-
-            // 9. Finally delete the user
-            await this.prisma.user.delete({ where: { id } })
 
             return {
                 success: true,
-                message: "Student successfully deleted with all related records"
+                message: "Student successfully deleted (soft delete)"
             }
-        } catch (error) {
+        } catch (error: any) {
             console.error('Delete student error:', error);
             throw new Error(`Failed to delete student: ${error.message}`)
         }

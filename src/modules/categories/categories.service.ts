@@ -88,8 +88,9 @@ export class CategoriesService {
       );
     }
 
-    await this.prisma.categories.delete({
+    await this.prisma.categories.update({
       where: { id },
+      data: { status: 'INACTIVE' },
     });
 
     return {
