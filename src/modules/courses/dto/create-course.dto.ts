@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
-import { CourseLevel } from "@prisma/client";
+import { CourseLevel, Status } from "@prisma/client";
 import { Type } from "class-transformer";
 import {
   IsEnum,
@@ -55,4 +55,22 @@ export class CreateCourseDto {
   @IsPositive()
   @Type(() => Number)
   categoryId: number;
+
+  @ApiPropertyOptional({
+    example: "1",
+    description: "Mentor ID",
+  })
+  @IsOptional()
+  @IsInt()
+  @IsPositive()
+  @Type(() => Number)
+  teacherId?: number;
+
+  @ApiPropertyOptional({
+    example: "ACTIVE",
+    enum: Status,
+  })
+  @IsOptional()
+  @IsEnum(Status)
+  status?: Status;
 }

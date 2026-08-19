@@ -24,6 +24,7 @@ export class UsersService {
         phone: true,
         file: true,
         role: true,
+        status: true,
         created_at: true,
         updated_at: true,
       },
@@ -143,7 +144,7 @@ export class UsersService {
 
     if (!existingAdmin) throw new NotFoundException("Admin is not found");
 
-    await this.prisma.user.delete({ where: { id } });
+    await this.prisma.user.update({ where: { id }, data: { status: 'INACTIVE' } });
 
     return {
       success: true,
