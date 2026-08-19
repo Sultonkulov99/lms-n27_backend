@@ -34,7 +34,7 @@ export class CourseCommentsService {
     const message = `${userFullName} posted a comment on course: ${course.name}`;
 
     // Notify ALL Admins (recipientId = null)
-    await this.notificationsService.create('New Course Comment', message, 'COURSE_COMMENT', null);
+    await this.notificationsService.create('New Course Comment', message, 'COURSE_COMMENT', undefined);
 
     // Notify the Teacher specifically
     if (course.teacherId) {
