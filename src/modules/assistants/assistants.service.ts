@@ -9,7 +9,7 @@ import { PrismaService } from "src/core/database/prisma.service";
 import { CreateAssistantDto } from "./dto/create-assistant.dto";
 import { UpdateAssistantDto } from "./dto/update-assistant.dto";
 import { randomUUID } from "node:crypto";
-import * as bcrypt from "bcrypt";
+import * as argon2 from "argon2";
 
 @Injectable()
 export class AssistantsService {
@@ -49,7 +49,7 @@ export class AssistantsService {
       );
     }
 
-    const hashedPassword = await bcrypt.hash(payload.password, 10);
+    const hashedPassword = await argon2.hash(payload.password);
 
     try {
       const newAssistant = await this.prisma.user.create({
@@ -103,7 +103,7 @@ export class AssistantsService {
       where: { id },
       data: {
         ...rest,
-        ...(password && { password: await bcrypt.hash(password, 10) }),
+        ...(password && { password: await argon2.hash(password) }),
         ...(file && { file: file.filename }),
       },
     });
