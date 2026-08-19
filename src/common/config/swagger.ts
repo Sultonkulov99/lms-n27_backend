@@ -8,9 +8,7 @@ export const config = new DocumentBuilder()
       type: "http",
       scheme: "bearer",
       bearerFormat: "JWT",
-      name: "JWT",
       description: "JWT Superadmin tokenini kiriting",
-      in: "header",
     },
     "accessToken",
   )
