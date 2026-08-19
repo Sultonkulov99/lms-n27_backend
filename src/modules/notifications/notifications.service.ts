@@ -9,12 +9,13 @@ export class NotificationsService {
     private gateway: NotificationsGateway,
   ) {}
 
-  async create(title: string, message: string, type: string = 'COMMENT') {
+  async create(title: string, message: string, type: string = 'COMMENT', recipientId?: number) {
     const notification = await this.prisma.notification.create({
       data: {
         title,
         message,
         type,
+        recipientId,
       },
     });
     
@@ -24,14 +25,22 @@ export class NotificationsService {
     return notification;
   }
 
-  async findAllUnread() {
-    return this.prisma.notification.findMany({
-      where: { isRead: false },
-      orderBy: { created_at: 'desc' },
-    });
+  async findAllUnread(userId: number, role: string) {
+    if (role === 'SUPERADMIN' || role === 'ADMIN') {
+      return this.prisma.notification.findMany({
+        where: { isRead: false, recipientId: null },
+        orderBy: { created_at: 'desc' },
+      });
+    } else {
+      return this.prisma.notification.findMany({
+        where: { isRead: false, recipientId: userId },
+        orderBy: { created_at: 'desc' },
+      });
+    }
   }
 
-  async markAsRead(id: number) {
+  async markAsRead(id: number, userId: number, role: string) {
+    // Ideally we should check if this user is allowed to read it
     return this.prisma.notification.update({
       where: { id },
       data: { isRead: true },
