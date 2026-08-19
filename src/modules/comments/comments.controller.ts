@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Patch, Post, UseGuards } from "@nestjs/common";
 import { CommentsService } from "./comments.service";
 import { Roles } from "src/common/decorators/roles.decorator";
 import { UserRoles } from "@prisma/client";
@@ -43,7 +43,7 @@ export class CommentsController {
     @ApiOperation({
         summary: "Faqat SUPERADMIN va ADMIN - Commentlarni update qilish",
     })
-    @Put(":id")
+    @Patch(":id") 
     @Roles(UserRoles.SUPERADMIN, UserRoles.ADMIN)
     @ApiBearerAuth("access-token")
     @UseGuards(JwtAuthGuard, RolesGuard)
