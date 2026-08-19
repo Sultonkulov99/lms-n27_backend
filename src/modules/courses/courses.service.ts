@@ -24,7 +24,7 @@ export class CoursesService {
     return this.prisma.courses.findMany({
       skip: (page - 1) * limit,
       take: limit,
-      include: { categories: true, user: true, sections: true },
+      include: { categories: true, sections: true },
       orderBy: { created_at: "desc" },
     });
   }
@@ -32,7 +32,7 @@ export class CoursesService {
   async findOne(id: number) {
     const course = await this.prisma.courses.findUnique({
       where: { id },
-      include: { categories: true, sections: true, user: true },
+      include: { categories: true, sections: true },
     });
 
     if (!course) throw new NotFoundException(`Kurs topilmadi (id: ${id})`);
@@ -71,8 +71,6 @@ export class CoursesService {
         },
         include: {
           categories: true,
-          user: true,
-          payments: true,
           sections: true,
         },
       });
@@ -120,9 +118,7 @@ export class CoursesService {
         },
         include: {
           categories: true,
-          user: true,
           sections: true,
-          payments: true,
         },
       });
 
