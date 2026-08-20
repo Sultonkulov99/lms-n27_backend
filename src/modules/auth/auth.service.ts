@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   HttpException,
   HttpStatus,
@@ -156,7 +157,7 @@ export class AuthService {
     );
 
     if (!isSame) {
-      throw new UnauthorizedException("Parol xato");
+      throw new BadRequestException("Parol xato");
     }
 
     const { password, ...result } = existing;
