@@ -24,7 +24,7 @@ export class StudentService {
 
     return {
       success: true,
-      students,
+      data: students,
     };
   }
 
