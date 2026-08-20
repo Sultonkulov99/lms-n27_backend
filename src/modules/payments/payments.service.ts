@@ -40,6 +40,7 @@ export class PaymentsService {
     return this.prisma.payments.create({
       data: {
         courseId: payload.courseId,
+        status: true,
         userId: payload.userId,
         amount: Number(course.price),
       },
