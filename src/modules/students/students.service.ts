@@ -22,10 +22,27 @@ export class StudentService {
             }
         })
 
-        return {
-            success: true,
-            students,
-        }
+    return {
+      success: true,
+      data: students,
+    };
+  }
+
+  async getOneStudent(id: number) {
+    const student = await this.prisma.user.findUnique({
+      where: { id, role: UserRoles.STUDENT },
+      select: {
+        id: true,
+        fullName: true,
+        phone: true,
+        role: true,
+        created_at: true,
+        updated_at: true,
+      },
+    });
+
+    if (!student) {
+      throw new NotFoundException("Bunaqa student yo'q. Yana bilmadim:)!");
     }
  
     async getOneStudent(id: number) {
