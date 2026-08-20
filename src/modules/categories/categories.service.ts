@@ -8,19 +8,30 @@ export class CategoriesService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(dto: CreateCategoryDto) {
-    const category = await this.prisma.categories.create({
-      data: dto,
-    });
+    try {
+      const category = await this.prisma.categories.create({
+        data: dto,
+      });
 
-
-    return {
-      success: true,
-      data: category,
-    };
+      return {
+        success: true,
+        data: category,
+      };
+    } catch (error: any) {
+      if (error.code === 'P2002') {
+        throw new ConflictException("Bu nomdagi kategoriya allaqachon mavjud");
+      }
+      throw error;
+    }
   }
 
   async findAll() {
     const categories = await this.prisma.categories.findMany({
+      where: {
+        status: {
+          not: 'DELETED'
+        }
+      },
       include: {
         courses: true,
       },
@@ -33,8 +44,13 @@ export class CategoriesService {
   }
 
   async findOne(id: number) {
-    const category = await this.prisma.categories.findUnique({
-      where: { id },
+    const category = await this.prisma.categories.findFirst({
+      where: { 
+        id,
+        status: {
+          not: 'DELETED'
+        }
+      },
       include: {
         courses: true,
       },
@@ -57,15 +73,22 @@ export class CategoriesService {
       throw new NotFoundException("User not found");
     }
 
-    const updated = await this.prisma.categories.update({
-      where: { id },
-      data: dto,
-    });
+    try {
+      const updated = await this.prisma.categories.update({
+        where: { id },
+        data: dto,
+      });
 
-    return {
-      success: true,
-      data: updated,
-    };
+      return {
+        success: true,
+        data: updated,
+      };
+    } catch (error: any) {
+      if (error.code === 'P2002') {
+        throw new ConflictException("Bu nomdagi kategoriya allaqachon mavjud");
+      }
+      throw error;
+    }
   }
 
   async remove(id: number) {
@@ -90,7 +113,7 @@ export class CategoriesService {
 
     await this.prisma.categories.update({
       where: { id },
-      data: { status: 'INACTIVE' },
+      data: { status: 'DELETED' },
     });
 
     return {

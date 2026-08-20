@@ -15,7 +15,10 @@ export class MentorService {
 
   async getAll() {
     const mentor = await this.prisma.user.findMany({
-      where: { role: "MENTOR" },
+      where: { 
+        role: "MENTOR",
+        status: { not: 'DELETED' }
+      },
       select: {
         id: true,
         fullName: true,
@@ -155,7 +158,7 @@ export class MentorService {
 
     await this.prisma.user.update({
       where: { id },
-      data: { status: 'INACTIVE' },
+      data: { status: 'DELETED' },
     });
 
     return {
