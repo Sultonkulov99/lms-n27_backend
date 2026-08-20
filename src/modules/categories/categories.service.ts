@@ -8,21 +8,14 @@ export class CategoriesService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(dto: CreateCategoryDto) {
-    try {
-      const category = await this.prisma.categories.create({
-        data: dto,
-      });
+    const category = await this.prisma.categories.create({
+      data: dto,
+    });
 
-      return {
-        success: true,
-        data: category,
-      };
-    } catch (error: any) {
-      if (error.code === 'P2002') {
-        throw new ConflictException("Bu nomdagi kategoriya allaqachon mavjud");
-      }
-      throw error;
-    }
+    return {
+      success: true,
+      data: category,
+    };
   }
 
   async findAll() {
@@ -73,22 +66,15 @@ export class CategoriesService {
       throw new NotFoundException("User not found");
     }
 
-    try {
-      const updated = await this.prisma.categories.update({
-        where: { id },
-        data: dto,
-      });
+    const updated = await this.prisma.categories.update({
+      where: { id },
+      data: dto,
+    });
 
-      return {
-        success: true,
-        data: updated,
-      };
-    } catch (error: any) {
-      if (error.code === 'P2002') {
-        throw new ConflictException("Bu nomdagi kategoriya allaqachon mavjud");
-      }
-      throw error;
-    }
+    return {
+      success: true,
+      data: updated,
+    };
   }
 
   async remove(id: number) {

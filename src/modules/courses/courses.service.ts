@@ -86,11 +86,8 @@ export class CoursesService {
           payments: true,
         },
       });
-    } catch (error: any) {
+    } catch (error) {
       await this.deleteUploadedFiles([bannerFile, introVideoFile]);
-      if (error.code === 'P2002') {
-        throw new ConflictException("Bu nomdagi kurs allaqachon mavjud");
-      }
       throw error;
     }
   }
@@ -151,11 +148,8 @@ export class CoursesService {
       }
 
       return updated;
-    } catch (error: any) {
+    } catch (error) {
       await this.deleteUploadedFiles([bannerFile, introVideoFile]);
-      if (error.code === 'P2002') {
-        throw new ConflictException("Bu nomdagi kurs allaqachon mavjud");
-      }
       throw error;
     }
   }
