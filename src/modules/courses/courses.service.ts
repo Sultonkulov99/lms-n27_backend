@@ -24,7 +24,7 @@ export class CoursesService {
     return this.prisma.courses.findMany({
       skip: (page - 1) * limit,
       take: limit,
-      include: { categories: true, user: true, sections: true },
+      include: { categories: true, sections: true, user: true, payments: true },
       orderBy: { created_at: "desc" },
     });
   }
@@ -32,7 +32,7 @@ export class CoursesService {
   async findOne(id: number) {
     const course = await this.prisma.courses.findUnique({
       where: { id },
-      include: { categories: true, sections: true, user: true },
+      include: { categories: true, sections: true, user: true, payments: true },
     });
 
     if (!course) throw new NotFoundException(`Kurs topilmadi (id: ${id})`);
@@ -63,7 +63,7 @@ export class CoursesService {
       return await this.prisma.courses.create({
         data: {
           ...rest,
-          teacherId: user.id,
+          teacherId: dto.teacherId !== undefined ? dto.teacherId : null,
           banner: `/uploads/banners/${bannerFile.filename}`,
           introVideo: introVideoFile
             ? `/uploads/videos/${introVideoFile.filename}`
@@ -71,9 +71,9 @@ export class CoursesService {
         },
         include: {
           categories: true,
+          sections: true,
           user: true,
           payments: true,
-          sections: true,
         },
       });
     } catch (error) {
@@ -110,7 +110,7 @@ export class CoursesService {
         where: { id },
         data: {
           ...rest,
-          teacherId: user.id,
+          ...(dto.teacherId !== undefined && { teacherId: dto.teacherId }),
           ...(bannerFile && {
             banner: `/uploads/banners/${bannerFile.filename}`,
           }),
@@ -120,8 +120,8 @@ export class CoursesService {
         },
         include: {
           categories: true,
-          user: true,
           sections: true,
+          user: true,
           payments: true,
         },
       });
@@ -148,8 +148,9 @@ export class CoursesService {
     const existing = await this.findOne(id);
 
     try {
-      return await this.prisma.courses.delete({
+      return await this.prisma.courses.update({
         where: { id },
+        data: { status: 'INACTIVE' },
       });
     } catch (error) {
       throw new ConflictException(

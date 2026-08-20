@@ -1,0 +1,19 @@
+import { Controller, Get, Post, Body, Param, UseGuards, Req, ParseIntPipe } from '@nestjs/common';
+import { CourseCommentsService } from './course-comments.service';
+import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
+
+@Controller('course-comments')
+export class CourseCommentsController {
+  constructor(private readonly courseCommentsService: CourseCommentsService) {}
+
+  @UseGuards(JwtAuthGuard)
+  @Post()
+  create(@Body() body: { courseId: number; text: string }, @Req() req: any) {
+    return this.courseCommentsService.create(body.courseId, req.user.id, body.text);
+  }
+
+  @Get(':courseId')
+  findByCourseId(@Param('courseId', ParseIntPipe) courseId: number) {
+    return this.courseCommentsService.findByCourseId(courseId);
+  }
+}

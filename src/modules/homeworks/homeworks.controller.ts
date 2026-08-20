@@ -10,36 +10,61 @@ import {
   UploadedFiles,
   UseGuards,
   UseInterceptors,
-} from '@nestjs/common';
-
+} from "@nestjs/common";
 import {
   ApiBearerAuth,
   ApiBody,
   ApiConsumes,
+  ApiOperation,
   ApiTags,
-} from '@nestjs/swagger';
+} from "@nestjs/swagger";
+import { FilesInterceptor } from "@nestjs/platform-express";
+import { diskStorage } from "multer";
+import { extname } from "path";
 
-import { FilesInterceptor } from '@nestjs/platform-express';
-import { diskStorage } from 'multer';
-import { extname } from 'path';
+import { HomeworksService } from "./homeworks.service";
+import { CreateHomeworkDto } from "./dto/create-homework.dto";
+import { UpdateHomeworkDto } from "./dto/update-homework.dto";
 
-import { HomeworksService } from './homeworks.service';
-import { CreateHomeworkDto } from './dto/create-homework.dto';
-import { UpdateHomeworkDto } from './dto/update-homework.dto';
+import { JwtAuthGuard } from "src/common/guards/jwt-auth.guard";
+import { RolesGuard } from "src/common/guards/roles.guard";
+import { Roles } from "src/common/decorators/roles.decorator";
+import { UserRoles } from "@prisma/client";
 
-import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
-import { RolesGuard } from 'src/common/guards/roles.guard';
-import { Roles } from '../../common/decorators/roles.decorator';
-import { UserRoles } from '../../common/enums/user-roles.enum';
-
-@ApiTags('Homeworks')
-@ApiBearerAuth()
-@Controller('homeworks')
-@UseGuards(JwtAuthGuard, RolesGuard)
+@ApiTags("Homeworks")
+@Controller("homeworks")
 export class HomeworksController {
   constructor(
     private readonly homeworksService: HomeworksService,
   ) {}
+
+  @Get()
+  @Roles(
+    UserRoles.SUPERADMIN,
+    UserRoles.ADMIN,
+    UserRoles.MENTOR,
+  )
+  @ApiBearerAuth("access-token")
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiOperation({ summary: "SUPERADMIN - Barcha homeworkslarni olish" })
+  findAll() {
+    return this.homeworksService.findAll();
+  }
+
+  @Get(":id")
+  @Roles(
+    UserRoles.SUPERADMIN,
+    UserRoles.ADMIN,
+    UserRoles.MENTOR,
+  )
+  @ApiBearerAuth("access-token")
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiOperation({ summary: "SUPERADMIN - Homeworkni id bo'yicha olish" })
+  findOne(
+    @Param("id", ParseIntPipe) id: number,
+  ) {
+    return this.homeworksService.findOne(id);
+  }
 
   @Post()
   @Roles(
@@ -47,38 +72,41 @@ export class HomeworksController {
     UserRoles.ADMIN,
     UserRoles.MENTOR,
   )
-  @ApiConsumes('multipart/form-data')
+  @ApiBearerAuth("access-token")
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiOperation({ summary: "SUPERADMIN - Homework yaratish" })
+  @ApiConsumes("multipart/form-data")
   @ApiBody({
     schema: {
-      type: 'object',
+      type: "object",
       properties: {
         lessonId: {
-          type: 'number',
+          type: "integer",
           example: 1,
         },
         description: {
-          type: 'string',
-          example: 'Homework description',
+          type: "string",
+          example: "Homework description",
         },
         file: {
-          type: 'array',
+          type: "array",
           items: {
-            type: 'string',
-            format: 'binary',
+            type: "string",
+            format: "binary",
           },
         },
       },
-      required: ['lessonId', 'description'],
+      required: ["lessonId", "description"],
     },
   })
   @UseInterceptors(
-    FilesInterceptor('file', 10, {
+    FilesInterceptor("file", 10, {
       storage: diskStorage({
-        destination: './uploads/homeworks',
+        destination: "./uploads/homeworks",
         filename(req, file, cb) {
           const unique =
             Date.now() +
-            '-' +
+            "-" +
             Math.round(Math.random() * 100000);
 
           cb(null, unique + extname(file.originalname));
@@ -93,64 +121,43 @@ export class HomeworksController {
     return this.homeworksService.create(dto, files);
   }
 
-  @Get()
+  @Patch(":id")
   @Roles(
     UserRoles.SUPERADMIN,
     UserRoles.ADMIN,
     UserRoles.MENTOR,
   )
-  findAll() {
-    return this.homeworksService.findAll();
-  }
-
-  @Get(':id')
-  @Roles(
-    UserRoles.SUPERADMIN,
-    UserRoles.ADMIN,
-    UserRoles.MENTOR,
-  )
-  findOne(
-    @Param('id', ParseIntPipe) id: number,
-  ) {
-    return this.homeworksService.findOne(id);
-  }
-
-  
-  @Patch(':id')
-  @Roles(
-    UserRoles.SUPERADMIN,
-    UserRoles.ADMIN,
-    UserRoles.MENTOR,
-  )
-  @ApiConsumes('multipart/form-data')
+  @ApiConsumes("multipart/form-data")
   @ApiBody({
     schema: {
-      type: 'object',
+      type: "object",
       properties: {
         lessonId: {
-          type: 'number',
+          type: "integer",
+          example: 1,
         },
         description: {
-          type: 'string',
+          type: "string",
+          example: "Updated homework",
         },
         file: {
-          type: 'array',
+          type: "array",
           items: {
-            type: 'string',
-            format: 'binary',
+            type: "string",
+            format: "binary",
           },
         },
       },
     },
   })
   @UseInterceptors(
-    FilesInterceptor('file', 10, {
+    FilesInterceptor("file", 10, {
       storage: diskStorage({
-        destination: './uploads/homeworks',
+        destination: "./uploads/homeworks",
         filename(req, file, cb) {
           const unique =
             Date.now() +
-            '-' +
+            "-" +
             Math.round(Math.random() * 100000);
 
           cb(null, unique + extname(file.originalname));
@@ -159,21 +166,24 @@ export class HomeworksController {
     }),
   )
   update(
-    @Param('id', ParseIntPipe) id: number,
+    @Param("id", ParseIntPipe) id: number,
     @Body() dto: UpdateHomeworkDto,
     @UploadedFiles() files: Express.Multer.File[],
   ) {
     return this.homeworksService.update(id, dto, files);
   }
 
-  @Delete(':id')
+  @Delete(":id")
   @Roles(
     UserRoles.SUPERADMIN,
     UserRoles.ADMIN,
     UserRoles.MENTOR,
   )
+  @ApiBearerAuth("access-token")
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiOperation({ summary: "SUPERADMIN - Homeworkni o'chirish" })
   remove(
-    @Param('id', ParseIntPipe) id: number,
+    @Param("id", ParseIntPipe) id: number,
   ) {
     return this.homeworksService.remove(id);
   }
