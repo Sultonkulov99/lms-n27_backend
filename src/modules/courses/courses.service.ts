@@ -22,6 +22,11 @@ export class CoursesService {
 
   findAll(page = 1, limit = 10) {
     return this.prisma.courses.findMany({
+      where: {
+        status: {
+          not: 'DELETED',
+        },
+      },
       skip: (page - 1) * limit,
       take: limit,
       include: { categories: true, sections: true, user: true, payments: true },
@@ -30,8 +35,13 @@ export class CoursesService {
   }
 
   async findOne(id: number) {
-    const course = await this.prisma.courses.findUnique({
-      where: { id },
+    const course = await this.prisma.courses.findFirst({
+      where: { 
+        id,
+        status: {
+          not: 'DELETED'
+        }
+      },
       include: { categories: true, sections: true, user: true, payments: true },
     });
 
@@ -76,8 +86,11 @@ export class CoursesService {
           payments: true,
         },
       });
-    } catch (error) {
+    } catch (error: any) {
       await this.deleteUploadedFiles([bannerFile, introVideoFile]);
+      if (error.code === 'P2002') {
+        throw new ConflictException("Bu nomdagi kurs allaqachon mavjud");
+      }
       throw error;
     }
   }
@@ -138,8 +151,11 @@ export class CoursesService {
       }
 
       return updated;
-    } catch (error) {
+    } catch (error: any) {
       await this.deleteUploadedFiles([bannerFile, introVideoFile]);
+      if (error.code === 'P2002') {
+        throw new ConflictException("Bu nomdagi kurs allaqachon mavjud");
+      }
       throw error;
     }
   }
@@ -150,7 +166,7 @@ export class CoursesService {
     try {
       return await this.prisma.courses.update({
         where: { id },
-        data: { status: 'INACTIVE' },
+        data: { status: 'DELETED' },
       });
     } catch (error) {
       throw new ConflictException(

@@ -13,7 +13,10 @@ export class StudentService {
 
   async getAllStudents() {
     const students = await this.prisma.user.findMany({
-      where: { role: UserRoles.STUDENT },
+      where: { 
+        role: UserRoles.STUDENT,
+        status: { not: 'DELETED' }
+      },
       select: {
         id: true,
         file: true,
@@ -89,7 +92,7 @@ export class StudentService {
     try {
       await this.prisma.user.update({
         where: { id },
-        data: { status: "INACTIVE" },
+        data: { status: "DELETED" },
       });
 
       return {
