@@ -1,5 +1,6 @@
 import {
   ConflictException,
+  ForbiddenException,
   HttpException,
   HttpStatus,
   Injectable,
@@ -81,10 +82,10 @@ export class AuthService {
 
     const redisKey = `reg_${payload.phone}`;
     const storedOtp = await this.redisService.get(redisKey);
-    
+
     // Development mode - allow test OTP
     const testOtp = process.env.NODE_ENV === 'development' ? '000000' : null;
-    
+
     if (!storedOtp && !testOtp) {
       throw new HttpException(
         'Noto\'g\'ri yoki muddati o\'tgan tasdiqlash kodi',
@@ -144,6 +145,21 @@ export class AuthService {
       where: {
         phone: payload.phone,
       },
+      select: {
+        id: true,
+        fullName: true,
+        email: true,
+        phone: true,
+        password: true,
+        file: true,
+        role: true,
+        status: true,
+        payments: {
+          select: {
+            status: true
+          }
+        }
+      }
     });
 
     if (!existing) {
@@ -157,6 +173,10 @@ export class AuthService {
 
     if (!isSame) {
       throw new UnauthorizedException("Parol xato");
+    }
+
+    if (existing.role === UserRoles.STUDENT && existing.payments[0].status === false) {
+      throw new ForbiddenException();
     }
 
     const { password, ...result } = existing;
