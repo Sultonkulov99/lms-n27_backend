@@ -1,3 +1,5 @@
+import { User } from "@prisma/client";
+
 export enum UserRoles {
   SUPERADMIN = 'SUPERADMIN',
   ADMIN = 'ADMIN',
@@ -5,3 +7,5 @@ export enum UserRoles {
   ASSISTANT = 'ASSISTANT',
   STUDENT = 'STUDENT',
 }
+
+export type TAuthUser = Omit<User, 'password'>;
