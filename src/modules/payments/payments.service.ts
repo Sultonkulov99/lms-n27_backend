@@ -2,6 +2,7 @@ import { HttpException, HttpStatus, Injectable, NotFoundException } from "@nestj
 import { CreatePaymentDto } from "./dto/create-payment.dto";
 import { UpdatePaymentDto } from "./dto/update-payment.dto";
 import { PrismaService } from "src/core/database/prisma.service";
+import { Current } from "../courses/courses.service";
 
 @Injectable()
 export class PaymentsService {
@@ -57,40 +58,61 @@ export class PaymentsService {
     };
   }
 
-  async findOne(id: number) {
-    const existing = await this.prisma.payments.findUnique({
-      where: { id },
-      include: { course: true, user: true },
+  async findOne(courseId: number, userId: number) {
+    const purchased = await this.prisma.payments.findFirst({
+      where: {
+        courseId: courseId,
+        userId: userId,
+      },
     });
-
-    if (!existing) {
-      throw new NotFoundException("Payment not found");
+    if (!purchased) {
+      throw new HttpException(
+        'This course has not been purchased',
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     return {
       success: true,
-      data: existing,
+      data: purchased,
     };
   }
 
-  async update(id: number, payload: UpdatePaymentDto) {
+  async update(courseId: number, userId: number) {
     try {
-      await this.findOne(id);
+      const { data: purchased } = await this.findOne(courseId, userId)
 
-      const payment = await this.prisma.payments.update({
-        where: { id },
-        data: payload,
-        include: { course: true, user: true },
-      });
+      if (purchased.status === true) {
+        await this.prisma.payments.update({
+          where: { id: purchased.id },
+          data: { status: false },
+        });
+
+        return {
+          success: true,
+          message: "Payment status successfully updated to PENDING"
+        }
+      } else {
+        await this.prisma.payments.update({
+          where: { id: purchased.id },
+          data: { status: true },
+        });
+
+        return {
+          success: true,
+          message: "Payment status successfully updated to COMPLETED"
+        }
+      }
+
     } catch (error) {
       throw new NotFoundException("Payment not found");
     }
   }
 
-  async remove(id: number) {
+  async remove(courseId: number, user: Current) {
     try {
-      await this.findOne(id);
-      return this.prisma.payments.delete({ where: { id } });
+      const { data: purchased } = await this.findOne(courseId, user.id)
+      return this.prisma.payments.delete({ where: { id: purchased.id } });
     } catch (error) {
       throw new NotFoundException(`Payment not found`);
     }
