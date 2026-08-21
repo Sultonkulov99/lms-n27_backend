@@ -31,7 +31,7 @@ export class MaterialsController {
   @Roles(UserRoles.SUPERADMIN, UserRoles.ADMIN, UserRoles.MENTOR, UserRoles.ASSISTANT, UserRoles.STUDENT)
   @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: "SUPERADMIN - Barcha materiallarni olish" })
+  @ApiOperation({ summary: "Barcha materiallarni olish" })
   findAll() {
     return this.materialsService.findAll();
   }
@@ -40,7 +40,7 @@ export class MaterialsController {
   @Roles(UserRoles.SUPERADMIN, UserRoles.ADMIN, UserRoles.MENTOR, UserRoles.ASSISTANT, UserRoles.STUDENT)
   @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: "SUPERADMIN - Materialni id bo'yicha olish" })
+  @ApiOperation({ summary: "Materialni id bo'yicha olish" })
   findOne(@Param("id", ParseIntPipe) id: number) {
     return this.materialsService.findOne(id);
   }
@@ -49,7 +49,7 @@ export class MaterialsController {
   @Roles(UserRoles.SUPERADMIN, UserRoles.ADMIN, UserRoles.MENTOR, UserRoles.ASSISTANT)
   @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: "SUPERADMIN - Material yaratish" })
+  @ApiOperation({ summary: "Material yaratish" })
   @ApiConsumes("multipart/form-data")
   @UseInterceptors(
     FilesInterceptor("file", 10, {
@@ -75,7 +75,7 @@ export class MaterialsController {
   @Roles(UserRoles.SUPERADMIN, UserRoles.ADMIN, UserRoles.MENTOR, UserRoles.ASSISTANT)
   @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: "SUPERADMIN - Materialni tahrirlash" })
+  @ApiOperation({ summary: "Materialni tahrirlash" })
   @ApiConsumes("multipart/form-data")
   @UseInterceptors(
     FilesInterceptor("file", 10, {
@@ -102,7 +102,7 @@ export class MaterialsController {
   @Roles(UserRoles.SUPERADMIN, UserRoles.ADMIN, UserRoles.MENTOR, UserRoles.ASSISTANT)
   @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: "SUPERADMIN - Material o'chirish" })
+  @ApiOperation({ summary: "Material o'chirish" })
   remove(@Param("id", ParseIntPipe) id: number) {
     return this.materialsService.remove(id);
   }

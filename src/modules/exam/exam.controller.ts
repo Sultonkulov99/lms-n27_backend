@@ -56,7 +56,7 @@ export class ExamController {
   @Roles(UserRoles.SUPERADMIN, UserRoles.ADMIN, UserRoles.MENTOR, UserRoles.ASSISTANT)
   @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: "SUPERADMIN - Create exam" })
+  @ApiOperation({ summary: "Create exam" })
   create(@Body() dto: CreateExamDto, @Req() req) {
     return this.examService.create(dto, req.user.id);
   }
@@ -65,7 +65,7 @@ export class ExamController {
   @Roles(UserRoles.SUPERADMIN, UserRoles.ADMIN, UserRoles.MENTOR, UserRoles.ASSISTANT)
   @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: "SUPERADMIN - Update exam" })
+  @ApiOperation({ summary: "Update exam" })
   update(@Param("id", ParseIntPipe) id: number, @Body() dto: UpdateExamDto) {
     return this.examService.update(id, dto);
   }
@@ -74,7 +74,7 @@ export class ExamController {
   @Roles(UserRoles.SUPERADMIN, UserRoles.ADMIN, UserRoles.MENTOR, UserRoles.ASSISTANT)
   @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: "SUPERADMIN - Delete exam" })
+  @ApiOperation({ summary: "Delete exam" })
   remove(@Param("id", ParseIntPipe) id: number) {
     return this.examService.delete(id);
   }

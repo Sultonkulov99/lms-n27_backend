@@ -48,7 +48,7 @@ export class HomeworksController {
   )
   @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: "SUPERADMIN - Barcha homeworkslarni olish" })
+  @ApiOperation({ summary: "Barcha homeworkslarni olish" })
   findAll() {
     return this.homeworksService.findAll();
   }
@@ -63,7 +63,7 @@ export class HomeworksController {
   )
   @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: "SUPERADMIN - Homeworkni id bo'yicha olish" })
+  @ApiOperation({ summary: "Homeworkni id bo'yicha olish" })
   findOne(
     @Param("id", ParseIntPipe) id: number,
   ) {
@@ -79,7 +79,7 @@ export class HomeworksController {
   )
   @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: "SUPERADMIN - Homework yaratish" })
+  @ApiOperation({ summary: "Homework yaratish" })
   @ApiConsumes("multipart/form-data")
   @ApiBody({
     schema: {
@@ -133,6 +133,8 @@ export class HomeworksController {
     UserRoles.MENTOR,
     UserRoles.ASSISTANT,
   )
+  @ApiBearerAuth("accessToken")
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiConsumes("multipart/form-data")
   @ApiBody({
     schema: {
@@ -188,7 +190,7 @@ export class HomeworksController {
   )
   @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: "SUPERADMIN - Homeworkni o'chirish" })
+  @ApiOperation({ summary: "Homeworkni o'chirish..." })
   remove(
     @Param("id", ParseIntPipe) id: number,
   ) {
