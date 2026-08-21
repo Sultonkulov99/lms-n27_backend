@@ -14,6 +14,7 @@ export class HomeworksService {
     const homework = await this.prisma.homeworks.create({
       data: {
         lessonId: Number(dto.lessonId),
+        title: dto.title,
         description: dto.description,
         file: uploadedFiles,
       },
@@ -73,6 +74,7 @@ export class HomeworksService {
       },
       data: {
         lessonId: dto.lessonId,
+        title: dto.title,
         description: dto.description,
         ...(uploadedFiles && {
           file: uploadedFiles,
