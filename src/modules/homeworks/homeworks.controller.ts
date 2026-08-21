@@ -89,6 +89,10 @@ export class HomeworksController {
           type: "integer",
           example: 1,
         },
+        title: {
+          type: "string",
+          example: "Homework title",
+        },
         description: {
           type: "string",
           example: "Homework description",
@@ -143,6 +147,10 @@ export class HomeworksController {
         lessonId: {
           type: "integer",
           example: 1,
+        },
+        title: {
+          type: "string",
+          example: "Updated title",
         },
         description: {
           type: "string",
