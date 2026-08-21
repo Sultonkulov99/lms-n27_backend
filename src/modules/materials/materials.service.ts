@@ -56,7 +56,6 @@ export class MaterialsService {
     return this.prisma.materials.create({
       data: {
         lessonId: Number(dto.lessonId),
-        title: dto.title,
         description: dto.description,
         file: filePaths,
       },
@@ -86,7 +85,6 @@ export class MaterialsService {
     }
 
     const updateData: any = {
-      title: dto.title,
       description: dto.description,
       lessonId: dto.lessonId ? Number(dto.lessonId) : undefined,
     };

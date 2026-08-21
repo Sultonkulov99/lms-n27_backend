@@ -13,13 +13,6 @@ export class CreateMaterialDto {
   @IsNotEmpty()
   lessonId: number;
 
-  @ApiProperty({
-    example: "Material 1",
-    description: "Material title",
-  })
-  @IsString()
-  @IsNotEmpty()
-  title: string;
 
   @ApiProperty({
     example: "1-dars",
