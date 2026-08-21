@@ -190,7 +190,7 @@ export class HomeworksController {
   )
   @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: "Homeworkni o'chirish" })
+  @ApiOperation({ summary: "Homeworkni o'chirish..." })
   remove(
     @Param("id", ParseIntPipe) id: number,
   ) {
