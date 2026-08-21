@@ -93,7 +93,7 @@ model CourseAssistant {
 
 model Categories {
   id         Int       @id @default(autoincrement())
-  name       String  
+  name       String   @unique
   status     Status    @default(ACTIVE)
   created_at DateTime  @default(now())
   updated_at DateTime  @updatedAt
@@ -105,7 +105,7 @@ model Courses {
   teacherId   Int?
   banner      String
   introVideo  String?
-  name        String    
+  name        String    @unique
   description String
   level       CourseLevel
   price       Decimal
