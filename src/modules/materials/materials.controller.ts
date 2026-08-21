@@ -16,7 +16,7 @@ import { diskStorage } from "multer";
 import { extname } from "path";
 import { MaterialsService } from "./materials.service";
 import { CreateMaterialDto } from "./dto/create-material.dto";
-import { ApiBearerAuth, ApiConsumes, ApiOperation } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiConsumes, ApiOperation, ApiBody } from "@nestjs/swagger";
 import { Roles } from "src/common/decorators/roles.decorator";
 import { UserRoles } from "@prisma/client";
 import { JwtAuthGuard } from "src/common/guards/jwt-auth.guard";
@@ -51,6 +51,21 @@ export class MaterialsController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "Material yaratish" })
   @ApiConsumes("multipart/form-data")
+  @ApiBody({
+    schema: {
+      type: "object",
+      properties: {
+        lessonId: { type: "integer", example: 1 },
+        title: { type: "string", example: "Material title" },
+        description: { type: "string", example: "Material description" },
+        file: {
+          type: "array",
+          items: { type: "string", format: "binary" },
+        },
+      },
+      required: ["lessonId", "description"],
+    },
+  })
   @UseInterceptors(
     FilesInterceptor("file", 10, {
       storage: diskStorage({
@@ -77,6 +92,20 @@ export class MaterialsController {
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "Materialni tahrirlash" })
   @ApiConsumes("multipart/form-data")
+  @ApiBody({
+    schema: {
+      type: "object",
+      properties: {
+        lessonId: { type: "integer", example: 1 },
+        title: { type: "string", example: "Updated title" },
+        description: { type: "string", example: "Updated material" },
+        file: {
+          type: "array",
+          items: { type: "string", format: "binary" },
+        },
+      },
+    },
+  })
   @UseInterceptors(
     FilesInterceptor("file", 10, {
       storage: diskStorage({
