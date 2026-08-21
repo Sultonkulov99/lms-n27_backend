@@ -128,7 +128,7 @@ model Sections {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
-  courses Courses   @relation(fields: [courseId], references: [id])
+  courses Courses   @relation(fields: [courseId], references: [id], onDelete: Cascade)
   lessons Lessons[]
 }
 
@@ -141,7 +141,7 @@ model Lessons {
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
 
-  sections     Sections       @relation(fields: [sectionId], references: [id])
+  sections     Sections       @relation(fields: [sectionId], references: [id], onDelete: Cascade)
   materials    Materials[]
   homeworks    Homeworks[]
   exams        Exams[]
@@ -157,7 +157,7 @@ model Materials {
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
 
-  lessons Lessons @relation(fields: [lessonId], references: [id])
+  lessons Lessons @relation(fields: [lessonId], references: [id], onDelete: Cascade)
 }
 
 model Homeworks {
@@ -168,7 +168,7 @@ model Homeworks {
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
 
-  lessons Lessons @relation(fields: [lessonId], references: [id])
+  lessons Lessons @relation(fields: [lessonId], references: [id], onDelete: Cascade)
 }
 
 model Exams {
@@ -184,7 +184,7 @@ model Exams {
   created_at DateTime   @default(now())
   updated_at DateTime   @updatedAt
 
-  lessons Lessons       @relation(fields: [lessonId], references: [id])
+  lessons Lessons       @relation(fields: [lessonId], references: [id], onDelete: Cascade)
   user    User          @relation(fields: [userId], references: [id])
   answers ExamAnswers[]
 }
@@ -201,7 +201,7 @@ model ExamAttempts {
   started_at     DateTime      @default(now())
   finished_at    DateTime?
 
-  lesson  Lessons       @relation(fields: [lessonId], references: [id])
+  lesson  Lessons       @relation(fields: [lessonId], references: [id], onDelete: Cascade)
   user    User          @relation(fields: [userId], references: [id])
   answers ExamAnswers[]
 
@@ -216,8 +216,8 @@ model ExamAnswers {
   isCorrect  Boolean
   created_at DateTime   @default(now())
 
-  attempt ExamAttempts @relation(fields: [attemptId], references: [id])
-  exam    Exams        @relation(fields: [examId], references: [id])
+  attempt ExamAttempts @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  exam    Exams        @relation(fields: [examId], references: [id], onDelete: Cascade)
 
   @@unique([attemptId, examId])
 }
@@ -255,7 +255,7 @@ model ExamResults {
   updated_at    DateTime @updatedAt
 
   user    User    @relation(fields: [userId], references: [id])
-  lessons Lessons @relation(fields: [lessonId], references: [id])
+  lessons Lessons @relation(fields: [lessonId], references: [id], onDelete: Cascade)
 }
 
 model Notification {
