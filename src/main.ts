@@ -8,7 +8,7 @@ import cookieParser = require('cookie-parser');
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-
+  
   app.setGlobalPrefix('api/v1');
 
   app.use(cookieParser());
@@ -31,6 +31,6 @@ async function bootstrap() {
     },
   });
 
-  await app.listen(3000,"0.0.0.0");
+  await app.listen(3001,"0.0.0.0");
 }
 bootstrap();
