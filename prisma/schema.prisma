@@ -152,7 +152,6 @@ model Lessons {
 model Materials {
   id          Int      @id @default(autoincrement())
   lessonId    Int
-  title       String
   description String
   file        String[] @default([])
   created_at  DateTime @default(now())
@@ -164,7 +163,6 @@ model Materials {
 model Homeworks {
   id          Int      @id @default(autoincrement())
   lessonId    Int
-  title       String
   description String
   file        String[] @default([])
   created_at  DateTime @default(now())
