@@ -6,10 +6,9 @@ export class CreateHomeworkDto {
   @IsInt()
   lessonId: number;
 
-  @ApiProperty({ required: false })
+  @ApiProperty()
   @IsString()
-  @IsOptional()
-  title?: string;
+  title: string;
 
   @ApiProperty()
   @IsString()

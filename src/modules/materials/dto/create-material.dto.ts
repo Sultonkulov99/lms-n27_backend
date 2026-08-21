@@ -16,11 +16,9 @@ export class CreateMaterialDto {
   @ApiProperty({
     example: "Material 1",
     description: "Material title",
-    required: false,
   })
   @IsString()
-  @IsOptional()
-  title?: string;
+  title: string;
 
 
   @ApiProperty({
