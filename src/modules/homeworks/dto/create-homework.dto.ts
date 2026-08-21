@@ -11,8 +11,6 @@ export class CreateHomeworkDto {
   @IsOptional()
   title?: string;
 
-
-
   @ApiProperty()
   @IsString()
   description: string;
