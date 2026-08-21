@@ -43,8 +43,10 @@ export class HomeworksController {
     UserRoles.SUPERADMIN,
     UserRoles.ADMIN,
     UserRoles.MENTOR,
+    UserRoles.ASSISTANT,
+    UserRoles.STUDENT,
   )
-  @ApiBearerAuth("access-token")
+  @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "SUPERADMIN - Barcha homeworkslarni olish" })
   findAll() {
@@ -56,8 +58,10 @@ export class HomeworksController {
     UserRoles.SUPERADMIN,
     UserRoles.ADMIN,
     UserRoles.MENTOR,
+    UserRoles.ASSISTANT,
+    UserRoles.STUDENT,
   )
-  @ApiBearerAuth("access-token")
+  @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "SUPERADMIN - Homeworkni id bo'yicha olish" })
   findOne(
@@ -71,8 +75,9 @@ export class HomeworksController {
     UserRoles.SUPERADMIN,
     UserRoles.ADMIN,
     UserRoles.MENTOR,
+    UserRoles.ASSISTANT,
   )
-  @ApiBearerAuth("access-token")
+  @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "SUPERADMIN - Homework yaratish" })
   @ApiConsumes("multipart/form-data")
@@ -126,6 +131,7 @@ export class HomeworksController {
     UserRoles.SUPERADMIN,
     UserRoles.ADMIN,
     UserRoles.MENTOR,
+    UserRoles.ASSISTANT,
   )
   @ApiConsumes("multipart/form-data")
   @ApiBody({
@@ -178,8 +184,9 @@ export class HomeworksController {
     UserRoles.SUPERADMIN,
     UserRoles.ADMIN,
     UserRoles.MENTOR,
+    UserRoles.ASSISTANT,
   )
-  @ApiBearerAuth("access-token")
+  @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "SUPERADMIN - Homeworkni o'chirish" })
   remove(
