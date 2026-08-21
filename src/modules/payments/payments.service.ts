@@ -17,6 +17,9 @@ export class PaymentsService {
     if (!course) {
       throw new HttpException('Course not found', HttpStatus.NOT_FOUND);
     }
+    if (course.status === 'INACTIVE') {
+      throw new HttpException('Ushbu kurs nofaol holatda va uni sotib olib bo\'lmaydi', HttpStatus.BAD_REQUEST);
+    }
     const purchased = await this.prisma.payments.findFirst({
       where: {
         courseId: courseId,

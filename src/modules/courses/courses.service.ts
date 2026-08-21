@@ -20,13 +20,19 @@ export interface Current {
 export class CoursesService {
   constructor(private readonly prisma: PrismaService) {}
 
-  findAll(page = 1, limit = 10) {
-    return this.prisma.courses.findMany({
-      where: {
-        status: {
-          not: 'DELETED',
-        },
+  findAll(page = 1, limit = 10, status?: string) {
+    const whereClause: any = {
+      status: {
+        not: 'DELETED',
       },
+    };
+
+    if (status) {
+      whereClause.status = status;
+    }
+
+    return this.prisma.courses.findMany({
+      where: whereClause,
       skip: (page - 1) * limit,
       take: limit,
       include: { categories: true, sections: true, user: true, payments: true },
@@ -105,6 +111,21 @@ export class CoursesService {
     const bannerFile = files?.banner?.[0];
     const introVideoFile = files?.introVideo?.[0];
 
+    const hasStudents = await this.prisma.payments.findFirst({
+      where: { courseId: id, status: true },
+    });
+
+    if (hasStudents) {
+      const updateKeys = Object.keys(dto).filter(
+        (key) => key !== "status" && (dto as any)[key] !== undefined,
+      );
+      if (updateKeys.length > 0 || bannerFile || introVideoFile) {
+        throw new ConflictException(
+          "Bu kurs sotib olinganligi sababli, faqat uning statusini (Active/Inactive) o'zgartirish mumkin.",
+        );
+      }
+    }
+
     try {
       if (dto.categoryId) {
         const category = await this.prisma.categories.findUnique({
@@ -162,6 +183,16 @@ export class CoursesService {
 
   async remove(id: number) {
     const existing = await this.findOne(id);
+
+    const hasStudents = await this.prisma.payments.findFirst({
+      where: { courseId: id, status: true },
+    });
+
+    if (hasStudents) {
+      throw new ConflictException(
+        "Bu kurs sotib olingan va o'quvchilarga ega. O'chirishdan oldin o'quvchilarni uzishingiz kerak.",
+      );
+    }
 
     try {
       return await this.prisma.courses.update({
