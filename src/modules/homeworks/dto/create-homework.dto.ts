@@ -8,6 +8,10 @@ export class CreateHomeworkDto {
 
   @ApiProperty()
   @IsString()
+  title: string;
+
+  @ApiProperty()
+  @IsString()
   description: string;
 
   @ApiPropertyOptional({

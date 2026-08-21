@@ -16,7 +16,7 @@ import { diskStorage } from "multer";
 import { extname } from "path";
 import { MaterialsService } from "./materials.service";
 import { CreateMaterialDto } from "./dto/create-material.dto";
-import { ApiBearerAuth, ApiConsumes, ApiOperation } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiConsumes, ApiOperation, ApiBody } from "@nestjs/swagger";
 import { Roles } from "src/common/decorators/roles.decorator";
 import { UserRoles } from "@prisma/client";
 import { JwtAuthGuard } from "src/common/guards/jwt-auth.guard";
@@ -28,29 +28,44 @@ export class MaterialsController {
   constructor(private readonly materialsService: MaterialsService) {}
 
   @Get()
-  @Roles(UserRoles.SUPERADMIN)
+  @Roles(UserRoles.SUPERADMIN, UserRoles.ADMIN, UserRoles.MENTOR, UserRoles.ASSISTANT, UserRoles.STUDENT)
   @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: "SUPERADMIN - Barcha materiallarni olish" })
+  @ApiOperation({ summary: "Barcha materiallarni olish" })
   findAll() {
     return this.materialsService.findAll();
   }
 
   @Get(":id")
-  @Roles(UserRoles.SUPERADMIN)
+  @Roles(UserRoles.SUPERADMIN, UserRoles.ADMIN, UserRoles.MENTOR, UserRoles.ASSISTANT, UserRoles.STUDENT)
   @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: "SUPERADMIN - Materialni id bo'yicha olish" })
+  @ApiOperation({ summary: "Materialni id bo'yicha olish" })
   findOne(@Param("id", ParseIntPipe) id: number) {
     return this.materialsService.findOne(id);
   }
 
   @Post()
-  @Roles(UserRoles.SUPERADMIN)
+  @Roles(UserRoles.SUPERADMIN, UserRoles.ADMIN, UserRoles.MENTOR, UserRoles.ASSISTANT)
   @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: "SUPERADMIN - Material yaratish" })
+  @ApiOperation({ summary: "Material yaratish" })
   @ApiConsumes("multipart/form-data")
+  @ApiBody({
+    schema: {
+      type: "object",
+      properties: {
+        lessonId: { type: "integer", example: 1 },
+        title: { type: "string", example: "Material title" },
+        description: { type: "string", example: "Material description" },
+        file: {
+          type: "array",
+          items: { type: "string", format: "binary" },
+        },
+      },
+      required: ["lessonId", "description"],
+    },
+  })
   @UseInterceptors(
     FilesInterceptor("file", 10, {
       storage: diskStorage({
@@ -72,11 +87,25 @@ export class MaterialsController {
   }
 
   @Patch(":id")
-  @Roles(UserRoles.SUPERADMIN)
+  @Roles(UserRoles.SUPERADMIN, UserRoles.ADMIN, UserRoles.MENTOR, UserRoles.ASSISTANT)
   @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: "SUPERADMIN - Materialni tahrirlash" })
+  @ApiOperation({ summary: "Materialni tahrirlash" })
   @ApiConsumes("multipart/form-data")
+  @ApiBody({
+    schema: {
+      type: "object",
+      properties: {
+        lessonId: { type: "integer", example: 1 },
+        title: { type: "string", example: "Updated title" },
+        description: { type: "string", example: "Updated material" },
+        file: {
+          type: "array",
+          items: { type: "string", format: "binary" },
+        },
+      },
+    },
+  })
   @UseInterceptors(
     FilesInterceptor("file", 10, {
       storage: diskStorage({
@@ -99,10 +128,10 @@ export class MaterialsController {
   }
 
   @Delete(":id")
-  @Roles(UserRoles.SUPERADMIN)
+  @Roles(UserRoles.SUPERADMIN, UserRoles.ADMIN, UserRoles.MENTOR, UserRoles.ASSISTANT)
   @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: "SUPERADMIN - Material o'chirish" })
+  @ApiOperation({ summary: "Material o'chirish" })
   remove(@Param("id", ParseIntPipe) id: number) {
     return this.materialsService.remove(id);
   }
