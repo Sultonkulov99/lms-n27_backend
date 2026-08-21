@@ -105,7 +105,7 @@ export class HomeworksController {
           },
         },
       },
-      required: ["lessonId", "description"],
+      required: ["lessonId", "title", "description"],
     },
   })
   @UseInterceptors(
