@@ -26,7 +26,7 @@ export class CreateMaterialDto {
     description: "Material description",
   })
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   description: string;
 
   @ApiProperty({
