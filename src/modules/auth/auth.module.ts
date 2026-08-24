@@ -24,5 +24,6 @@ import { PaymentsService } from "../payments/payments.service";
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtAccessStrategy, TokenConfig, PaymentsService],
+  exports: [JwtModule],
 })
 export class AuthModule {}

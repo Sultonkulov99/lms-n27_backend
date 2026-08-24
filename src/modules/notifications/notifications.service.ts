@@ -9,13 +9,14 @@ export class NotificationsService {
     private gateway: NotificationsGateway,
   ) {}
 
-  async create(title: string, message: string, type: string = 'COMMENT', recipientId?: number) {
+  async create(title: string, message: string, type: string = 'COMMENT', recipientId?: number, link?: string) {
     const notification = await this.prisma.notification.create({
       data: {
         title,
         message,
         type,
         recipientId,
+        link,
       },
     });
     
