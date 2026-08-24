@@ -10,9 +10,14 @@ import { PrismaService } from "src/core/database/prisma.service";
 import { Current } from "../courses/courses.service";
 import { Status } from "@prisma/client";
 
+import { NotificationsService } from "../notifications/notifications.service";
+
 @Injectable()
 export class PaymentsService {
-  constructor(private readonly prisma: PrismaService) { }
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly notificationsService: NotificationsService
+  ) { }
 
   async checkCoursePurchased(courseId: number, userId: number) {
     const course = await this.prisma.courses.findUnique({
@@ -112,6 +117,16 @@ export class PaymentsService {
           where: { id: purchased.id },
           data: { status: true },
         });
+
+        const course = await this.prisma.courses.findUnique({ where: { id: courseId } });
+
+        await this.notificationsService.create(
+          'To\'lov qabul qilindi',
+          `Tabriklaymiz, sizning "${course?.name || 'Kurs'}" kursi uchun to'lovingiz muvaffaqiyatli qabul qilindi!`,
+          'PAYMENT_SUCCESS',
+          userId,
+          '/dashboard/courses'
+        );
 
         return {
           success: true,
