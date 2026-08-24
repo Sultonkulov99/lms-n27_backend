@@ -26,5 +26,5 @@ export class CreateUserDto {
         format: 'binary'
     })
     @IsOptional()
-    file: any;
+    file?: any;
 }

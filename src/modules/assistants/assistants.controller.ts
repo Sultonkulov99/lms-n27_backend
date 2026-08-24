@@ -99,6 +99,24 @@ export class AssistantsController {
     return await this.service.updateAssistant(id, payload, file);
   }
 
+  @Patch("assistant/:id/archive")
+  @Roles(UserRoles.SUPERADMIN)
+  @ApiBearerAuth("accessToken")
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiOperation({ summary: "Archive assistant" })
+  async archiveAssistant(@Param("id") id: number) {
+    return await this.service.archiveAssistant(id);
+  }
+
+  @Patch("assistant/:id/restore")
+  @Roles(UserRoles.SUPERADMIN)
+  @ApiBearerAuth("accessToken")
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiOperation({ summary: "Restore assistant" })
+  async restoreAssistant(@Param("id") id: number) {
+    return await this.service.restoreAssistant(id);
+  }
+
   @Delete("assistant/:id")
   @Roles(UserRoles.SUPERADMIN)
   @ApiBearerAuth("accessToken")
