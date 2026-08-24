@@ -281,9 +281,12 @@ model CourseComment {
   likes      Int      @default(0)
   courseId   Int
   userId     Int
+  parentId   Int?
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
-  course Courses @relation(fields: [courseId], references: [id])
-  user   User    @relation(fields: [userId], references: [id])
+  course  Courses         @relation(fields: [courseId], references: [id])
+  user    User            @relation(fields: [userId], references: [id])
+  parent  CourseComment?  @relation("CommentReplies", fields: [parentId], references: [id])
+  replies CourseComment[] @relation("CommentReplies")
 }
