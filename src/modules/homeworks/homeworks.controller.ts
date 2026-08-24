@@ -30,13 +30,14 @@ import { JwtAuthGuard } from "src/common/guards/jwt-auth.guard";
 import { RolesGuard } from "src/common/guards/roles.guard";
 import { Roles } from "src/common/decorators/roles.decorator";
 import { UserRoles } from "@prisma/client";
+import { CurrentUser } from "src/common/decorators/current-user.decorator";
 
 @ApiTags("Homeworks")
 @Controller("homeworks")
 export class HomeworksController {
   constructor(
     private readonly homeworksService: HomeworksService,
-  ) {}
+  ) { }
 
   @Get()
   @Roles(
@@ -53,7 +54,22 @@ export class HomeworksController {
     return this.homeworksService.findAll();
   }
 
-  @Get(":id")
+  @Get("mine")
+  @Roles(
+    UserRoles.SUPERADMIN,
+    UserRoles.ADMIN,
+    UserRoles.MENTOR,
+  )
+  @ApiBearerAuth("accessToken")
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiOperation({ summary: "Mentor ga aloqador barcha Homework'larni olish" })
+  findAllMine(
+    @CurrentUser() user: { id: number; role: UserRoles },
+  ) {
+    return this.homeworksService.findAllMine(user);
+  }
+
+  @Get(":lessonId")
   @Roles(
     UserRoles.SUPERADMIN,
     UserRoles.ADMIN,
@@ -63,11 +79,11 @@ export class HomeworksController {
   )
   @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: "Homeworkni id bo'yicha olish" })
+  @ApiOperation({ summary: "Homeworkni lesson_id bo'yicha olish" })
   findOne(
-    @Param("id", ParseIntPipe) id: number,
+    @Param("lessonId", ParseIntPipe) lessonId: number,
   ) {
-    return this.homeworksService.findOne(id);
+    return this.homeworksService.findOne(lessonId);
   }
 
   @Post()

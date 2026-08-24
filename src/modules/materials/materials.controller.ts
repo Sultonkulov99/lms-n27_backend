@@ -36,12 +36,12 @@ export class MaterialsController {
     return this.materialsService.findAll();
   }
 
-  @Get(":id")
+  @Get(":lessonId")
   @Roles(UserRoles.SUPERADMIN, UserRoles.ADMIN, UserRoles.MENTOR, UserRoles.ASSISTANT, UserRoles.STUDENT)
   @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: "Materialni id bo'yicha olish" })
-  findOne(@Param("id", ParseIntPipe) id: number) {
+  @ApiOperation({ summary: "Materialni lesson_id bo'yicha olish" })
+  findOne(@Param("lessonId", ParseIntPipe) id: number) {
     return this.materialsService.findOne(id);
   }
 
