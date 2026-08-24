@@ -9,7 +9,7 @@ export class CourseCommentsService {
     private readonly notificationsService: NotificationsService,
   ) {}
 
-  async create(courseId: number, userId: number, text: string) {
+  async create(courseId: number, userId: number, text: string, parentId?: number) {
     const course = await this.prisma.courses.findUnique({
       where: { id: courseId },
       include: { user: true }, // Include teacher info
@@ -24,6 +24,7 @@ export class CourseCommentsService {
         text,
         courseId,
         userId,
+        ...(parentId && { parentId })
       },
       include: {
         user: true,

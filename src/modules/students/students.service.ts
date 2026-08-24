@@ -156,4 +156,61 @@ export class StudentService {
 
     return myCourses;
   }
+
+  async getStudentCourseDetails(courseId: number, userId: number) {
+    const payment = await this.prisma.payments.findFirst({
+      where: {
+        userId,
+        courseId,
+        status: true,
+      }
+    });
+
+    // We allow access if they have a payment OR if they are an admin testing the endpoint (handled by RolesGuard but we check role just in case, wait, userId alone doesn't give us role here, let's just bypass payment check for now if we want, or keep it strict. I will keep it strict, but since the frontend might send an admin token, let's just check payment). 
+    // Wait, let's just query the user role.
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!payment && user?.role === UserRoles.STUDENT) {
+      throw new ConflictException("Siz ushbu kursni sotib olmagansiz!");
+    }
+
+    const course = await this.prisma.courses.findUnique({
+      where: { id: courseId },
+      include: {
+        categories: { select: { id: true, name: true } },
+        user: { select: { id: true, fullName: true, file: true } },
+        sections: {
+          include: {
+            lessons: {
+              include: {
+                materials: true,
+                homeworks: true,
+                exams: true,
+              },
+              orderBy: { id: 'asc' }
+            }
+          },
+          orderBy: { id: 'asc' }
+        },
+        courseComments: {
+          include: {
+            user: { select: { id: true, fullName: true, role: true, file: true } },
+            replies: {
+              include: {
+                user: { select: { id: true, fullName: true, role: true, file: true } }
+              },
+              orderBy: { created_at: 'asc' }
+            }
+          },
+          where: { parentId: null },
+          orderBy: { created_at: 'desc' }
+        }
+      }
+    });
+
+    if (!course) {
+      throw new NotFoundException("Kurs topilmadi");
+    }
+
+    return course;
+  }
 }

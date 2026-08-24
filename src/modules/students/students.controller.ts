@@ -31,6 +31,18 @@ export class StudentController {
         return await this.service.getMyCourses(user.id);
     }
 
+    @Get("my-courses/:courseId")
+    @Roles(UserRoles.STUDENT , UserRoles.SUPERADMIN, UserRoles.ADMIN)
+    @ApiBearerAuth('accessToken')
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @ApiOperation({ summary: "Faqat STUDENT - bitta kursning to'liq tafsilotlarini olish (darslar bilan)" })
+    async getMyCourseDetails(
+        @Param("courseId") courseId: string, 
+        @CurrentUser() user: { id: number }
+    ) {
+        return await this.service.getStudentCourseDetails(+courseId, user.id);
+    }
+
     @Patch(":id")
     @Roles(UserRoles.ADMIN , UserRoles.SUPERADMIN , UserRoles.STUDENT)
     @ApiBearerAuth('accessToken')

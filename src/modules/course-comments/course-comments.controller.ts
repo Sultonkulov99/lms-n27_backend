@@ -8,8 +8,8 @@ export class CourseCommentsController {
 
   @UseGuards(JwtAuthGuard)
   @Post()
-  create(@Body() body: { courseId: number; text: string }, @Req() req: any) {
-    return this.courseCommentsService.create(body.courseId, req.user.id, body.text);
+  create(@Body() body: { courseId: number; text: string; parentId?: number }, @Req() req: any) {
+    return this.courseCommentsService.create(body.courseId, req.user.id, body.text, body.parentId);
   }
 
   @Get(':courseId')
