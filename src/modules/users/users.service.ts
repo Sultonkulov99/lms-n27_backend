@@ -94,7 +94,7 @@ export class UsersService {
         data: {
           ...payload,
           password: hashedPassword,
-          file: file?.filename ?? "empty",
+          file: file?.filename,
           role: UserRoles.ADMIN,
         },
       });

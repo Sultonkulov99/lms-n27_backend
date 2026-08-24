@@ -58,7 +58,7 @@ export class AssistantsService {
         data: {
           ...payload,
           password: hashedPassword,
-          file: file?.filename ?? "empty",
+          file: file?.filename,
           role: UserRoles.ASSISTANT,
         },
       });
