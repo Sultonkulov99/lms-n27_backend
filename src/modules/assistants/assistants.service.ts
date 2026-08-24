@@ -1,6 +1,5 @@
 import {
   ConflictException,
-  ForbiddenException,
   Injectable,
   NotFoundException,
 } from "@nestjs/common";
@@ -137,6 +136,60 @@ export class AssistantsService {
     return {
       success: true,
       data: existingAssistant,
+    };
+  }
+
+  async archiveAssistant(id: number) {
+    const assistant = await this.prisma.user.findFirst({
+      where: {
+        id,
+        role: UserRoles.ASSISTANT,
+      },
+    });
+
+    if (!assistant) {
+      throw new NotFoundException("Assistant is not found");
+    }
+
+    const updatedAssistant = await this.prisma.user.update({
+      where: {
+        id,
+      },
+      data: {
+        status: Status.INACTIVE,
+      },
+    });
+
+    return {
+      success: true,
+      data: updatedAssistant,
+    };
+  }
+
+  async restoreAssistant(id: number) {
+    const assistant = await this.prisma.user.findFirst({
+      where: {
+        id,
+        role: UserRoles.ASSISTANT,
+      },
+    });
+
+    if (!assistant) {
+      throw new NotFoundException("Assistant is not found");
+    }
+
+    const updatedAssistant = await this.prisma.user.update({
+      where: {
+        id,
+      },
+      data: {
+        status: Status.ACTIVE,
+      },
+    });
+
+    return {
+      success: true,
+      data: updatedAssistant,
     };
   }
 
