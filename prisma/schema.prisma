@@ -114,10 +114,10 @@ model Courses {
   created_at  DateTime    @default(now())
   updated_at  DateTime    @updatedAt
 
-  user       User?      @relation(fields: [teacherId], references: [id])
-  categories Categories @relation(fields: [categoryId], references: [id])
-  sections   Sections[]
-  payments   Payments[]
+  user           User?           @relation(fields: [teacherId], references: [id])
+  categories     Categories      @relation(fields: [categoryId], references: [id])
+  sections       Sections[]
+  payments       Payments[]
   courseComments CourseComment[]
 }
 
@@ -239,6 +239,7 @@ model Payments {
   courseId   Int
   amount     Decimal?
   status     Boolean  @default(false)
+  isActive   Status   @default(INACTIVE)
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
@@ -270,7 +271,7 @@ model Notification {
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
 
-  user        User?    @relation(fields: [recipientId], references: [id])
+  user User? @relation(fields: [recipientId], references: [id])
 }
 
 model CourseComment {
@@ -282,6 +283,6 @@ model CourseComment {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
-  course     Courses  @relation(fields: [courseId], references: [id])
-  user       User     @relation(fields: [userId], references: [id])
+  course Courses @relation(fields: [courseId], references: [id])
+  user   User    @relation(fields: [userId], references: [id])
 }
