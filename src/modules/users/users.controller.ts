@@ -107,6 +107,24 @@ export class UsersController {
     return await this.service.updateAdmin(id, payload, file);
   }
 
+  @Patch("admin/:id/archive")
+  @Roles(UserRoles.SUPERADMIN)
+  @ApiBearerAuth("accessToken")
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiOperation({ summary: "Archive admin" })
+  async archiveAdmin(@Param("id") id: number) {
+    return await this.service.archiveAdmin(id);
+  }
+
+  @Patch("admin/:id/restore")
+  @Roles(UserRoles.SUPERADMIN)
+  @ApiBearerAuth("accessToken")
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiOperation({ summary: "Restore admin" })
+  async restoreAdmin(@Param("id") id: number) {
+    return await this.service.restoreAdmin(id);
+  }
+
   @Delete("admin/:id")
   @Roles(UserRoles.SUPERADMIN)
   @ApiBearerAuth("accessToken")

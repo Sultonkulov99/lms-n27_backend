@@ -59,7 +59,7 @@ export class CoursesController {
   @Get()
   findAll(
     @Query() query: PageQueryDto) {
-    return this.coursesService.findAll(query.page, query.limit, query.status);
+    return this.coursesService.findAll(query.page, query.limit, query.isActive);
   }
 
   @Get(":id")

@@ -94,7 +94,7 @@ export class UsersService {
         data: {
           ...payload,
           password: hashedPassword,
-          file: file?.filename ?? "empty",
+          file: file?.filename,
           role: UserRoles.ADMIN,
         },
       });
@@ -153,6 +153,60 @@ export class UsersService {
     return {
       success: true,
       data: existingAdmin,
+    };
+  }
+
+    async archiveAdmin(id: number) {
+    const admin = await this.prisma.user.findFirst({
+      where: {
+        id,
+        role: UserRoles.ADMIN,
+      },
+    });
+
+    if (!admin) {
+      throw new NotFoundException("Admin is not found");
+    }
+
+    const updatedAdmin = await this.prisma.user.update({
+      where: {
+        id,
+      },
+      data: {
+        status: Status.INACTIVE,
+      },
+    });
+
+    return {
+      success: true,
+      data: updatedAdmin,
+    };
+  }
+
+  async restoreAdmin(id: number) {
+    const admin = await this.prisma.user.findFirst({
+      where: {
+        id,
+        role: UserRoles.ADMIN,
+      },
+    });
+
+    if (!admin) {
+      throw new NotFoundException("Admin is not found");
+    }
+
+    const updatedAdmin = await this.prisma.user.update({
+      where: {
+        id,
+      },
+      data: {
+        status: Status.ACTIVE,
+      },
+    });
+
+    return {
+      success: true,
+      data: updatedAdmin,
     };
   }
 
