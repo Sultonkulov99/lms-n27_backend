@@ -4,8 +4,10 @@ import {
   Delete,
   Get,
   Param,
+  ParseEnumPipe,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -13,7 +15,7 @@ import { CourseAssistantService } from './course-assistant.service';
 import { CreateCourseAssistantDto } from './dto/create-course-assistant.dto';
 import { UpdateCourseAssistantDto } from './dto/update-course-assistant.dto';
 import { Roles } from 'src/common/decorators/roles.decorator';
-import { UserRoles } from '@prisma/client';
+import { Status, UserRoles } from '@prisma/client';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 
@@ -38,8 +40,11 @@ export class CourseAssistantController {
   @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: 'SUPERADMIN - Get All Course Assistants' })
-  findAll() {
-    return this.courseAssistantService.findAll();
+  findAll(
+    @Query("status", new ParseEnumPipe(Status, { optional: true }))
+    status?: Status,
+  ) {
+    return this.courseAssistantService.findAll(status);
   }
 
   @Get(':id')
