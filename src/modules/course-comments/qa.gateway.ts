@@ -41,6 +41,10 @@ export class QaGateway implements OnGatewayConnection, OnGatewayDisconnect {
     const room = `course_${data.courseId}_lesson_${data.lessonId}`;
     client.join(room);
     console.log(`Client ${client.id} joined room: ${room}`);
+    const user = (client as any).user;
+    if (user) {
+      this.server.to(room).emit('user_joined', { userId: user.id });
+    }
   }
 
   @SubscribeMessage('leave_lesson')
@@ -49,6 +53,10 @@ export class QaGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @ConnectedSocket() client: Socket,
   ) {
     const room = `course_${data.courseId}_lesson_${data.lessonId}`;
+    const user = (client as any).user;
+    if (user) {
+      this.server.to(room).emit('user_left', { userId: user.id });
+    }
     client.leave(room);
     console.log(`Client ${client.id} left room: ${room}`);
   }
@@ -95,5 +103,27 @@ export class QaGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     // Broadcast the newly created reply back to everyone in the room
     this.server.to(room).emit('new_reply', reply);
+  }
+
+  @SubscribeMessage('typing')
+  handleTyping(
+    @MessageBody() data: { courseId: number; lessonId: number; isMentor: boolean },
+    @ConnectedSocket() client: Socket,
+  ) {
+    const user = (client as any).user;
+    if (!user) return;
+    const room = `course_${data.courseId}_lesson_${data.lessonId}`;
+    this.server.to(room).emit('user_typing', { userId: user.id, isMentor: data.isMentor });
+  }
+
+  @SubscribeMessage('stop_typing')
+  handleStopTyping(
+    @MessageBody() data: { courseId: number; lessonId: number },
+    @ConnectedSocket() client: Socket,
+  ) {
+    const user = (client as any).user;
+    if (!user) return;
+    const room = `course_${data.courseId}_lesson_${data.lessonId}`;
+    this.server.to(room).emit('user_stop_typing', { userId: user.id });
   }
 }
