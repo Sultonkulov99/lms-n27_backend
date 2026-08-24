@@ -35,7 +35,8 @@ export class CourseCommentsService {
 
     const userFullName = comment.user.fullName || 'Student';
     const message = `${userFullName} posted a comment on course: ${course.name}`;
-    const link = lessonId ? `/students/${courseId}?lessonId=${lessonId}` : undefined;
+    const commentHash = `#comment-${parentId || comment.id}`;
+    const link = lessonId ? `/students/${courseId}?lessonId=${lessonId}${commentHash}` : undefined;
 
     if (parentId && comment.parent && comment.parent.userId !== userId) {
       // It's a reply to someone, notify the person who asked
@@ -61,15 +62,29 @@ export class CourseCommentsService {
 
   async findByCourseId(courseId: number) {
     return this.prisma.courseComment.findMany({
-      where: { courseId },
+      where: { courseId, parentId: null },
       include: {
         user: {
           select: {
             id: true,
             fullName: true,
             file: true,
+            role: true,
           }
         },
+        replies: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                fullName: true,
+                file: true,
+                role: true,
+              }
+            }
+          },
+          orderBy: { created_at: 'asc' }
+        }
       },
       orderBy: { created_at: 'desc' },
     });
