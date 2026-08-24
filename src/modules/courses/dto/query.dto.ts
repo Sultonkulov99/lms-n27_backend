@@ -28,5 +28,5 @@ export class PageQueryDto {
     })
     @IsOptional()
     @IsString()
-    status?: Status;
+    isActive?: Status;
 }
