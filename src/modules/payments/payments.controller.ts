@@ -36,7 +36,7 @@ export class PaymentsController {
   findAll(
     @Query() query: PageQueryDto,
   ) {
-    return this.paymentsService.findAll(query.status);
+    return this.paymentsService.findAll(query.isActive);
   }
 
   @Get(":id")
