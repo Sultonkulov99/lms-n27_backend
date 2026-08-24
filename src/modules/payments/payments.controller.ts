@@ -16,6 +16,9 @@ import { UpdatePaymentDto } from "./dto/update-payment.dto";
 import { CurrentUser } from "src/common/decorators/current-user.decorator";
 import { JwtAuthGuard } from "src/common/guards/jwt-auth.guard";
 import { Status, UserRoles } from "@prisma/client";
+import { Roles } from "src/common/decorators/roles.decorator";
+import { ApiBearerAuth } from "@nestjs/swagger";
+import { RolesGuard } from "src/common/guards/roles.guard";
 
 @UseGuards(JwtAuthGuard)
 @Controller("payments")
@@ -57,5 +60,21 @@ export class PaymentsController {
     @CurrentUser() user: { id: number; role: UserRoles },
   ) {
     return this.paymentsService.remove(id, user);
+  }
+
+  @Patch("admin/:id")
+  @Roles(UserRoles.SUPERADMIN)
+  @ApiBearerAuth("accessToken")
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  update2(@Param("id") id: string, @Body() dto: UpdatePaymentDto) {
+    return this.paymentsService.updateById(+id, dto);
+  }
+
+  @Delete("admin/:id")
+  @Roles(UserRoles.SUPERADMIN)
+  @ApiBearerAuth("accessToken")
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  remove2(@Param("id") id: string) {
+    return this.paymentsService.removeById(+id);
   }
 }

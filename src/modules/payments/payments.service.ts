@@ -23,8 +23,11 @@ export class PaymentsService {
     if (!course) {
       throw new HttpException("Course not found", HttpStatus.NOT_FOUND);
     }
-    if (course.status === 'INACTIVE') {
-      throw new HttpException('Ushbu kurs nofaol holatda va uni sotib olib bo\'lmaydi', HttpStatus.BAD_REQUEST);
+    if (course.status === "INACTIVE") {
+      throw new HttpException(
+        "Ushbu kurs nofaol holatda va uni sotib olib bo'lmaydi",
+        HttpStatus.BAD_REQUEST,
+      );
     }
     const purchased = await this.prisma.payments.findFirst({
       where: {
@@ -125,5 +128,28 @@ export class PaymentsService {
     } catch (error) {
       throw new NotFoundException(`Payment not found`);
     }
+  }
+
+  async findOneById(id: number) {
+    const payment = await this.prisma.payments.findUnique({
+      where: { id },
+      include: { course: true, user: true },
+    });
+    if (!payment) throw new NotFoundException("Payment not found");
+    return payment;
+  }
+
+  async updateById(id: number, payload: UpdatePaymentDto) {
+    await this.findOneById(id);
+    return this.prisma.payments.update({
+      where: { id },
+      data: payload,
+      include: { course: true, user: true },
+    });
+  }
+
+  async removeById(id: number) {
+    await this.findOneById(id);
+    return this.prisma.payments.delete({ where: { id } });
   }
 }

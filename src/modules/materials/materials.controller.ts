@@ -63,7 +63,7 @@ export class MaterialsController {
           items: { type: "string", format: "binary" },
         },
       },
-      required: ["lessonId", "description"],
+      required: ["lessonId", "title", "description"],
     },
   })
   @UseInterceptors(

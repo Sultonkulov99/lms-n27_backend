@@ -1,8 +1,10 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { IsInt, IsOptional, IsString } from 'class-validator';
+import { Transform } from 'class-transformer';
 
 export class CreateHomeworkDto {
   @ApiProperty()
+  @Transform(({ value }) => Number(value))
   @IsInt()
   lessonId: number;
 

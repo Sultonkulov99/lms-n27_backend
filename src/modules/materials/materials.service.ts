@@ -37,10 +37,6 @@ export class MaterialsService {
   }
 
   async create(dto: CreateMaterialDto, files: Express.Multer.File[]) {
-    if (!files || files.length === 0) {
-      throw new BadRequestException("Kamida bitta fayl yuklanishi shart");
-    }
-
     const lesson = await this.prisma.lessons.findUnique({
       where: { id: Number(dto.lessonId) },
     });
@@ -49,9 +45,9 @@ export class MaterialsService {
       throw new NotFoundException(`Dars topilmadi (id: ${dto.lessonId})`);
     }
 
-    const filePaths: string[] = files.map(
+    const filePaths: string[] = files && files.length > 0 ? files.map(
       (file) => file.path || `uploads/${file.filename}`,
-    );
+    ) : [];
 
     return this.prisma.materials.create({
       data: {

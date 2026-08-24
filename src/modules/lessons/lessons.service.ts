@@ -22,7 +22,7 @@ export class LessonsService {
 
     async findAll() {
         return this.prisma.lessons.findMany({
-            include: {sections: true , exams: true},
+            include: {sections: true , exams: true, materials: true, homeworks: true},
         });
     }
 
@@ -30,7 +30,7 @@ export class LessonsService {
     async findOne(id: number) {
         const lesson = await this.prisma.lessons.findUnique({
             where: {id},
-            include: {sections: true , exams: true},
+            include: {sections: true , exams: true, materials: true, homeworks: true},
         });
 
         if(!lesson) {
