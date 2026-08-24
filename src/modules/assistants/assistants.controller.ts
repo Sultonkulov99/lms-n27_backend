@@ -4,8 +4,10 @@ import {
   Delete,
   Get,
   Param,
+  ParseEnumPipe,
   Patch,
   Post,
+  Query,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -22,12 +24,12 @@ import { FileInterceptor } from "@nestjs/platform-express";
 import { Roles } from "src/common/decorators/roles.decorator";
 import { JwtAuthGuard } from "src/common/guards/jwt-auth.guard";
 import { RolesGuard } from "src/common/guards/roles.guard";
-import { UserRoles } from "@prisma/client";
+import { Status, UserRoles } from "@prisma/client";
 import { diskStorage } from "multer";
 import { extname } from "path";
 import { UpdateAssistantDto } from "./dto/update-assistant.dto";
 
-@ApiTags('Assistants')
+@ApiTags("Assistants")
 @Controller("user")
 export class AssistantsController {
   constructor(private readonly service: AssistantsService) {}
@@ -37,8 +39,11 @@ export class AssistantsController {
   @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "Faqat SUPERADMIN" })
-  async getAllAssistants() {
-    return await this.service.getAllAssistants();
+  async getAllAssistants(
+    @Query("status", new ParseEnumPipe(Status, { optional: true }))
+    status?: Status,
+  ) {
+    return await this.service.getAllAssistants(status);
   }
 
   @Post("assistant")

@@ -4,7 +4,7 @@ import {
   Injectable,
   NotFoundException,
 } from "@nestjs/common";
-import { UserRoles } from "@prisma/client";
+import { Status, UserRoles } from "@prisma/client";
 import { PrismaService } from "src/core/database/prisma.service";
 import { CreateUserDto } from "./dto/create-user.dto";
 import { UpdateUserDto } from "./dto/update-user.dto";
@@ -15,11 +15,12 @@ import * as argon from "argon2"
 export class UsersService {
   constructor(private readonly prisma: PrismaService) { }
 
-  async getAllAdmins() {
+  async getAllAdmins(statusParam?: Status) {
+    const status = statusParam || Status.ACTIVE;
     const admins = await this.prisma.user.findMany({
       where: { 
         role: UserRoles.ADMIN,
-        status: { not: 'DELETED' } 
+        where: { status },
       },
       select: {
         id: true,

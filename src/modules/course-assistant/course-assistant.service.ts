@@ -6,7 +6,7 @@ import {
 import { PrismaService } from "src/core/database/prisma.service";
 import { CreateCourseAssistantDto } from "./dto/create-course-assistant.dto";
 import { UpdateCourseAssistantDto } from "./dto/update-course-assistant.dto";
-import { UserRoles } from "@prisma/client";
+import { Status, UserRoles } from "@prisma/client";
 
 @Injectable()
 export class CourseAssistantService {
@@ -33,11 +33,11 @@ export class CourseAssistantService {
     });
   }
 
-  async findAll() {
+  async findAll(statusParam?: string) {
+    const status = (statusParam as Status) || Status.ACTIVE;
     return this.prisma.courseAssistant.findMany({
-      include: {
-        user: true,
-      },
+      where: { status },
+      include: { user: true },
     });
   }
 
