@@ -4,8 +4,10 @@ import {
   Delete,
   Get,
   Param,
+  ParseEnumPipe,
   Patch,
   Post,
+  Query,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -22,7 +24,7 @@ import { FileInterceptor } from "@nestjs/platform-express";
 import { Roles } from "src/common/decorators/roles.decorator";
 import { JwtAuthGuard } from "src/common/guards/jwt-auth.guard";
 import { RolesGuard } from "src/common/guards/roles.guard";
-import { UserRoles } from "@prisma/client";
+import { Status, UserRoles } from "@prisma/client";
 import { diskStorage } from "multer";
 import { extname } from "path";
 import { UpdateUserDto } from "./dto/update-user.dto";
@@ -36,8 +38,11 @@ export class UsersController {
   @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "Faqat SUPERADMIN" })
-  async getAllAdmins() {
-    return await this.service.getAllAdmins();
+  async getAllAdmins(
+    @Query("status", new ParseEnumPipe(Status, { optional: true }))
+    status?: Status,
+  ) {
+    return await this.service.getAllAdmins(status);
   }
 
   @Get("dashboard")

@@ -85,6 +85,7 @@ model CourseAssistant {
   id         Int      @id @default(autoincrement())
   courseId   Int
   userId     Int
+  status   Status   @default(ACTIVE)
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 

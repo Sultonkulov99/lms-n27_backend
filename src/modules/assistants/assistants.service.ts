@@ -4,7 +4,7 @@ import {
   Injectable,
   NotFoundException,
 } from "@nestjs/common";
-import { UserRoles } from "@prisma/client";
+import { Status, UserRoles } from "@prisma/client";
 import { PrismaService } from "src/core/database/prisma.service";
 import { CreateAssistantDto } from "./dto/create-assistant.dto";
 import { UpdateAssistantDto } from "./dto/update-assistant.dto";
@@ -15,9 +15,11 @@ import * as argon2 from "argon2";
 export class AssistantsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getAllAssistants() {
+  async getAllAssistants(statusParam?: string) {
+    const status = (statusParam as Status) || Status.ACTIVE;
+
     const assistants = await this.prisma.user.findMany({
-      where: { role: UserRoles.ASSISTANT },
+      where: { role: UserRoles.ASSISTANT, status },
       select: {
         id: true,
         fullName: true,
