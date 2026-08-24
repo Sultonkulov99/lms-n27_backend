@@ -12,7 +12,7 @@ import { Status } from "@prisma/client";
 
 @Injectable()
 export class PaymentsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async checkCoursePurchased(courseId: number, userId: number) {
     const course = await this.prisma.courses.findUnique({
@@ -52,7 +52,6 @@ export class PaymentsService {
     return this.prisma.payments.create({
       data: {
         courseId: payload.courseId,
-        status: true,
         userId: payload.userId,
         amount: Number(course.price),
         isActive: Status.ACTIVE,
@@ -61,12 +60,14 @@ export class PaymentsService {
   }
 
   async findAll(isActiveParam?: Status) {
-    const isActive = isActiveParam || Status.ACTIVE;
-
+    const isActive = isActiveParam;
     const payments = await this.prisma.payments.findMany({
       where: { isActive },
       include: { course: true, user: true },
-      orderBy: { created_at: "desc" },
+      orderBy: [
+        { status: 'asc' },
+        { created_at: 'desc' },
+      ],
     });
 
     return { success: true, data: payments };

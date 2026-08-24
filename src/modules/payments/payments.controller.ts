@@ -19,6 +19,8 @@ import { Status, UserRoles } from "@prisma/client";
 import { Roles } from "src/common/decorators/roles.decorator";
 import { ApiBearerAuth } from "@nestjs/swagger";
 import { RolesGuard } from "src/common/guards/roles.guard";
+import { query } from "axios";
+import { PageQueryDto } from "../courses/dto/query.dto";
 
 @UseGuards(JwtAuthGuard)
 @Controller("payments")
@@ -32,10 +34,9 @@ export class PaymentsController {
 
   @Get()
   findAll(
-    @Query("isActive", new ParseEnumPipe(Status, { optional: true }))
-    isActive?: Status,
+    @Query() query: PageQueryDto,
   ) {
-    return this.paymentsService.findAll(isActive);
+    return this.paymentsService.findAll(query.status);
   }
 
   @Get(":id")

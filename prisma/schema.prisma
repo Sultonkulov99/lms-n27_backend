@@ -240,7 +240,7 @@ model Payments {
   courseId   Int
   amount     Decimal?
   status     Boolean  @default(false)
-  isActive   Status   @default(INACTIVE)
+  isActive   Status   @default(ACTIVE)
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 

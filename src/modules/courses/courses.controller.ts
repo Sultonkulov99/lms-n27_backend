@@ -31,6 +31,8 @@ import { RolesGuard } from "src/common/guards/roles.guard";
 import { FileFieldsInterceptor } from "@nestjs/platform-express";
 import { courseFileFilter, courseFileStorage } from "./courses.multer";
 import { CurrentUser } from "src/common/decorators/current-user.decorator";
+import { query } from "axios";
+import { PageQueryDto } from "./dto/query.dto";
 
 const fileInterceptor = FileFieldsInterceptor(
   [
@@ -56,11 +58,8 @@ export class CoursesController {
 
   @Get()
   findAll(
-    @Query("page") page?: number,
-    @Query("limit") limit?: number,
-    @Query("status") status?: string,
-  ) {
-    return this.coursesService.findAll(page || 1, limit || 10, status);
+    @Query() query: PageQueryDto) {
+    return this.coursesService.findAll(query.page, query.limit, query.status);
   }
 
   @Get(":id")
