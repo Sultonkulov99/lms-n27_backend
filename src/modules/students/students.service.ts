@@ -123,6 +123,9 @@ export class StudentService {
             categories: {
               select: { id: true, name: true },
             },
+            user: {
+              select: { id: true, fullName: true, file: true },
+            },
           },
         },
       },
@@ -140,6 +143,10 @@ export class StudentService {
           id: payment.course.categories?.id,
           name: payment.course.categories?.name,
         },
+        user: payment.course.user ? {
+          fullName: payment.course.user.fullName,
+          file: payment.course.user.file
+        } : undefined,
         createdAt: payment.created_at.toISOString(),
         updatedAt: payment.created_at.toISOString(),
       },
