@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   ForbiddenException,
   HttpException,
@@ -172,7 +173,7 @@ export class AuthService {
     );
 
     if (!isSame) {
-      throw new UnauthorizedException("Parol xato");
+      throw new BadRequestException("Parol xato");
     }
 
     if (existing.role === UserRoles.STUDENT && existing.payments[0].status === false) {

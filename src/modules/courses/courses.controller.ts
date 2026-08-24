@@ -1,4 +1,5 @@
 import {
+  Query,
   BadRequestException,
   Body,
   Controller,
@@ -54,8 +55,12 @@ export class CoursesController {
   constructor(private readonly coursesService: CoursesService) {}
 
   @Get()
-  findAll() {
-    return this.coursesService.findAll();
+  findAll(
+    @Query("page") page?: number,
+    @Query("limit") limit?: number,
+    @Query("status") status?: string,
+  ) {
+    return this.coursesService.findAll(page || 1, limit || 10, status);
   }
 
   @Get(":id")

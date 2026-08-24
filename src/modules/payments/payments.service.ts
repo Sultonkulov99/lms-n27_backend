@@ -1,12 +1,18 @@
-import { HttpException, HttpStatus, Injectable, NotFoundException } from "@nestjs/common";
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from "@nestjs/common";
 import { CreatePaymentDto } from "./dto/create-payment.dto";
 import { UpdatePaymentDto } from "./dto/update-payment.dto";
 import { PrismaService } from "src/core/database/prisma.service";
 import { Current } from "../courses/courses.service";
+import { Status } from "@prisma/client";
 
 @Injectable()
 export class PaymentsService {
-  constructor(private readonly prisma: PrismaService) { }
+  constructor(private readonly prisma: PrismaService) {}
 
   async checkCoursePurchased(courseId: number, userId: number) {
     const course = await this.prisma.courses.findUnique({
@@ -15,7 +21,13 @@ export class PaymentsService {
       },
     });
     if (!course) {
-      throw new HttpException('Course not found', HttpStatus.NOT_FOUND);
+      throw new HttpException("Course not found", HttpStatus.NOT_FOUND);
+    }
+    if (course.status === "INACTIVE") {
+      throw new HttpException(
+        "Ushbu kurs nofaol holatda va uni sotib olib bo'lmaydi",
+        HttpStatus.BAD_REQUEST,
+      );
     }
     const purchased = await this.prisma.payments.findFirst({
       where: {
@@ -25,7 +37,7 @@ export class PaymentsService {
     });
     if (purchased) {
       throw new HttpException(
-        'This course already purchased',
+        "This course already purchased",
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -43,20 +55,21 @@ export class PaymentsService {
         status: true,
         userId: payload.userId,
         amount: Number(course.price),
+        isActive: Status.ACTIVE,
       },
     });
   }
 
-  async findAll() {
+  async findAll(isActiveParam?: Status) {
+    const isActive = isActiveParam || Status.ACTIVE;
+
     const payments = await this.prisma.payments.findMany({
+      where: { isActive },
       include: { course: true, user: true },
       orderBy: { created_at: "desc" },
     });
 
-    return {
-      success: true,
-      data: payments,
-    };
+    return { success: true, data: payments };
   }
 
   async findOne(courseId: number, userId: number) {
@@ -68,7 +81,7 @@ export class PaymentsService {
     });
     if (!purchased) {
       throw new HttpException(
-        'This course has not been purchased',
+        "This course has not been purchased",
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -81,7 +94,7 @@ export class PaymentsService {
 
   async update(courseId: number, userId: number) {
     try {
-      const { data: purchased } = await this.findOne(courseId, userId)
+      const { data: purchased } = await this.findOne(courseId, userId);
 
       if (purchased.status === true) {
         await this.prisma.payments.update({
@@ -91,8 +104,8 @@ export class PaymentsService {
 
         return {
           success: true,
-          message: "Payment status successfully updated to PENDING"
-        }
+          message: "Payment status successfully updated to PENDING",
+        };
       } else {
         await this.prisma.payments.update({
           where: { id: purchased.id },
@@ -101,10 +114,9 @@ export class PaymentsService {
 
         return {
           success: true,
-          message: "Payment status successfully updated to COMPLETED"
-        }
+          message: "Payment status successfully updated to COMPLETED",
+        };
       }
-
     } catch (error) {
       throw new NotFoundException("Payment not found");
     }
@@ -112,10 +124,33 @@ export class PaymentsService {
 
   async remove(courseId: number, user: Current) {
     try {
-      const { data: purchased } = await this.findOne(courseId, user.id)
+      const { data: purchased } = await this.findOne(courseId, user.id);
       return this.prisma.payments.delete({ where: { id: purchased.id } });
     } catch (error) {
       throw new NotFoundException(`Payment not found`);
     }
+  }
+
+  async findOneById(id: number) {
+    const payment = await this.prisma.payments.findUnique({
+      where: { id },
+      include: { course: true, user: true },
+    });
+    if (!payment) throw new NotFoundException("Payment not found");
+    return payment;
+  }
+
+  async updateById(id: number, payload: UpdatePaymentDto) {
+    await this.findOneById(id);
+    return this.prisma.payments.update({
+      where: { id },
+      data: payload,
+      include: { course: true, user: true },
+    });
+  }
+
+  async removeById(id: number) {
+    await this.findOneById(id);
+    return this.prisma.payments.delete({ where: { id } });
   }
 }

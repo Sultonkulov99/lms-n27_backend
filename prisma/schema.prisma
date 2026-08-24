@@ -17,6 +17,7 @@ enum UserRoles {
 enum Status {
   ACTIVE
   INACTIVE
+  DELETED
 }
 
 enum CourseLevel {
@@ -113,10 +114,10 @@ model Courses {
   created_at  DateTime    @default(now())
   updated_at  DateTime    @updatedAt
 
-  user       User?      @relation(fields: [teacherId], references: [id])
-  categories Categories @relation(fields: [categoryId], references: [id])
-  sections   Sections[]
-  payments   Payments[]
+  user           User?           @relation(fields: [teacherId], references: [id])
+  categories     Categories      @relation(fields: [categoryId], references: [id])
+  sections       Sections[]
+  payments       Payments[]
   courseComments CourseComment[]
 }
 
@@ -127,7 +128,7 @@ model Sections {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
-  courses Courses   @relation(fields: [courseId], references: [id])
+  courses Courses   @relation(fields: [courseId], references: [id], onDelete: Cascade)
   lessons Lessons[]
 }
 
@@ -140,7 +141,7 @@ model Lessons {
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
 
-  sections     Sections       @relation(fields: [sectionId], references: [id])
+  sections     Sections       @relation(fields: [sectionId], references: [id], onDelete: Cascade)
   materials    Materials[]
   homeworks    Homeworks[]
   exams        Exams[]
@@ -151,23 +152,25 @@ model Lessons {
 model Materials {
   id          Int      @id @default(autoincrement())
   lessonId    Int
+  title       String   @default("")
   description String
   file        String[] @default([])
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
 
-  lessons Lessons @relation(fields: [lessonId], references: [id])
+  lessons Lessons @relation(fields: [lessonId], references: [id], onDelete: Cascade)
 }
 
 model Homeworks {
   id          Int      @id @default(autoincrement())
   lessonId    Int
+  title       String   @default("")
   description String
   file        String[] @default([])
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
 
-  lessons Lessons @relation(fields: [lessonId], references: [id])
+  lessons Lessons @relation(fields: [lessonId], references: [id], onDelete: Cascade)
 }
 
 model Exams {
@@ -183,7 +186,7 @@ model Exams {
   created_at DateTime   @default(now())
   updated_at DateTime   @updatedAt
 
-  lessons Lessons       @relation(fields: [lessonId], references: [id])
+  lessons Lessons       @relation(fields: [lessonId], references: [id], onDelete: Cascade)
   user    User          @relation(fields: [userId], references: [id])
   answers ExamAnswers[]
 }
@@ -200,7 +203,7 @@ model ExamAttempts {
   started_at     DateTime      @default(now())
   finished_at    DateTime?
 
-  lesson  Lessons       @relation(fields: [lessonId], references: [id])
+  lesson  Lessons       @relation(fields: [lessonId], references: [id], onDelete: Cascade)
   user    User          @relation(fields: [userId], references: [id])
   answers ExamAnswers[]
 
@@ -215,8 +218,8 @@ model ExamAnswers {
   isCorrect  Boolean
   created_at DateTime   @default(now())
 
-  attempt ExamAttempts @relation(fields: [attemptId], references: [id])
-  exam    Exams        @relation(fields: [examId], references: [id])
+  attempt ExamAttempts @relation(fields: [attemptId], references: [id], onDelete: Cascade)
+  exam    Exams        @relation(fields: [examId], references: [id], onDelete: Cascade)
 
   @@unique([attemptId, examId])
 }
@@ -236,6 +239,7 @@ model Payments {
   courseId   Int
   amount     Decimal?
   status     Boolean  @default(false)
+  isActive   Status   @default(INACTIVE)
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
@@ -254,7 +258,7 @@ model ExamResults {
   updated_at    DateTime @updatedAt
 
   user    User    @relation(fields: [userId], references: [id])
-  lessons Lessons @relation(fields: [lessonId], references: [id])
+  lessons Lessons @relation(fields: [lessonId], references: [id], onDelete: Cascade)
 }
 
 model Notification {
@@ -267,7 +271,7 @@ model Notification {
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
 
-  user        User?    @relation(fields: [recipientId], references: [id])
+  user User? @relation(fields: [recipientId], references: [id])
 }
 
 model CourseComment {
@@ -279,6 +283,6 @@ model CourseComment {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
-  course     Courses  @relation(fields: [courseId], references: [id])
-  user       User     @relation(fields: [userId], references: [id])
+  course Courses @relation(fields: [courseId], references: [id])
+  user   User    @relation(fields: [userId], references: [id])
 }

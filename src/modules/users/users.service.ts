@@ -17,7 +17,10 @@ export class UsersService {
 
   async getAllAdmins() {
     const admins = await this.prisma.user.findMany({
-      where: { role: UserRoles.ADMIN },
+      where: { 
+        role: UserRoles.ADMIN,
+        status: { not: 'DELETED' } 
+      },
       select: {
         id: true,
         fullName: true,
@@ -144,7 +147,7 @@ export class UsersService {
 
     if (!existingAdmin) throw new NotFoundException("Admin is not found");
 
-    await this.prisma.user.update({ where: { id }, data: { status: 'INACTIVE' } });
+    await this.prisma.user.update({ where: { id }, data: { status: 'DELETED' } });
 
     return {
       success: true,

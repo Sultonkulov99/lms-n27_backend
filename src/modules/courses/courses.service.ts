@@ -20,8 +20,19 @@ export interface Current {
 export class CoursesService {
   constructor(private readonly prisma: PrismaService) {}
 
-  findAll(page = 1, limit = 10) {
+  findAll(page = 1, limit = 10, status?: string) {
+    const whereClause: any = {
+      status: {
+        not: 'DELETED',
+      },
+    };
+
+    if (status) {
+      whereClause.status = status;
+    }
+
     return this.prisma.courses.findMany({
+      where: whereClause,
       skip: (page - 1) * limit,
       take: limit,
       include: { categories: true, sections: true, user: true, payments: true },
@@ -30,8 +41,13 @@ export class CoursesService {
   }
 
   async findOne(id: number) {
-    const course = await this.prisma.courses.findUnique({
-      where: { id },
+    const course = await this.prisma.courses.findFirst({
+      where: { 
+        id,
+        status: {
+          not: 'DELETED'
+        }
+      },
       include: { categories: true, sections: true, user: true, payments: true },
     });
 
@@ -76,8 +92,11 @@ export class CoursesService {
           payments: true,
         },
       });
-    } catch (error) {
+    } catch (error: any) {
       await this.deleteUploadedFiles([bannerFile, introVideoFile]);
+      if (error.code === 'P2002') {
+        throw new ConflictException("Bu nomdagi kurs allaqachon mavjud");
+      }
       throw error;
     }
   }
@@ -91,6 +110,21 @@ export class CoursesService {
     const existing = await this.findOne(id);
     const bannerFile = files?.banner?.[0];
     const introVideoFile = files?.introVideo?.[0];
+
+    const hasStudents = await this.prisma.payments.findFirst({
+      where: { courseId: id, status: true },
+    });
+
+    if (hasStudents) {
+      const updateKeys = Object.keys(dto).filter(
+        (key) => key !== "status" && (dto as any)[key] !== undefined,
+      );
+      if (updateKeys.length > 0 || bannerFile || introVideoFile) {
+        throw new ConflictException(
+          "Bu kurs sotib olinganligi sababli, faqat uning statusini (Active/Inactive) o'zgartirish mumkin.",
+        );
+      }
+    }
 
     try {
       if (dto.categoryId) {
@@ -138,8 +172,11 @@ export class CoursesService {
       }
 
       return updated;
-    } catch (error) {
+    } catch (error: any) {
       await this.deleteUploadedFiles([bannerFile, introVideoFile]);
+      if (error.code === 'P2002') {
+        throw new ConflictException("Bu nomdagi kurs allaqachon mavjud");
+      }
       throw error;
     }
   }
@@ -147,10 +184,20 @@ export class CoursesService {
   async remove(id: number) {
     const existing = await this.findOne(id);
 
+    const hasStudents = await this.prisma.payments.findFirst({
+      where: { courseId: id, status: true },
+    });
+
+    if (hasStudents) {
+      throw new ConflictException(
+        "Bu kurs sotib olingan va o'quvchilarga ega. O'chirishdan oldin o'quvchilarni uzishingiz kerak.",
+      );
+    }
+
     try {
       return await this.prisma.courses.update({
         where: { id },
-        data: { status: 'INACTIVE' },
+        data: { status: 'DELETED' },
       });
     } catch (error) {
       throw new ConflictException(
