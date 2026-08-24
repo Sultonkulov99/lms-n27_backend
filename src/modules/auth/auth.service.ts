@@ -81,31 +81,31 @@ export class AuthService {
       );
     }
 
-    const redisKey = `reg_${payload.phone}`;
-    const storedOtp = await this.redisService.get(redisKey);
+    // const redisKey = `reg_${payload.phone}`;
+    // const storedOtp = await this.redisService.get(redisKey);
 
-    // Development mode - allow test OTP
-    const testOtp = process.env.NODE_ENV === 'development' ? '000000' : null;
+    // // Development mode - allow test OTP
+    // const testOtp = process.env.NODE_ENV === 'development' ? '000000' : null;
 
-    if (!storedOtp && !testOtp) {
-      throw new HttpException(
-        'Noto\'g\'ri yoki muddati o\'tgan tasdiqlash kodi',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
+    // if (!storedOtp && !testOtp) {
+    //   throw new HttpException(
+    //     'Noto\'g\'ri yoki muddati o\'tgan tasdiqlash kodi',
+    //     HttpStatus.BAD_REQUEST,
+    //   );
+    // }
 
-    // Check OTP validity
-    if (storedOtp && storedOtp !== payload.otp && payload.otp !== testOtp) {
-      throw new HttpException(
-        'Noto\'g\'ri yoki muddati o\'tgan tasdiqlash kodi',
-        HttpStatus.BAD_REQUEST,
-      );
-    }
+    // // Check OTP validity
+    // if (storedOtp && storedOtp !== payload.otp && payload.otp !== testOtp) {
+    //   throw new HttpException(
+    //     'Noto\'g\'ri yoki muddati o\'tgan tasdiqlash kodi',
+    //     HttpStatus.BAD_REQUEST,
+    //   );
+    // }
 
-    // Delete OTP after successful verification to prevent reuse
-    if (storedOtp) {
-      await this.redisService.del(redisKey);
-    }
+    // // Delete OTP after successful verification to prevent reuse
+    // if (storedOtp) {
+    //   await this.redisService.del(redisKey);
+    // }
 
     const hashedPassword = await this.hashPassword(payload.password);
 

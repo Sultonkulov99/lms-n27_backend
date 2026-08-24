@@ -20,7 +20,7 @@ export class UsersService {
     const admins = await this.prisma.user.findMany({
       where: { 
         role: UserRoles.ADMIN,
-        where: { status },
+        status,
       },
       select: {
         id: true,
