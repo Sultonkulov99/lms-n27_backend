@@ -47,8 +47,23 @@ export class CoursesService {
         status: {
           not: 'DELETED'
         }
+      include: { 
+        categories: true, 
+        sections: {
+          include: {
+            lessons: {
+              include: {
+                materials: true,
+                homeworks: true,
+                exams: true
+              }
+            }
+          },
+          orderBy: { created_at: 'asc' }
+        }, 
+        user: true, 
+        payments: true 
       },
-      include: { categories: true, sections: true, user: true, payments: true },
     });
 
     if (!course) throw new NotFoundException(`Kurs topilmadi (id: ${id})`);
