@@ -16,7 +16,7 @@ import { StudentService } from "./students.service";
 import { Roles } from "src/common/decorators/roles.decorator";
 import { CurrentUser } from "src/common/decorators/current-user.decorator";
 import { Status, UserRoles } from "@prisma/client";
-import { ApiBearerAuth, ApiConsumes, ApiOperation } from "@nestjs/swagger";
+import { ApiBearerAuth, ApiConsumes, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { JwtAuthGuard } from "src/common/guards/jwt-auth.guard";
 import { RolesGuard } from "src/common/guards/roles.guard";
 import { UpdateStudentDto } from "./dto/update-student.dto";
@@ -25,6 +25,7 @@ import { diskStorage } from "multer";
 import { extname } from "path";
 import { CreateUserDto } from "../users/dto/create-user.dto";
 
+@ApiTags("Students")
 @Controller("students")
 export class StudentController {
   constructor(private readonly service: StudentService) {}
@@ -121,7 +122,7 @@ export class StudentController {
   @Roles(UserRoles.SUPERADMIN)
   @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: "Faqat ADMIN - Studentni tahrirlash" })
+  @ApiOperation({ summary: "Faqat SUPERADMIN - Studentni arxivlash" })
   async archiveStudent(@Param("id") id: number) {
     return await this.service.archiveStudent(id);
   }
@@ -130,7 +131,7 @@ export class StudentController {
   @Roles(UserRoles.SUPERADMIN)
   @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: "Faqat ADMIN - Studentni tahrirlash" })
+  @ApiOperation({ summary: "Faqat SUPERADMIN - Studentni arxivdan chiqarish (tiklash)" })
   async restoreStudent(@Param("id") id: number) {
     return await this.service.restoreStudent(id);
   }
