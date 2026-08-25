@@ -111,7 +111,7 @@ export class UsersController {
   @Roles(UserRoles.SUPERADMIN)
   @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: "Archive admin" })
+  @ApiOperation({ summary: "Faqat SUPERADMIN" })
   async archiveAdmin(@Param("id") id: number) {
     return await this.service.archiveAdmin(id);
   }
@@ -120,7 +120,7 @@ export class UsersController {
   @Roles(UserRoles.SUPERADMIN)
   @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: "Restore admin" })
+  @ApiOperation({ summary: "Faqat SUPERADMIN" })
   async restoreAdmin(@Param("id") id: number) {
     return await this.service.restoreAdmin(id);
   }
