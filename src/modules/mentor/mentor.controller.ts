@@ -23,7 +23,7 @@ export class MentorController {
   constructor(private mentorService: MentorService) {}
 
   @Get()
-  @Roles(UserRoles.SUPERADMIN)
+  @Roles(UserRoles.SUPERADMIN, UserRoles.ADMIN)
   @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "SUPERADMIN - Get All Mentor" })
@@ -32,7 +32,7 @@ export class MentorController {
   }
 
   @Get(":id")
-  @Roles(UserRoles.SUPERADMIN)
+  @Roles(UserRoles.SUPERADMIN, UserRoles.ADMIN)
   @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "SUPERADMIN, Admin - Get One Mentor" })
@@ -41,7 +41,7 @@ export class MentorController {
   }
 
   @Post()
-  @Roles(UserRoles.SUPERADMIN)
+  @Roles(UserRoles.SUPERADMIN, UserRoles.ADMIN)
   @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "SUPERADMIN, Admin- Create Mentor" })
@@ -50,7 +50,7 @@ export class MentorController {
   }
 
   @Patch(":id")
-  @Roles(UserRoles.SUPERADMIN)
+  @Roles(UserRoles.SUPERADMIN, UserRoles.ADMIN)
   @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "SUPERADMIN, Admin - Update Mentor" })
@@ -62,7 +62,7 @@ export class MentorController {
   }
 
   @Delete(":id")
-  @Roles(UserRoles.SUPERADMIN)
+  @Roles(UserRoles.SUPERADMIN, UserRoles.ADMIN)
   @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "SUPERADMIN, Admin - Delete Mentor" })

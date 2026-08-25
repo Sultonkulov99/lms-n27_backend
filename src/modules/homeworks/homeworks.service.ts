@@ -1,12 +1,13 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, UserRoles } from "@prisma/client";
 import { CreateHomeworkDto } from "./dto/create-homework.dto";
 import { UpdateHomeworkDto } from "./dto/update-homework.dto";
 import { PrismaService } from "src/core/database/prisma.service";
+import { Current } from "../courses/courses.service";
 
 @Injectable()
 export class HomeworksService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) { }
 
   async create(dto: CreateHomeworkDto, files?: Express.Multer.File[]) {
     const uploadedFiles = files?.map((file) => file.filename) || [];
@@ -39,15 +40,42 @@ export class HomeworksService {
     };
   }
 
-  async findOne(id: number) {
-    const homework = await this.prisma.homeworks.findUnique({
+  async findOne(lessonId: number) {
+    const homework = await this.prisma.homeworks.findMany({
       where: {
-        id,
+        lessonId,
       },
       include: {
         lessons: true,
       },
     });
+
+    if (!homework) {
+      throw new NotFoundException("Homework not found");
+    }
+
+    return {
+      success: true,
+      data: homework,
+    };
+  }
+
+  async findAllMine(user: Current) {
+    const homework = await this.prisma.homeworks.findMany({
+      where: {
+        lessons: {
+          sections: {
+            courses: {
+              teacherId: user.role === UserRoles.MENTOR ? user.id : undefined,
+            }
+          }
+        }
+      },
+      include: {
+        lessons: true,
+      },
+    });
+    console.log(homework, "BBB")
 
     if (!homework) {
       throw new NotFoundException("Homework not found");

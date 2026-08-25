@@ -1,4 +1,4 @@
-import { Module } from "@nestjs/common";
+import { Module, forwardRef } from "@nestjs/common";
 import { AuthService } from "./auth.service";
 import { AuthController } from "./auth.controller";
 import { JwtModule } from "@nestjs/jwt";
@@ -7,7 +7,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PassportModule } from "@nestjs/passport";
 import { JwtAccessStrategy } from "src/common/strategies/jwt-access.strategy";
 import { TokenConfig } from "src/common/config/token.config";
-import { PaymentsService } from "../payments/payments.service";
+import { PaymentsModule } from "../payments/payments.module";
 
 @Module({
   imports: [
@@ -21,8 +21,10 @@ import { PaymentsService } from "../payments/payments.service";
       }),
       inject: [ConfigService],
     }),
+    forwardRef(() => PaymentsModule),
   ],
   controllers: [AuthController],
-  providers: [AuthService, JwtAccessStrategy, TokenConfig, PaymentsService],
+  providers: [AuthService, JwtAccessStrategy, TokenConfig],
+  exports: [JwtModule],
 })
 export class AuthModule {}

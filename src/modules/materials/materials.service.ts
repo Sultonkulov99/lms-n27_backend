@@ -25,13 +25,13 @@ export class MaterialsService {
     });
   }
 
-  async findOne(id: number) {
-    const section = await this.prisma.materials.findUnique({
-      where: { id },
+  async findOne(lessonId: number) {
+    const section = await this.prisma.materials.findMany({
+      where: { lessonId },
       include: { lessons: true },
     });
 
-    if (!section) throw new NotFoundException(`Material topilmadi (id: ${id})`);
+    if (!section) throw new NotFoundException(`Material topilmadi (lesson_id: ${lessonId})`);
 
     return section;
   }

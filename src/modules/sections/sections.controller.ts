@@ -33,7 +33,7 @@ export class SectionsController {
   }
 
   @Get(":id")
-  @Roles(UserRoles.SUPERADMIN)
+  @Roles(UserRoles.SUPERADMIN, UserRoles.MENTOR)
   @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "SUPERADMIN - Bo'limni id bo'yicha olish" })
@@ -42,7 +42,7 @@ export class SectionsController {
   }
 
   @Post()
-  @Roles(UserRoles.SUPERADMIN)
+  @Roles(UserRoles.SUPERADMIN, UserRoles.MENTOR)
   @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "SUPERADMIN - Yangi bo'lim yaratish" })
@@ -51,7 +51,7 @@ export class SectionsController {
   }
 
   @Patch(":id")
-  @Roles(UserRoles.SUPERADMIN)
+  @Roles(UserRoles.SUPERADMIN, UserRoles.MENTOR)
   @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "SUPERADMIN - Bo'limni tahrirlash" })

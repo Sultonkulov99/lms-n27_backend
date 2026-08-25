@@ -148,6 +148,7 @@ model Lessons {
   exams        Exams[]
   examAttempts ExamAttempts[]
   examResults  ExamResults[]
+  courseComments CourseComment[]
 }
 
 model Materials {
@@ -268,6 +269,7 @@ model Notification {
   message     String
   type        String   @default("COMMENT")
   isRead      Boolean  @default(false)
+  link        String?
   recipientId Int?
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
@@ -281,9 +283,14 @@ model CourseComment {
   likes      Int      @default(0)
   courseId   Int
   userId     Int
+  lessonId   Int?
+  parentId   Int?
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
-  course Courses @relation(fields: [courseId], references: [id])
-  user   User    @relation(fields: [userId], references: [id])
+  course  Courses         @relation(fields: [courseId], references: [id])
+  user    User            @relation(fields: [userId], references: [id])
+  lesson  Lessons?        @relation(fields: [lessonId], references: [id])
+  parent  CourseComment?  @relation("CommentReplies", fields: [parentId], references: [id])
+  replies CourseComment[] @relation("CommentReplies")
 }

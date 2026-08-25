@@ -25,6 +25,7 @@ jobs:
             if [ ! -d "lms-n27_backend/.git" ]; then
               echo "Cloning repository!" 
               git clone https://github.com/Sultonkulov99/lms-n27_backend
+              cd lms-n27_backend
             else
               echo "Pulling latest changes!"
               cd lms-n27_backend  
