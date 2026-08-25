@@ -11,7 +11,7 @@ import {
 import { PrismaService } from "src/core/database/prisma.service";
 import * as argon from "argon2";
 import { JwtService } from "@nestjs/jwt";
-import { User, UserRoles } from "@prisma/client";
+import { Status, User, UserRoles } from "@prisma/client";
 import { RegisterDto } from "./dto/register.dto";
 import { LoginDto } from "./dto/login.dto";
 import { RedisService } from "src/common/redis/redis.service";
@@ -25,7 +25,7 @@ export class AuthService {
     private readonly redisService: RedisService,
     private readonly jwtService: JwtService,
     private readonly payments: PaymentsService,
-  ) { }
+  ) {}
 
   private async hashPassword(password: string) {
     return await argon.hash(password);
@@ -39,10 +39,10 @@ export class AuthService {
   }
 
   async generateToken(
-    user: Pick<User, 'id' | 'role'>,
-    accessTokenOnly?: boolean
+    user: Pick<User, "id" | "role">,
+    accessTokenOnly?: boolean,
   ) {
-    const tokens: { accessToken?: string, refreshToken?: string } = {
+    const tokens: { accessToken?: string; refreshToken?: string } = {
       accessToken: undefined,
       refreshToken: undefined,
     };
@@ -85,11 +85,11 @@ export class AuthService {
     const storedOtp = await this.redisService.get(redisKey);
 
     // Development mode - allow test OTP
-    const testOtp = process.env.NODE_ENV === 'development' ? '000000' : null;
+    const testOtp = process.env.NODE_ENV === "development" ? "000000" : null;
 
     if (!storedOtp && !testOtp) {
       throw new HttpException(
-        'Noto\'g\'ri yoki muddati o\'tgan tasdiqlash kodi',
+        "Noto'g'ri yoki muddati o'tgan tasdiqlash kodi",
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -97,7 +97,7 @@ export class AuthService {
     // Check OTP validity
     if (storedOtp && storedOtp !== payload.otp && payload.otp !== testOtp) {
       throw new HttpException(
-        'Noto\'g\'ri yoki muddati o\'tgan tasdiqlash kodi',
+        "Noto'g'ri yoki muddati o'tgan tasdiqlash kodi",
         HttpStatus.BAD_REQUEST,
       );
     }
@@ -121,23 +121,26 @@ export class AuthService {
     const { password, ...result } = user;
 
     try {
-      const { course } = await this.payments.checkCoursePurchased(courseId, user.id);
+      const { course } = await this.payments.checkCoursePurchased(
+        courseId,
+        user.id,
+      );
 
       await this.prisma.payments.create({
         data: {
           courseId,
           userId: user.id,
           amount: Number(course.price),
-        }
-      })
+        },
+      });
 
       return {
         data: result,
-        tokens: await this.generateToken(user)
+        tokens: await this.generateToken(user),
       };
     } catch (error) {
-      await this.prisma.user.delete({ where: { id: user.id } })
-      throw error
+      await this.prisma.user.delete({ where: { id: user.id } });
+      throw error;
     }
   }
 
@@ -157,14 +160,18 @@ export class AuthService {
         status: true,
         payments: {
           select: {
-            status: true
-          }
-        }
-      }
+            status: true,
+          },
+        },
+      },
     });
 
     if (!existing) {
       throw new NotFoundException("Foydalanuvchi topilmadi");
+    }
+
+    if (existing.status !== Status.ACTIVE) {
+      throw new ForbiddenException("Foydalanuvchi bloklangan yoki faol emas");
     }
 
     const isSame = await this.verifyPassword(
@@ -176,7 +183,10 @@ export class AuthService {
       throw new BadRequestException("Parol xato");
     }
 
-    if (existing.role === UserRoles.STUDENT && existing.payments[0].status === false) {
+    if (
+      existing.role === UserRoles.STUDENT &&
+      existing.payments[0].status === false
+    ) {
       throw new ForbiddenException();
     }
 
@@ -185,8 +195,7 @@ export class AuthService {
     return {
       success: true,
       tokens: await this.generateToken(result),
-      data: result
+      data: result,
     };
   }
-
 }
