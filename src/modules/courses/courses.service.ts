@@ -47,6 +47,7 @@ export class CoursesService {
         status: {
           not: 'DELETED'
         }
+      },
       include: { 
         categories: true, 
         sections: {
