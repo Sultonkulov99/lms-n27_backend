@@ -103,7 +103,7 @@ export class AssistantsController {
   @Roles(UserRoles.SUPERADMIN)
   @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: "Archive assistant" })
+  @ApiOperation({ summary: "Faqat SUPERADMIN" })
   async archiveAssistant(@Param("id") id: number) {
     return await this.service.archiveAssistant(id);
   }
@@ -112,7 +112,7 @@ export class AssistantsController {
   @Roles(UserRoles.SUPERADMIN)
   @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: "Restore assistant" })
+  @ApiOperation({ summary: "Faqat SUPERADMIN" })
   async restoreAssistant(@Param("id") id: number) {
     return await this.service.restoreAssistant(id);
   }
