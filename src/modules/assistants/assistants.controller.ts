@@ -28,6 +28,9 @@ import { Status, UserRoles } from "@prisma/client";
 import { diskStorage } from "multer";
 import { extname } from "path";
 import { UpdateAssistantDto } from "./dto/update-assistant.dto";
+import { PermissionsGuard } from "src/common/guards/permissions.guard";
+import { RequirePermissions } from "src/common/decorators/permissions.decorator";
+import { ResourceCategory, PermissionAction } from "src/common/types/permissions.type";
 
 @ApiTags("Assistants")
 @Controller("user")
@@ -36,8 +39,9 @@ export class AssistantsController {
 
   @Get("assistant")
   @Roles(UserRoles.SUPERADMIN)
+  @RequirePermissions(ResourceCategory.ASSISTANT, PermissionAction.READ)
   @ApiBearerAuth("accessToken")
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionsGuard)
   @ApiOperation({ summary: "Faqat SUPERADMIN" })
   async getAllAssistants(
     @Query("status", new ParseEnumPipe(Status, { optional: true }))
@@ -48,8 +52,9 @@ export class AssistantsController {
 
   @Post("assistant")
   @Roles(UserRoles.SUPERADMIN)
+  @RequirePermissions(ResourceCategory.ASSISTANT, PermissionAction.CREATE)
   @ApiBearerAuth("accessToken")
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionsGuard)
   @ApiConsumes("multipart/form-data")
   @ApiOperation({ summary: "Faqat SUPERADMIN" })
   @UseInterceptors(
@@ -74,8 +79,9 @@ export class AssistantsController {
 
   @Patch("assistant/:id")
   @Roles(UserRoles.SUPERADMIN)
+  @RequirePermissions(ResourceCategory.ASSISTANT, PermissionAction.UPDATE)
   @ApiBearerAuth("accessToken")
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionsGuard)
   @ApiConsumes("multipart/form-data")
   @ApiOperation({ summary: "Faqat SUPERADMIN" })
   @UseInterceptors(
@@ -101,8 +107,9 @@ export class AssistantsController {
 
   @Patch("assistant/:id/archive")
   @Roles(UserRoles.SUPERADMIN)
+  @RequirePermissions(ResourceCategory.ASSISTANT, PermissionAction.VIEW_ARCHIVE)
   @ApiBearerAuth("accessToken")
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionsGuard)
   @ApiOperation({ summary: "Faqat SUPERADMIN" })
   async archiveAssistant(@Param("id") id: number) {
     return await this.service.archiveAssistant(id);
@@ -110,8 +117,9 @@ export class AssistantsController {
 
   @Patch("assistant/:id/restore")
   @Roles(UserRoles.SUPERADMIN)
+  @RequirePermissions(ResourceCategory.ASSISTANT, PermissionAction.UPDATE)
   @ApiBearerAuth("accessToken")
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionsGuard)
   @ApiOperation({ summary: "Faqat SUPERADMIN" })
   async restoreAssistant(@Param("id") id: number) {
     return await this.service.restoreAssistant(id);
@@ -119,8 +127,9 @@ export class AssistantsController {
 
   @Delete("assistant/:id")
   @Roles(UserRoles.SUPERADMIN)
+  @RequirePermissions(ResourceCategory.ASSISTANT, PermissionAction.DELETE)
   @ApiBearerAuth("accessToken")
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionsGuard)
   @ApiOperation({ summary: "Faqat SUPERADMIN" })
   async deleteAssistant(@Param("id") id: number) {
     return await this.service.deleteAssistant(id);

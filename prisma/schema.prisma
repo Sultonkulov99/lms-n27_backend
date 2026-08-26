@@ -48,6 +48,7 @@ model User {
   file             String?
   email            String?
   role             UserRoles
+  permissions      Json?
   status           Status            @default(ACTIVE)
   created_at       DateTime          @default(now())
   updated_at       DateTime          @updatedAt
@@ -85,7 +86,7 @@ model CourseAssistant {
   id         Int      @id @default(autoincrement())
   courseId   Int
   userId     Int
-  status   Status   @default(ACTIVE)
+  status     Status   @default(ACTIVE)
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
@@ -142,12 +143,12 @@ model Lessons {
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
 
-  sections     Sections       @relation(fields: [sectionId], references: [id], onDelete: Cascade)
-  materials    Materials[]
-  homeworks    Homeworks[]
-  exams        Exams[]
-  examAttempts ExamAttempts[]
-  examResults  ExamResults[]
+  sections       Sections        @relation(fields: [sectionId], references: [id], onDelete: Cascade)
+  materials      Materials[]
+  homeworks      Homeworks[]
+  exams          Exams[]
+  examAttempts   ExamAttempts[]
+  examResults    ExamResults[]
   courseComments CourseComment[]
 }
 

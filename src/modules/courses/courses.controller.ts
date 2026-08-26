@@ -34,6 +34,9 @@ import { courseFileFilter, courseFileStorage } from "./courses.multer";
 import { CurrentUser } from "src/common/decorators/current-user.decorator";
 import { query } from "axios";
 import { PageQueryDto } from "./dto/query.dto";
+import { PermissionsGuard } from "src/common/guards/permissions.guard";
+import { RequirePermissions } from "src/common/decorators/permissions.decorator";
+import { ResourceCategory, PermissionAction } from "src/common/types/permissions.type";
 
 const fileInterceptor = FileFieldsInterceptor(
   [
@@ -71,8 +74,9 @@ export class CoursesController {
 
   @Post()
   @Roles(UserRoles.SUPERADMIN, UserRoles.ADMIN, UserRoles.MENTOR)
+  @RequirePermissions(ResourceCategory.COURSE, PermissionAction.CREATE)
   @ApiBearerAuth("accessToken")
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionsGuard)
   @ApiOperation({ summary: "SUPERADMIN - Yangi kurs yaratish" })
   @ApiConsumes("multipart/form-data")
   @ApiExtraModels(CreateCourseDto)
@@ -91,8 +95,9 @@ export class CoursesController {
 
   @Patch(":id")
   @Roles(UserRoles.SUPERADMIN, UserRoles.ADMIN, UserRoles.MENTOR)
+  @RequirePermissions(ResourceCategory.COURSE, PermissionAction.UPDATE)
   @ApiBearerAuth("accessToken")
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionsGuard)
   @ApiOperation({ summary: "SUPERADMIN - Kursni tahrirlash" })
   @ApiConsumes("multipart/form-data")
   @ApiExtraModels(UpdateCourseDto)
@@ -109,8 +114,9 @@ export class CoursesController {
 
   @Patch(":id/archive")
   @Roles(UserRoles.SUPERADMIN, UserRoles.ADMIN)
+  @RequirePermissions(ResourceCategory.COURSE, PermissionAction.VIEW_ARCHIVE)
   @ApiBearerAuth("accessToken")
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionsGuard)
   @ApiOperation({ summary: "Faqat SUPERADMIN - Archive Kursni" })
   async archiveMentor(@Param("id") id: number) {
     return await this.coursesService.archive(id);
@@ -118,8 +124,9 @@ export class CoursesController {
 
   @Patch(":id/restore")
   @Roles(UserRoles.SUPERADMIN, UserRoles.ADMIN)
+  @RequirePermissions(ResourceCategory.COURSE, PermissionAction.UPDATE)
   @ApiBearerAuth("accessToken")
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionsGuard)
   @ApiOperation({ summary: "Faqat SUPERADMIN - Restore Kursni" })
   async restoreMentor(@Param("id") id: number) {
     return await this.coursesService.restore(id);
@@ -127,8 +134,9 @@ export class CoursesController {
 
   @Delete(":id")
   @Roles(UserRoles.SUPERADMIN, UserRoles.ADMIN, UserRoles.MENTOR)
+  @RequirePermissions(ResourceCategory.COURSE, PermissionAction.DELETE)
   @ApiBearerAuth("accessToken")
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionsGuard)
   @ApiOperation({ summary: "SUPERADMIN - Kursni o'chirish" })
   remove(@Param("id", ParseIntPipe) id: number) {
     return this.coursesService.remove(id);

@@ -18,6 +18,9 @@ import { CreateLessonDto } from './dto/create-lesson.dto';
 import { UpdateLessonDto } from './dto/update-lesson.dto';
 import { videoMulterConfig } from 'src/common/config/video-multer.config';
 import { Roles } from 'src/common/decorators/roles.decorator';
+import { PermissionsGuard } from "src/common/guards/permissions.guard";
+import { RequirePermissions } from "src/common/decorators/permissions.decorator";
+import { ResourceCategory, PermissionAction } from "src/common/types/permissions.type";
 
 @ApiTags('Lessons')
 @Controller('lessons')
@@ -25,8 +28,8 @@ export class LessonsController {
   constructor(private readonly lessonsService: LessonsService) {}
 
   @Post()
-  @ApiOperation({ summary: 'Yangi dars yaratish' })
   @Roles("ADMIN" , "MENTOR" , "SUPERADMIN")
+  @RequirePermissions(ResourceCategory.LESSON, PermissionAction.CREATE)
   @ApiConsumes('multipart/form-data')
   @ApiExtraModels(CreateLessonDto)
   @ApiBody({
@@ -56,14 +59,15 @@ export class LessonsController {
   }
 
   @Get()
-  @ApiOperation({ summary: 'Barcha darslarni olish' })
   @Roles("ADMIN" , "MENTOR" , "SUPERADMIN" , "STUDENT")
+  @RequirePermissions(ResourceCategory.LESSON, PermissionAction.READ)
   findAll() {
     return this.lessonsService.findAll();
   }
 
   @Get(':id')
   @Roles("ADMIN" , "MENTOR" , "STUDENT" , "SUPERADMIN")
+  @RequirePermissions(ResourceCategory.LESSON, PermissionAction.READ)
   @ApiOperation({ summary: 'Bitta darsni olish' })
   @ApiParam({ name: 'id', type: Number })
   findOne(@Param('id', ParseIntPipe) id: number) {
@@ -71,8 +75,8 @@ export class LessonsController {
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: 'Darsni yangilash' })
   @Roles("ADMIN" , "MENTOR" , "SUPERADMIN")
+  @RequirePermissions(ResourceCategory.LESSON, PermissionAction.UPDATE)
   @ApiParam({ name: 'id', type: Number })
   @ApiConsumes('multipart/form-data')
   @ApiExtraModels(UpdateLessonDto)
@@ -103,6 +107,7 @@ export class LessonsController {
 
   @Delete(':id')
   @Roles("ADMIN" , "MENTOR" , "SUPERADMIN")
+  @RequirePermissions(ResourceCategory.LESSON, PermissionAction.DELETE)
   @ApiOperation({ summary: "Darsni o'chirish" })
   @ApiParam({ name: 'id', type: Number })
   remove(@Param('id', ParseIntPipe) id: number) {

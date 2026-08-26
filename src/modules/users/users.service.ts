@@ -88,11 +88,13 @@ export class UsersService {
     }
 
     const hashedPassword = await argon.hash(payload.password);
+    const { permissions, ...restPayload } = payload;
 
     try {
       const newAdmin = await this.prisma.user.create({
         data: {
-          ...payload,
+          ...restPayload,
+          permissions: permissions as any,
           password: hashedPassword,
           file: file?.filename,
           role: UserRoles.ADMIN,
@@ -126,11 +128,12 @@ export class UsersService {
         "Bu telefon raqami boshqa admin tomonidan band qilingan",
       );
 
-    const { file: _ignore, password, ...rest } = payload as any;
+    const { file: _ignore, password, permissions, ...rest } = payload as any;
     const updatedAdmin = await this.prisma.user.update({
       where: { id },
       data: {
         ...rest,
+        ...(permissions && { permissions: permissions as any }),
         ...(password && { password: await argon.hash(password) }),
         ...(file && { file: file.filename }),
       },

@@ -24,6 +24,9 @@ import { FileInterceptor } from "@nestjs/platform-express";
 import { diskStorage } from "multer";
 import { extname } from "path";
 import { CreateUserDto } from "../users/dto/create-user.dto";
+import { PermissionsGuard } from "src/common/guards/permissions.guard";
+import { RequirePermissions } from "src/common/decorators/permissions.decorator";
+import { ResourceCategory, PermissionAction } from "src/common/types/permissions.type";
 
 @ApiTags("Students")
 @Controller("students")
@@ -32,8 +35,9 @@ export class StudentController {
 
   @Get()
   @Roles(UserRoles.SUPERADMIN, UserRoles.ADMIN)
+  @RequirePermissions(ResourceCategory.STUDENT, PermissionAction.READ)
   @ApiBearerAuth("accessToken")
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionsGuard)
   @ApiOperation({ summary: "Faqat ADMIN - Barcha studentlarni olish" })
   async getAllStudents(
     @Query("status", new ParseEnumPipe(Status, { optional: true }))
@@ -44,8 +48,9 @@ export class StudentController {
 
   @Get("my-courses")
   @Roles(UserRoles.STUDENT, UserRoles.SUPERADMIN)
+  @RequirePermissions(ResourceCategory.STUDENT, PermissionAction.READ)
   @ApiBearerAuth("accessToken")
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionsGuard)
   @ApiOperation({ summary: "Faqat STUDENT - o'zi to'lagan kurslarni olish" })
   async getMyCourses(@CurrentUser() user: { id: number }) {
     return await this.service.getMyCourses(user.id);
@@ -53,8 +58,9 @@ export class StudentController {
 
   @Post()
   @Roles(UserRoles.SUPERADMIN)
+  @RequirePermissions(ResourceCategory.STUDENT, PermissionAction.CREATE)
   @ApiBearerAuth("accessToken")
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionsGuard)
   @ApiConsumes("multipart/form-data")
   @ApiOperation({ summary: "Faqat SUPERADMIN  - Studentni yaratolidi" })
   @UseInterceptors(
@@ -79,8 +85,9 @@ export class StudentController {
 
   @Patch(":id")
   @Roles(UserRoles.ADMIN, UserRoles.SUPERADMIN, UserRoles.STUDENT)
+  @RequirePermissions(ResourceCategory.STUDENT, PermissionAction.UPDATE)
   @ApiBearerAuth("accessToken")
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionsGuard)
   @ApiConsumes("multipart/form-data")
   @ApiOperation({ summary: "Faqat ADMIN - Studentni tahrirlash" })
   @UseInterceptors(
@@ -105,8 +112,9 @@ export class StudentController {
   }
   @Get("my-courses/:courseId")
   @Roles(UserRoles.STUDENT, UserRoles.SUPERADMIN, UserRoles.ADMIN)
+  @RequirePermissions(ResourceCategory.STUDENT, PermissionAction.READ)
   @ApiBearerAuth("accessToken")
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionsGuard)
   @ApiOperation({
     summary:
       "Faqat STUDENT - bitta kursning to'liq tafsilotlarini olish (darslar bilan)",
@@ -120,8 +128,9 @@ export class StudentController {
 
   @Patch(":id/archive")
   @Roles(UserRoles.SUPERADMIN)
+  @RequirePermissions(ResourceCategory.STUDENT, PermissionAction.VIEW_ARCHIVE)
   @ApiBearerAuth("accessToken")
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionsGuard)
   @ApiOperation({ summary: "Faqat SUPERADMIN - Studentni arxivlash" })
   async archiveStudent(@Param("id") id: number) {
     return await this.service.archiveStudent(id);
@@ -129,8 +138,9 @@ export class StudentController {
 
   @Patch(":id/restore")
   @Roles(UserRoles.SUPERADMIN)
+  @RequirePermissions(ResourceCategory.STUDENT, PermissionAction.UPDATE)
   @ApiBearerAuth("accessToken")
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionsGuard)
   @ApiOperation({ summary: "Faqat SUPERADMIN - Studentni arxivdan chiqarish (tiklash)" })
   async restoreStudent(@Param("id") id: number) {
     return await this.service.restoreStudent(id);
@@ -138,8 +148,9 @@ export class StudentController {
 
   @Delete(":id")
   @Roles(UserRoles.ADMIN, UserRoles.SUPERADMIN)
+  @RequirePermissions(ResourceCategory.STUDENT, PermissionAction.DELETE)
   @ApiBearerAuth("accessToken")
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionsGuard)
   @ApiOperation({ summary: "Faqat ADMIN - Studentni o'chiradi" })
   async deleteStudent(@Param("id") id: number) {
     return await this.service.deleteStudent(id);

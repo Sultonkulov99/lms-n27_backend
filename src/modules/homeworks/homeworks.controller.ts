@@ -31,6 +31,9 @@ import { RolesGuard } from "src/common/guards/roles.guard";
 import { Roles } from "src/common/decorators/roles.decorator";
 import { UserRoles } from "@prisma/client";
 import { CurrentUser } from "src/common/decorators/current-user.decorator";
+import { PermissionsGuard } from "src/common/guards/permissions.guard";
+import { RequirePermissions } from "src/common/decorators/permissions.decorator";
+import { ResourceCategory, PermissionAction } from "src/common/types/permissions.type";
 
 @ApiTags("Homeworks")
 @Controller("homeworks")
@@ -47,8 +50,9 @@ export class HomeworksController {
     UserRoles.ASSISTANT,
     UserRoles.STUDENT,
   )
+  @RequirePermissions(ResourceCategory.HOMEWORK, PermissionAction.READ)
   @ApiBearerAuth("accessToken")
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionsGuard)
   @ApiOperation({ summary: "Barcha homeworkslarni olish" })
   findAll() {
     return this.homeworksService.findAll();
@@ -60,8 +64,9 @@ export class HomeworksController {
     UserRoles.ADMIN,
     UserRoles.MENTOR,
   )
+  @RequirePermissions(ResourceCategory.HOMEWORK, PermissionAction.READ)
   @ApiBearerAuth("accessToken")
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionsGuard)
   @ApiOperation({ summary: "Mentor ga aloqador barcha Homework'larni olish" })
   findAllMine(
     @CurrentUser() user: { id: number; role: UserRoles },
@@ -77,8 +82,9 @@ export class HomeworksController {
     UserRoles.ASSISTANT,
     UserRoles.STUDENT,
   )
+  @RequirePermissions(ResourceCategory.HOMEWORK, PermissionAction.READ)
   @ApiBearerAuth("accessToken")
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionsGuard)
   @ApiOperation({ summary: "Homeworkni lesson_id bo'yicha olish" })
   findOne(
     @Param("lessonId", ParseIntPipe) lessonId: number,
@@ -93,8 +99,9 @@ export class HomeworksController {
     UserRoles.MENTOR,
     UserRoles.ASSISTANT,
   )
+  @RequirePermissions(ResourceCategory.HOMEWORK, PermissionAction.CREATE)
   @ApiBearerAuth("accessToken")
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionsGuard)
   @ApiOperation({ summary: "Homework yaratish" })
   @ApiConsumes("multipart/form-data")
   @ApiBody({
@@ -153,8 +160,9 @@ export class HomeworksController {
     UserRoles.MENTOR,
     UserRoles.ASSISTANT,
   )
+  @RequirePermissions(ResourceCategory.HOMEWORK, PermissionAction.UPDATE)
   @ApiBearerAuth("accessToken")
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionsGuard)
   @ApiConsumes("multipart/form-data")
   @ApiBody({
     schema: {
@@ -212,8 +220,9 @@ export class HomeworksController {
     UserRoles.MENTOR,
     UserRoles.ASSISTANT,
   )
+  @RequirePermissions(ResourceCategory.HOMEWORK, PermissionAction.DELETE)
   @ApiBearerAuth("accessToken")
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionsGuard)
   @ApiOperation({ summary: "Homeworkni o'chirish..." })
   remove(
     @Param("id", ParseIntPipe) id: number,

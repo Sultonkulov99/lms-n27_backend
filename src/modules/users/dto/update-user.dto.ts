@@ -1,4 +1,4 @@
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
 import { Status } from "@prisma/client";
 import {
   IsEnum,
@@ -6,7 +6,22 @@ import {
   IsPhoneNumber,
   IsString,
   MinLength,
+  IsArray,
+  ValidateNested
 } from "class-validator";
+import { Type } from "class-transformer";
+import { ResourceCategory, PermissionAction } from "src/common/types/permissions.type";
+
+class PermissionDto {
+    @ApiProperty({ enum: ResourceCategory })
+    @IsEnum(ResourceCategory)
+    category: ResourceCategory;
+
+    @ApiProperty({ isArray: true, enum: PermissionAction })
+    @IsArray()
+    @IsEnum(PermissionAction, { each: true })
+    access: PermissionAction[];
+}
 
 export class UpdateUserDto {
   @ApiProperty({
@@ -48,4 +63,11 @@ export class UpdateUserDto {
   @IsOptional()
   @IsEnum(Status)
   status?: Status;
+
+  @ApiPropertyOptional({ type: [PermissionDto] })
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => PermissionDto)
+  permissions?: PermissionDto[];
 }

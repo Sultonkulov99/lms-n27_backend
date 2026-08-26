@@ -21,6 +21,9 @@ import { ApiBearerAuth } from "@nestjs/swagger";
 import { RolesGuard } from "src/common/guards/roles.guard";
 import { query } from "axios";
 import { PageQueryDto } from "../courses/dto/query.dto";
+import { PermissionsGuard } from "src/common/guards/permissions.guard";
+import { RequirePermissions } from "src/common/decorators/permissions.decorator";
+import { ResourceCategory, PermissionAction } from "src/common/types/permissions.type";
 
 @UseGuards(JwtAuthGuard)
 @Controller("payments")
@@ -65,16 +68,18 @@ export class PaymentsController {
 
   @Patch("admin/:id")
   @Roles(UserRoles.SUPERADMIN)
+  @RequirePermissions(ResourceCategory.PAYMENT, PermissionAction.UPDATE)
   @ApiBearerAuth("accessToken")
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionsGuard)
   update2(@Param("id") id: string, @Body() dto: UpdatePaymentDto) {
     return this.paymentsService.updateById(+id, dto);
   }
 
   @Delete("admin/:id")
   @Roles(UserRoles.SUPERADMIN)
+  @RequirePermissions(ResourceCategory.PAYMENT, PermissionAction.DELETE)
   @ApiBearerAuth("accessToken")
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionsGuard)
   remove2(@Param("id") id: string) {
     return this.paymentsService.removeById(+id);
   }

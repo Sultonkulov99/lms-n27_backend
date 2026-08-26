@@ -22,6 +22,9 @@ import { UserRoles } from "@prisma/client";
 import { JwtAuthGuard } from "src/common/guards/jwt-auth.guard";
 import { RolesGuard } from "src/common/guards/roles.guard";
 import { UpdateMaterialDto } from "./dto/update-material.dto";
+import { PermissionsGuard } from "src/common/guards/permissions.guard";
+import { RequirePermissions } from "src/common/decorators/permissions.decorator";
+import { ResourceCategory, PermissionAction } from "src/common/types/permissions.type";
 
 @Controller("materials")
 export class MaterialsController {
@@ -29,8 +32,9 @@ export class MaterialsController {
 
   @Get()
   @Roles(UserRoles.SUPERADMIN, UserRoles.ADMIN, UserRoles.MENTOR, UserRoles.ASSISTANT, UserRoles.STUDENT)
+  @RequirePermissions(ResourceCategory.MATERIAL, PermissionAction.READ)
   @ApiBearerAuth("accessToken")
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionsGuard)
   @ApiOperation({ summary: "Barcha materiallarni olish" })
   findAll() {
     return this.materialsService.findAll();
@@ -38,8 +42,9 @@ export class MaterialsController {
 
   @Get(":lessonId")
   @Roles(UserRoles.SUPERADMIN, UserRoles.ADMIN, UserRoles.MENTOR, UserRoles.ASSISTANT, UserRoles.STUDENT)
+  @RequirePermissions(ResourceCategory.MATERIAL, PermissionAction.READ)
   @ApiBearerAuth("accessToken")
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionsGuard)
   @ApiOperation({ summary: "Materialni lesson_id bo'yicha olish" })
   findOne(@Param("lessonId", ParseIntPipe) id: number) {
     return this.materialsService.findOne(id);
@@ -47,8 +52,9 @@ export class MaterialsController {
 
   @Post()
   @Roles(UserRoles.SUPERADMIN, UserRoles.ADMIN, UserRoles.MENTOR, UserRoles.ASSISTANT)
+  @RequirePermissions(ResourceCategory.MATERIAL, PermissionAction.CREATE)
   @ApiBearerAuth("accessToken")
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionsGuard)
   @ApiOperation({ summary: "Material yaratish" })
   @ApiConsumes("multipart/form-data")
   @ApiBody({
@@ -88,8 +94,9 @@ export class MaterialsController {
 
   @Patch(":id")
   @Roles(UserRoles.SUPERADMIN, UserRoles.ADMIN, UserRoles.MENTOR, UserRoles.ASSISTANT)
+  @RequirePermissions(ResourceCategory.MATERIAL, PermissionAction.UPDATE)
   @ApiBearerAuth("accessToken")
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionsGuard)
   @ApiOperation({ summary: "Materialni tahrirlash" })
   @ApiConsumes("multipart/form-data")
   @ApiBody({
@@ -129,8 +136,9 @@ export class MaterialsController {
 
   @Delete(":id")
   @Roles(UserRoles.SUPERADMIN, UserRoles.ADMIN, UserRoles.MENTOR, UserRoles.ASSISTANT)
+  @RequirePermissions(ResourceCategory.MATERIAL, PermissionAction.DELETE)
   @ApiBearerAuth("accessToken")
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionsGuard)
   @ApiOperation({ summary: "Material o'chirish" })
   remove(@Param("id", ParseIntPipe) id: number) {
     return this.materialsService.remove(id);

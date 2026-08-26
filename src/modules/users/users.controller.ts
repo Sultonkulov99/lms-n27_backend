@@ -27,6 +27,9 @@ import { Status, UserRoles } from "@prisma/client";
 import { diskStorage } from "multer";
 import { extname } from "path";
 import { UpdateUserDto } from "./dto/update-user.dto";
+import { PermissionsGuard } from "src/common/guards/permissions.guard";
+import { RequirePermissions } from "src/common/decorators/permissions.decorator";
+import { ResourceCategory, PermissionAction } from "src/common/types/permissions.type";
 
 @Controller("user")
 export class UsersController {
@@ -47,8 +50,9 @@ export class UsersController {
   @Get("dashboard")
   @Roles(UserRoles.SUPERADMIN, UserRoles.ADMIN)
   @ApiBearerAuth("accessToken")
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: "Faqat SUPERADMIN" })
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionsGuard)
+  @RequirePermissions(ResourceCategory.DASHBOARD, PermissionAction.READ)
+  @ApiOperation({ summary: "SUPERADMIN va ruxsati bor ADMINlar uchun" })
   async getCountByRoleAndCoursess() {
     return await this.service.getCountByRolesAndCourses();
   }

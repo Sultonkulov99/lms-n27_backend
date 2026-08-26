@@ -17,6 +17,9 @@ import { Roles } from "src/common/decorators/roles.decorator";
 import { UserRoles } from "@prisma/client";
 import { JwtAuthGuard } from "src/common/guards/jwt-auth.guard";
 import { RolesGuard } from "src/common/guards/roles.guard";
+import { PermissionsGuard } from "src/common/guards/permissions.guard";
+import { RequirePermissions } from "src/common/decorators/permissions.decorator";
+import { ResourceCategory, PermissionAction } from "src/common/types/permissions.type";
 
 @ApiTags("Categories")
 @Controller("categories")
@@ -25,8 +28,9 @@ export class CategoriesController {
 
   @Post()
   @Roles(UserRoles.SUPERADMIN)
+  @RequirePermissions(ResourceCategory.CATEGORY, PermissionAction.CREATE)
   @ApiBearerAuth("accessToken")
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionsGuard)
   @ApiOperation({ summary: "SUPERADMIN - Create Category" })
   async create(@Body() dto: CreateCategoryDto) {
     return await this.categoriesService.create(dto);
@@ -39,8 +43,9 @@ export class CategoriesController {
 
   @Get(":id")
   @Roles(UserRoles.SUPERADMIN)
+  @RequirePermissions(ResourceCategory.CATEGORY, PermissionAction.READ)
   @ApiBearerAuth("accessToken")
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionsGuard)
   @ApiOperation({ summary: "SUPERADMIN - Get Category By ID" })
   findOne(@Param("id") id: string) {
     return this.categoriesService.findOne(+id);
@@ -48,8 +53,9 @@ export class CategoriesController {
 
   @Put(":id")
   @Roles(UserRoles.SUPERADMIN)
+  @RequirePermissions(ResourceCategory.CATEGORY, PermissionAction.UPDATE)
   @ApiBearerAuth("accessToken")
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionsGuard)
   @ApiOperation({ summary: "SUPERADMIN - Update Category" })
   update(@Param("id") id: string, @Body() dto: UpdateCategoryDto) {
     return this.categoriesService.update(+id, dto);
@@ -57,8 +63,9 @@ export class CategoriesController {
 
   @Delete(":id")
   @Roles(UserRoles.SUPERADMIN)
+  @RequirePermissions(ResourceCategory.CATEGORY, PermissionAction.DELETE)
   @ApiBearerAuth("accessToken")
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionsGuard)
   @ApiOperation({ summary: "SUPERADMIN - Delete Category" })
   remove(@Param("id") id: string) {
     return this.categoriesService.remove(+id);

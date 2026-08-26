@@ -17,6 +17,9 @@ import { Roles } from "src/common/decorators/roles.decorator";
 import { JwtAuthGuard } from "src/common/guards/jwt-auth.guard";
 import { RolesGuard } from "src/common/guards/roles.guard";
 import { UserRoles } from "@prisma/client";
+import { PermissionsGuard } from "src/common/guards/permissions.guard";
+import { RequirePermissions } from "src/common/decorators/permissions.decorator";
+import { ResourceCategory, PermissionAction } from "src/common/types/permissions.type";
 
 @ApiTags("Sections")
 @Controller("sections")
@@ -25,8 +28,9 @@ export class SectionsController {
 
   @Get()
   @Roles(UserRoles.SUPERADMIN)
+  @RequirePermissions(ResourceCategory.SECTION, PermissionAction.READ)
   @ApiBearerAuth("accessToken")
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionsGuard)
   @ApiOperation({ summary: "SUPERADMIN - Barcha bo'limlarni olish" })
   findAll() {
     return this.sectionsService.findAll();
@@ -34,8 +38,9 @@ export class SectionsController {
 
   @Get(":id")
   @Roles(UserRoles.SUPERADMIN, UserRoles.MENTOR)
+  @RequirePermissions(ResourceCategory.SECTION, PermissionAction.READ)
   @ApiBearerAuth("accessToken")
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionsGuard)
   @ApiOperation({ summary: "SUPERADMIN - Bo'limni id bo'yicha olish" })
   findOne(@Param("id", ParseIntPipe) id: number) {
     return this.sectionsService.findOne(id);
@@ -43,8 +48,9 @@ export class SectionsController {
 
   @Post()
   @Roles(UserRoles.SUPERADMIN, UserRoles.MENTOR)
+  @RequirePermissions(ResourceCategory.SECTION, PermissionAction.CREATE)
   @ApiBearerAuth("accessToken")
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionsGuard)
   @ApiOperation({ summary: "SUPERADMIN - Yangi bo'lim yaratish" })
   create(@Body() dto: CreateSectionDto) {
     return this.sectionsService.create(dto);
@@ -52,8 +58,9 @@ export class SectionsController {
 
   @Patch(":id")
   @Roles(UserRoles.SUPERADMIN, UserRoles.MENTOR)
+  @RequirePermissions(ResourceCategory.SECTION, PermissionAction.UPDATE)
   @ApiBearerAuth("accessToken")
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionsGuard)
   @ApiOperation({ summary: "SUPERADMIN - Bo'limni tahrirlash" })
   update(@Param("id", ParseIntPipe) id: number, @Body() dto: UpdateSectionDto) {
     return this.sectionsService.update(id, dto);
@@ -61,8 +68,9 @@ export class SectionsController {
 
   @Delete(":id")
   @Roles(UserRoles.SUPERADMIN)
+  @RequirePermissions(ResourceCategory.SECTION, PermissionAction.DELETE)
   @ApiBearerAuth("accessToken")
-  @UseGuards(JwtAuthGuard, RolesGuard)
+  @UseGuards(JwtAuthGuard, RolesGuard, PermissionsGuard)
   @ApiOperation({ summary: "SUPERADMIN - Bo'limni o'chirish" })
   remove(@Param("id", ParseIntPipe) id: number) {
     return this.sectionsService.remove(id);
