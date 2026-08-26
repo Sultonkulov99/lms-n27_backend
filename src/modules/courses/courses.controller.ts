@@ -12,6 +12,7 @@ import {
   UploadedFiles,
   UseGuards,
   UseInterceptors,
+  ParseEnumPipe,
 } from "@nestjs/common";
 import {
   ApiBearerAuth,
@@ -24,7 +25,7 @@ import {
 import { CoursesService } from "./courses.service";
 import { CreateCourseDto } from "./dto/create-course.dto";
 import { UpdateCourseDto } from "./dto/update-course.dto";
-import { User, UserRoles } from "@prisma/client";
+import { Status, User, UserRoles } from "@prisma/client";
 import { Roles } from "src/common/decorators/roles.decorator";
 import { JwtAuthGuard } from "src/common/guards/jwt-auth.guard";
 import { RolesGuard } from "src/common/guards/roles.guard";
@@ -58,7 +59,8 @@ export class CoursesController {
 
   @Get()
   findAll(
-    @Query() query: PageQueryDto) {
+    @Query() query: PageQueryDto,
+  ) {
     return this.coursesService.findAll(query.page, query.limit, query.isActive);
   }
 
@@ -103,6 +105,24 @@ export class CoursesController {
     @CurrentUser() user: { id: number; role: UserRoles },
   ) {
     return this.coursesService.update(id, dto, files, user);
+  }
+
+  @Patch(":id/archive")
+  @Roles(UserRoles.SUPERADMIN, UserRoles.ADMIN)
+  @ApiBearerAuth("accessToken")
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiOperation({ summary: "Faqat SUPERADMIN - Archive Kursni" })
+  async archiveMentor(@Param("id") id: number) {
+    return await this.coursesService.archive(id);
+  }
+
+  @Patch(":id/restore")
+  @Roles(UserRoles.SUPERADMIN, UserRoles.ADMIN)
+  @ApiBearerAuth("accessToken")
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiOperation({ summary: "Faqat SUPERADMIN - Restore Kursni" })
+  async restoreMentor(@Param("id") id: number) {
+    return await this.coursesService.restore(id);
   }
 
   @Delete(":id")
