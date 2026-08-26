@@ -8,16 +8,19 @@ import { CreateMentorDto } from "./dto/mentor-create.dto";
 import * as argon from "argon2";
 import { UpdateMentorDto } from "./dto/mentor-update.dto";
 import { UserRoles } from "src/common/enums";
+import { Status } from "@prisma/client";
 
 @Injectable()
 export class MentorService {
   constructor(private prisma: PrismaService) {}
 
-  async getAll() {
+  async getAll(statusParam?: Status) {
+    const status = statusParam || Status.ACTIVE;
+
     const mentor = await this.prisma.user.findMany({
-      where: { 
-        role: "MENTOR",
-        status: { not: 'DELETED' }
+      where: {
+        role: UserRoles.MENTOR,
+        status,
       },
       select: {
         id: true,
@@ -37,7 +40,7 @@ export class MentorService {
 
   async getOne(id: number) {
     const mentor = await this.prisma.user.findFirst({
-      where: { id, role: "MENTOR" },
+      where: { id, role: UserRoles.MENTOR },
       select: {
         id: true,
         fullName: true,
@@ -76,7 +79,7 @@ export class MentorService {
         fullName: dto.fullName,
         phone: dto.phone,
         password: hashedPass,
-        role: "MENTOR",
+        role: UserRoles.MENTOR,
       },
 
       select: {
@@ -100,7 +103,7 @@ export class MentorService {
     const mentor = await this.prisma.user.findFirst({
       where: {
         id,
-        role: "MENTOR",
+        role: UserRoles.MENTOR,
       },
     });
 
@@ -158,11 +161,65 @@ export class MentorService {
 
     await this.prisma.user.update({
       where: { id },
-      data: { status: 'DELETED' },
+      data: { status: "DELETED" },
     });
 
     return {
       message: "Mentor successfully deleted!",
+    };
+  }
+
+  async archiveMentor(id: number) {
+    const mentor = await this.prisma.user.findFirst({
+      where: {
+        id,
+        role: UserRoles.MENTOR,
+      },
+    });
+
+    if (!mentor) {
+      throw new NotFoundException("Mentor is not found");
+    }
+
+    const updatedMentor = await this.prisma.user.update({
+      where: {
+        id,
+      },
+      data: {
+        status: Status.INACTIVE,
+      },
+    });
+
+    return {
+      success: true,
+      data: updatedMentor,
+    };
+  }
+
+  async restoreMentor(id: number) {
+    const mentor = await this.prisma.user.findFirst({
+      where: {
+        id,
+        role: UserRoles.MENTOR,
+      },
+    });
+
+    if (!mentor) {
+      throw new NotFoundException("Mentor is not found");
+    }
+
+    const updatedMentor = await this.prisma.user.update({
+      where: {
+        id,
+      },
+      data: {
+        status: Status.ACTIVE,
+      },
+    });
+
+    return {
+      success: true,
+      data: updatedMentor,
     };
   }
 }
