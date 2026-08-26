@@ -277,57 +277,27 @@ export class CoursesService {
         );
     }
 
-    async archive(id: number) {
-        const mentor = await this.prisma.user.findFirst({
-            where: {
-                id,
-                role: UserRoles.MENTOR,
-            },
-        });
-
-        if (!mentor) {
-            throw new NotFoundException("Mentor is not found");
-        }
-
-        const updatedMentor = await this.prisma.user.update({
-            where: {
-                id,
-            },
-            data: {
-                status: Status.INACTIVE,
-            },
-        });
-
-        return {
-            success: true,
-            data: updatedMentor,
-        };
+  async archive(id: number) {
+    const course = await this.prisma.courses.findFirst({ where: { id } });
+    if (!course) {
+      throw new NotFoundException(`Kurs topilmadi (id: ${id})`);
     }
+    const updated = await this.prisma.courses.update({
+      where: { id },
+      data: { status: Status.INACTIVE },
+    });
+    return { success: true, data: updated };
+  }
 
-    async restore(id: number) {
-        const mentor = await this.prisma.user.findFirst({
-            where: {
-                id,
-                role: UserRoles.MENTOR,
-            },
-        });
-
-        if (!mentor) {
-            throw new NotFoundException("Mentor is not found");
-        }
-
-        const updatedMentor = await this.prisma.user.update({
-            where: {
-                id,
-            },
-            data: {
-                status: Status.ACTIVE,
-            },
-        });
-
-        return {
-            success: true,
-            data: updatedMentor,
-        };
+  async restore(id: number) {
+    const course = await this.prisma.courses.findFirst({ where: { id } });
+    if (!course) {
+      throw new NotFoundException(`Kurs topilmadi (id: ${id})`);
     }
+    const updated = await this.prisma.courses.update({
+      where: { id },
+      data: { status: Status.ACTIVE },
+    });
+    return { success: true, data: updated };
+  }
 }
