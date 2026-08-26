@@ -1,25 +1,25 @@
 import {
-  Query,
-  BadRequestException,
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  ParseIntPipe,
-  Patch,
-  Post,
-  UploadedFiles,
-  UseGuards,
-  UseInterceptors,
+    Query,
+    BadRequestException,
+    Body,
+    Controller,
+    Delete,
+    Get,
+    Param,
+    ParseIntPipe,
+    Patch,
+    Post,
+    UploadedFiles,
+    UseGuards,
+    UseInterceptors,
 } from "@nestjs/common";
 import {
-  ApiBearerAuth,
-  ApiBody,
-  ApiConsumes,
-  ApiExtraModels,
-  ApiOperation,
-  ApiTags,
+    ApiBearerAuth,
+    ApiBody,
+    ApiConsumes,
+    ApiExtraModels,
+    ApiOperation,
+    ApiTags,
 } from "@nestjs/swagger";
 import { CoursesService } from "./courses.service";
 import { CreateCourseDto } from "./dto/create-course.dto";
@@ -35,82 +35,94 @@ import { query } from "axios";
 import { PageQueryDto } from "./dto/query.dto";
 
 const fileInterceptor = FileFieldsInterceptor(
-  [
-    { name: "banner", maxCount: 1 },
-    { name: "introVideo", maxCount: 1 },
-  ],
-  {
-    storage: courseFileStorage,
-    fileFilter: courseFileFilter,
-    limits: { fileSize: 500 * 1024 * 1024 },
-  },
+    [
+        { name: "banner", maxCount: 1 },
+        { name: "introVideo", maxCount: 1 },
+    ],
+    {
+        storage: courseFileStorage,
+        fileFilter: courseFileFilter,
+        limits: { fileSize: 500 * 1024 * 1024 },
+    },
 );
 
 export type CourseFiles = {
-  banner?: Express.Multer.File[];
-  introVideo?: Express.Multer.File[];
+    banner?: Express.Multer.File[];
+    introVideo?: Express.Multer.File[];
 };
 
 @ApiTags("Courses")
 @Controller("courses")
 export class CoursesController {
-  constructor(private readonly coursesService: CoursesService) {}
+    constructor(private readonly coursesService: CoursesService) {}
 
-  @Get()
-  findAll(
-    @Query() query: PageQueryDto) {
-    return this.coursesService.findAll(query.page, query.limit, query.isActive);
-  }
-
-  @Get(":id")
-  findOne(@Param("id", ParseIntPipe) id: number) {
-    return this.coursesService.findOne(id);
-  }
-
-  @Post()
-  @Roles(UserRoles.SUPERADMIN, UserRoles.MENTOR)
-  @ApiBearerAuth("accessToken")
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: "SUPERADMIN - Yangi kurs yaratish" })
-  @ApiConsumes("multipart/form-data")
-  @ApiExtraModels(CreateCourseDto)
-  @ApiBody({ type: CreateCourseDto })
-  @UseInterceptors(fileInterceptor)
-  create(
-    @Body() dto: CreateCourseDto,
-    @UploadedFiles() files: CourseFiles,
-    @CurrentUser() user: { id: number; role: UserRoles },
-  ) {
-    if (!files?.banner?.[0]) {
-      throw new BadRequestException("Banner majburiy");
+    @Get()
+    findAll(@Query() query: PageQueryDto) {
+        return this.coursesService.findAll(
+            query.page,
+            query.limit,
+            query.isActive,
+        );
     }
-    return this.coursesService.create(dto, files, user);
-  }
 
-  @Patch(":id")
-  @Roles(UserRoles.SUPERADMIN, UserRoles.MENTOR)
-  @ApiBearerAuth("accessToken")
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: "SUPERADMIN - Kursni tahrirlash" })
-  @ApiConsumes("multipart/form-data")
-  @ApiExtraModels(UpdateCourseDto)
-  @ApiBody({ type: UpdateCourseDto })
-  @UseInterceptors(fileInterceptor)
-  update(
-    @Param("id", ParseIntPipe) id: number,
-    @Body() dto: UpdateCourseDto,
-    @UploadedFiles() files: CourseFiles,
-    @CurrentUser() user: { id: number; role: UserRoles },
-  ) {
-    return this.coursesService.update(id, dto, files, user);
-  }
+    @Get("my-courses")
+    @Roles(UserRoles.MENTOR)
+    @ApiBearerAuth("accessToken")
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @ApiOperation({ summary: "Faqat MENTOR - o'z kurslarini olish" })
+    findMyCourses(@CurrentUser() user: { id: number }) {
+        return this.coursesService.findMyCourses(user.id);
+    }
 
-  @Delete(":id")
-  @Roles(UserRoles.SUPERADMIN, UserRoles.MENTOR)
-  @ApiBearerAuth("accessToken")
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @ApiOperation({ summary: "SUPERADMIN - Kursni o'chirish" })
-  remove(@Param("id", ParseIntPipe) id: number) {
-    return this.coursesService.remove(id);
-  }
+    @Get(":id")
+    findOne(@Param("id", ParseIntPipe) id: number) {
+        return this.coursesService.findOne(id);
+    }
+
+    @Post()
+    @Roles(UserRoles.SUPERADMIN, UserRoles.MENTOR)
+    @ApiBearerAuth("accessToken")
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @ApiOperation({ summary: "SUPERADMIN - Yangi kurs yaratish" })
+    @ApiConsumes("multipart/form-data")
+    @ApiExtraModels(CreateCourseDto)
+    @ApiBody({ type: CreateCourseDto })
+    @UseInterceptors(fileInterceptor)
+    create(
+        @Body() dto: CreateCourseDto,
+        @UploadedFiles() files: CourseFiles,
+        @CurrentUser() user: { id: number; role: UserRoles },
+    ) {
+        if (!files?.banner?.[0]) {
+            throw new BadRequestException("Banner majburiy");
+        }
+        return this.coursesService.create(dto, files, user);
+    }
+
+    @Patch(":id")
+    @Roles(UserRoles.SUPERADMIN, UserRoles.MENTOR)
+    @ApiBearerAuth("accessToken")
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @ApiOperation({ summary: "SUPERADMIN - Kursni tahrirlash" })
+    @ApiConsumes("multipart/form-data")
+    @ApiExtraModels(UpdateCourseDto)
+    @ApiBody({ type: UpdateCourseDto })
+    @UseInterceptors(fileInterceptor)
+    update(
+        @Param("id", ParseIntPipe) id: number,
+        @Body() dto: UpdateCourseDto,
+        @UploadedFiles() files: CourseFiles,
+        @CurrentUser() user: { id: number; role: UserRoles },
+    ) {
+        return this.coursesService.update(id, dto, files, user);
+    }
+
+    @Delete(":id")
+    @Roles(UserRoles.SUPERADMIN, UserRoles.MENTOR)
+    @ApiBearerAuth("accessToken")
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @ApiOperation({ summary: "SUPERADMIN - Kursni o'chirish" })
+    remove(@Param("id", ParseIntPipe) id: number) {
+        return this.coursesService.remove(id);
+    }
 }
