@@ -1,26 +1,47 @@
-import { Controller, Get, Query, UseGuards } from "@nestjs/common";
-import { ExamResultsDto } from "./dto/exam-results.dto";
-import { ExamResultsService } from "./exam-results.service";
+import { Body, Controller, Get, Post, Query, UseGuards } from "@nestjs/common";
 import { ApiBearerAuth, ApiOperation, ApiTags } from "@nestjs/swagger";
-import { Roles } from "src/common/decorators/roles.decorator";
 import { UserRoles } from "@prisma/client";
+import { CurrentUser } from "src/common/decorators/current-user.decorator";
+import { Roles } from "src/common/decorators/roles.decorator";
 import { JwtAuthGuard } from "src/common/guards/jwt-auth.guard";
 import { RolesGuard } from "src/common/guards/roles.guard";
-import { PermissionsGuard } from "src/common/guards/permissions.guard";
-import { RequirePermissions } from "src/common/decorators/permissions.decorator";
-import { ResourceCategory, PermissionAction } from "src/common/types/permissions.type";
+import { CreateExamResultDto } from "./dto/create-exam-result.dto";
+import { ExamResultsDto } from "./dto/exam-results.dto";
+import { ExamResultsService } from "./exam-results.service";
 
-@ApiTags("Exam-results")
+@ApiTags("Exam Results")
 @Controller("exam-results")
 export class ExamResultsController {
-    constructor(private readonly servive: ExamResultsService) {}
+    constructor(private readonly service: ExamResultsService) {}
 
     @Get()
-  @Roles(UserRoles.ADMIN, UserRoles.SUPERADMIN, UserRoles.MENTOR)
-  @RequirePermissions(ResourceCategory.EXAM_RESULT, PermissionAction.READ)
-    @ApiOperation({ summary: "Get Exam results" })
+    @Roles(UserRoles.SUPERADMIN, UserRoles.ADMIN)
+    @ApiBearerAuth("accessToken")
+    @UseGuards(JwtAuthGuard, RolesGuard)
+    @ApiOperation({ summary: "Faqat ADMIN - Barcha imtihon natijalarini olish" })
     async findAll(@Query() query: ExamResultsDto) {
-        return this.servive.findAll(query);
+        return await this.service.findAll(query);
+    }
+
+    @Get("mine")
+    @ApiBearerAuth("accessToken")
+    @UseGuards(JwtAuthGuard)
+    @ApiOperation({ summary: "O'zimning imtihon natijalarim" })
+    async findMine(
+        @CurrentUser() user: { id: number },
+        @Query() query: ExamResultsDto,
+    ) {
+        return await this.service.findMine(user.id, query);
+    }
+
+    @Post()
+    @ApiBearerAuth("accessToken")
+    @UseGuards(JwtAuthGuard)
+    @ApiOperation({ summary: "Imtihon javoblarini yuborish" })
+    async create(
+        @CurrentUser() user: { id: number },
+        @Body() dto: CreateExamResultDto,
+    ) {
+        return await this.service.create(user.id, dto);
     }
 }
-

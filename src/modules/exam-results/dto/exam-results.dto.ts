@@ -15,7 +15,6 @@ export class ExamResultsDto {
     @IsString()
     startDate?: string;
 
-    @ApiPropertyOptional({ description: "Tugash sanasi " })
     @ApiPropertyOptional({
         description: "Tugash sanasi",
     })
@@ -23,23 +22,60 @@ export class ExamResultsDto {
     @IsString()
     endDate?: string;
 
-    @ApiPropertyOptional({ default: 1 })
     @ApiPropertyOptional({
-        default: 1,
+        example: 1,
+        description: "Kurs bo'yicha filtr (lessons -> sections -> courses)",
     })
     @IsOptional()
     @Type(() => Number)
     @IsInt()
-    @Min(1)
-    page?: number = 1;
+    courseId?: number;
 
-    @ApiPropertyOptional({ default: 10 })
     @ApiPropertyOptional({
-        default: 10,
+        example: 1,
+        description: "Bo'lim bo'yicha filtr (lessons -> sections)",
+    })
+    @IsOptional()
+    @Type(() => Number)
+    @IsInt()
+    sectionId?: number;
+
+    @ApiPropertyOptional({
+        example: 1,
+        description: "O'quvchi (user) bo'yicha filtr",
+    })
+    @IsOptional()
+    @Type(() => Number)
+    @IsInt()
+    userId?: number;
+
+    @ApiPropertyOptional({
+        example: 1,
+        description: "Dars bo'yicha filtr",
+    })
+    @IsOptional()
+    @Type(() => Number)
+    @IsInt()
+    lessonId?: number;
+
+    @ApiPropertyOptional({
+        example: 1,
+        description: "Sahifa raqami. limit bilan birga ishlatiladi",
     })
     @IsOptional()
     @Type(() => Number)
     @IsInt()
     @Min(1)
-    limit?: number = 10;
+    page?: number;
+
+    @ApiPropertyOptional({
+        example: 10,
+        description:
+            "Bir sahifadagi yozuvlar soni. Berilmasa barcha natijalar qaytariladi",
+    })
+    @IsOptional()
+    @Type(() => Number)
+    @IsInt()
+    @Min(1)
+    limit?: number;
 }

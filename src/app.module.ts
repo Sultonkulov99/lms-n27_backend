@@ -24,6 +24,7 @@ import { join } from "path";
 import { AssistantsModule } from "./modules/assistants/assistants.module";
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { CourseCommentsModule } from './modules/course-comments/course-comments.module';
+import { ExamResultsModule } from './modules/exam-results/exam-results.module';
 
 
 @Module({
@@ -58,6 +59,7 @@ import { CourseCommentsModule } from './modules/course-comments/course-comments.
     BotModule,
     NotificationsModule,
     CourseCommentsModule,
+    ExamResultsModule,
   ],
 })
 export class AppModule { }
