@@ -1,4 +1,4 @@
-import { IsOptional, IsInt, Min, IsString } from 'class-validator';
+import { IsOptional, IsInt, Min, IsString, IsEnum } from 'class-validator';
 import { Type } from 'class-transformer';
 import { Status } from '@prisma/client';
 import { ApiProperty } from '@nestjs/swagger';
@@ -27,6 +27,6 @@ export class PageQueryDto {
         enum: Status
     })
     @IsOptional()
-    @IsString()
+    @IsEnum(Status)
     isActive?: Status;
 }

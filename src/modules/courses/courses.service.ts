@@ -20,19 +20,11 @@ export interface Current {
 export class CoursesService {
     constructor(private readonly prisma: PrismaService) {}
 
-    findAll(page = 1, limit = 10, status?: string) {
-        const whereClause: any = {
-            status: {
-                not: "DELETED",
-            },
-        };
-
-        if (status) {
-            whereClause.status = status;
-        }
+    findAll(page = 1, limit = 10, statusParam?: Status) {
+        const status = statusParam || Status.ACTIVE;
 
         return this.prisma.courses.findMany({
-            where: whereClause,
+            where: { status },
             skip: (page - 1) * limit,
             take: limit,
             include: {
@@ -283,5 +275,59 @@ export class CoursesService {
                     ),
             ),
         );
+    }
+
+    async archive(id: number) {
+        const mentor = await this.prisma.user.findFirst({
+            where: {
+                id,
+                role: UserRoles.MENTOR,
+            },
+        });
+
+        if (!mentor) {
+            throw new NotFoundException("Mentor is not found");
+        }
+
+        const updatedMentor = await this.prisma.user.update({
+            where: {
+                id,
+            },
+            data: {
+                status: Status.INACTIVE,
+            },
+        });
+
+        return {
+            success: true,
+            data: updatedMentor,
+        };
+    }
+
+    async restore(id: number) {
+        const mentor = await this.prisma.user.findFirst({
+            where: {
+                id,
+                role: UserRoles.MENTOR,
+            },
+        });
+
+        if (!mentor) {
+            throw new NotFoundException("Mentor is not found");
+        }
+
+        const updatedMentor = await this.prisma.user.update({
+            where: {
+                id,
+            },
+            data: {
+                status: Status.ACTIVE,
+            },
+        });
+
+        return {
+            success: true,
+            data: updatedMentor,
+        };
     }
 }

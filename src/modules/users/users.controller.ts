@@ -18,7 +18,6 @@ import {
   ApiBearerAuth,
   ApiConsumes,
   ApiOperation,
-  ApiTags,
 } from "@nestjs/swagger";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { Roles } from "src/common/decorators/roles.decorator";
@@ -34,7 +33,7 @@ export class UsersController {
   constructor(private readonly service: UsersService) {}
 
   @Get("admin")
-  @Roles(UserRoles.SUPERADMIN)
+  @Roles(UserRoles.SUPERADMIN, UserRoles.ADMIN)
   @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "Faqat SUPERADMIN" })
@@ -46,7 +45,7 @@ export class UsersController {
   }
 
   @Get("dashboard")
-  @Roles(UserRoles.SUPERADMIN)
+  @Roles(UserRoles.SUPERADMIN, UserRoles.ADMIN)
   @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "Faqat SUPERADMIN" })
@@ -108,7 +107,7 @@ export class UsersController {
   }
 
   @Patch("admin/:id/archive")
-  @Roles(UserRoles.SUPERADMIN)
+  @Roles(UserRoles.SUPERADMIN, UserRoles.ADMIN)
   @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "Faqat SUPERADMIN" })
@@ -117,7 +116,7 @@ export class UsersController {
   }
 
   @Patch("admin/:id/restore")
-  @Roles(UserRoles.SUPERADMIN)
+  @Roles(UserRoles.SUPERADMIN, UserRoles.ADMIN)
   @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "Faqat SUPERADMIN" })
