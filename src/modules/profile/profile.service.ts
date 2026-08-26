@@ -55,6 +55,41 @@ export class ProfileService {
             data: updateData,
         });
 
+        const mentorFields = [
+            "job",
+            "experience",
+            "description",
+            "site",
+            "telegram",
+            "instagram",
+            "facebook",
+            "linkedin",
+            "github",
+        ];
+        const mentorData = Object.fromEntries(
+            mentorFields
+                .filter((field) => (dto as any)[field] !== undefined)
+                .map((field) => [field, (dto as any)[field]]),
+        );
+        if (
+            updatedUser.role === "MENTOR" &&
+            Object.keys(mentorData).length > 0
+        ) {
+            const mentor = await this.prisma.mentorProfile.findFirst({
+                where: { userId },
+            });
+            if (mentor) {
+                await this.prisma.mentorProfile.update({
+                    where: { id: mentor.id },
+                    data: mentorData,
+                });
+            } else {
+                await this.prisma.mentorProfile.create({
+                    data: { userId, ...mentorData },
+                });
+            }
+        }
+
         return {
             message: "Profil muvaffaqiyatli yangilandi",
             data: {
@@ -73,6 +108,7 @@ export class ProfileService {
     async getProfile(userId: number) {
         const user = await this.prisma.user.findUnique({
             where: { id: userId },
+            include: { mentor: true },
         });
 
         if (!user) {
@@ -90,6 +126,7 @@ export class ProfileService {
                 role: user.role,
                 created_at: user.created_at,
                 updated_at: user.updated_at,
+                mentor: user.mentor?.[0] ?? null,
             },
         };
     }
