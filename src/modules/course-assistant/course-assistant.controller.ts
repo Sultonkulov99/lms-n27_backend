@@ -27,7 +27,7 @@ export class CourseAssistantController {
   ) { }
 
   @Post()
-  @Roles(UserRoles.SUPERADMIN)
+  @Roles(UserRoles.SUPERADMIN, UserRoles.ADMIN)
   @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: 'SUPERADMIN - Create Course Assistant' })
@@ -36,7 +36,7 @@ export class CourseAssistantController {
   }
 
   @Get()
-  @Roles(UserRoles.SUPERADMIN)
+  @Roles(UserRoles.SUPERADMIN, UserRoles.ADMIN)
   @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: 'SUPERADMIN - Get All Course Assistants' })
@@ -48,7 +48,7 @@ export class CourseAssistantController {
   }
 
   @Get(':id')
-  @Roles(UserRoles.SUPERADMIN)
+  @Roles(UserRoles.SUPERADMIN, UserRoles.ADMIN)
   @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: 'SUPERADMIN - Get Course Assistant By ID' })
@@ -57,7 +57,7 @@ export class CourseAssistantController {
   }
 
   @Patch(':id')
-  @Roles(UserRoles.SUPERADMIN)
+  @Roles(UserRoles.SUPERADMIN, UserRoles.ADMIN)
   @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: 'SUPERADMIN - Update Course Assistant' })
@@ -69,7 +69,7 @@ export class CourseAssistantController {
   }
 
   @Delete(':id')
-  @Roles(UserRoles.SUPERADMIN)
+  @Roles(UserRoles.SUPERADMIN, UserRoles.ADMIN)
   @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: 'SUPERADMIN - Delete Course Assistant' })

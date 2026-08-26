@@ -68,7 +68,7 @@ export class CoursesController {
   }
 
   @Post()
-  @Roles(UserRoles.SUPERADMIN, UserRoles.MENTOR)
+  @Roles(UserRoles.SUPERADMIN, UserRoles.ADMIN, UserRoles.MENTOR)
   @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "SUPERADMIN - Yangi kurs yaratish" })
@@ -88,7 +88,7 @@ export class CoursesController {
   }
 
   @Patch(":id")
-  @Roles(UserRoles.SUPERADMIN, UserRoles.MENTOR)
+  @Roles(UserRoles.SUPERADMIN, UserRoles.ADMIN, UserRoles.MENTOR)
   @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "SUPERADMIN - Kursni tahrirlash" })
@@ -106,7 +106,7 @@ export class CoursesController {
   }
 
   @Delete(":id")
-  @Roles(UserRoles.SUPERADMIN, UserRoles.MENTOR)
+  @Roles(UserRoles.SUPERADMIN, UserRoles.ADMIN, UserRoles.MENTOR)
   @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "SUPERADMIN - Kursni o'chirish" })

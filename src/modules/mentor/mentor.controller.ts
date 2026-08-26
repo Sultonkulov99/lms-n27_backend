@@ -8,10 +8,12 @@ import {
   Param,
   UseGuards,
   Patch,
+  Query,
+  ParseEnumPipe,
 } from "@nestjs/common";
 import { MentorService } from "./mentor.service";
 import { Roles } from "src/common/decorators/roles.decorator";
-import { UserRoles } from "@prisma/client";
+import { Status, UserRoles } from "@prisma/client";
 import { ApiBearerAuth, ApiOperation } from "@nestjs/swagger";
 import { JwtAuthGuard } from "src/common/guards/jwt-auth.guard";
 import { RolesGuard } from "src/common/guards/roles.guard";
@@ -27,8 +29,11 @@ export class MentorController {
   @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "SUPERADMIN - Get All Mentor" })
-  getAll() {
-    return this.mentorService.getAll();
+  getAll(
+    @Query("status", new ParseEnumPipe(Status, { optional: true }))
+    status?: Status,
+  ) {
+    return this.mentorService.getAll(status);
   }
 
   @Get(":id")
@@ -54,11 +59,26 @@ export class MentorController {
   @ApiBearerAuth("accessToken")
   @UseGuards(JwtAuthGuard, RolesGuard)
   @ApiOperation({ summary: "SUPERADMIN, Admin - Update Mentor" })
-  update(
-    @Param("id") id: string,
-    @Body() dto: UpdateMentorDto,
-  ) {
+  update(@Param("id") id: string, @Body() dto: UpdateMentorDto) {
     return this.mentorService.update(Number(id), dto);
+  }
+
+  @Patch(":id/archive")
+  @Roles(UserRoles.SUPERADMIN, UserRoles.ADMIN)
+  @ApiBearerAuth("accessToken")
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiOperation({ summary: "Faqat SUPERADMIN - Archive Mentor" })
+  async archiveMentor(@Param("id") id: number) {
+    return await this.mentorService.archiveMentor(id);
+  }
+
+  @Patch(":id/restore")
+  @Roles(UserRoles.SUPERADMIN, UserRoles.ADMIN)
+  @ApiBearerAuth("accessToken")
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @ApiOperation({ summary: "Faqat SUPERADMIN - Restore Mentor" })
+  async restoreMentor(@Param("id") id: number) {
+    return await this.mentorService.restoreMentor(id);
   }
 
   @Delete(":id")
